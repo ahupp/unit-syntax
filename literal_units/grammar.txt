@@ -1,4 +1,5 @@
 # PEG grammar for Python
+start: file
 
 file: [statements] ENDMARKER
 interactive: statement_newline
@@ -355,7 +356,6 @@ await_primary:
     | AWAIT primary
     | primary
 primary:
-    | invalid_primary  # must be before 'primay genexp' because of invalid_genexp
     | primary '.' NAME
     | primary genexp
     | primary '(' [arguments] ')'
