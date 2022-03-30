@@ -8,7 +8,7 @@ import traceback
 from abc import abstractmethod
 from typing import Any, Callable, ClassVar, Dict, Optional, Tuple, Type, TypeVar, cast
 
-from pegen.tokenizer import Mark, Tokenizer, exact_token_types
+from .pegen_tokenizer import Mark, Tokenizer, exact_token_types
 
 T = TypeVar("T")
 P = TypeVar("P", bound="Parser")

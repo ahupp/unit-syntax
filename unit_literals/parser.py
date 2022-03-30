@@ -7,7 +7,7 @@ import tokenize
 
 from typing import Any, Optional
 
-from pegen.parser import memoize, memoize_left_rec, logger, Parser
+from .pegen_parser import memoize, memoize_left_rec, logger, Parser
 # Keywords and soft keywords are listed at the end of the parser definition.
 class GeneratedParser(Parser):
 
