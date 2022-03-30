@@ -1,14 +1,13 @@
 [tool.poetry]
-name = "unit-literals"
+name = "unit-literals-test-ipython-5"
 version = "0.1.0"
 description = ""
 authors = ["Adam Hupp <adam@hupp.org>"]
-packages = [{include = "unit_literals"}]
 
 [tool.poetry.dependencies]
-python = ">=3.6, < 4"
-Pint = "^0.17"
-
+python = ">= 3.6, < 4"
+unit_literals = { path = "../../" }
+ipython = ">= 5.0, < 6"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

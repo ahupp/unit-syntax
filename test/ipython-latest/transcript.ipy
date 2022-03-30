@@ -1,0 +1,6 @@
+# coding: utf-8
+import unit_literals.autohook
+a = 5 seconds
+b = a * (1 m/s)
+assert b.magnitude == 5, b
+assert str(b.units) == 'meter', b
