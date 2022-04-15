@@ -1,1 +1,2 @@
-unit_literals = ../../
+.
+ipython == 5.*
