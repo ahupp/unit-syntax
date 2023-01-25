@@ -1,8 +1,8 @@
 import unittest
-from IPython.testing.globalipapp import get_ipython
 
 class Test(unittest.TestCase):
     def test_transforms(self):
+        from IPython.testing.globalipapp import get_ipython
         ip = get_ipython()
         ip.run_cell("import unit_literals.autohook")
         res = ip.run_cell("""
@@ -18,4 +18,4 @@ print(how_far.ito_base_units())
 how_far
 """)
         print(res)
-unittest.main()
+

@@ -8,9 +8,9 @@ import tokenize
 from typing import Any, Optional
 
 from .pegen_parser import memoize, memoize_left_rec, logger, Parser
+
 # Keywords and soft keywords are listed at the end of the parser definition.
 class GeneratedParser(Parser):
-
     @memoize
     def start(self) -> Optional[Any]:
         # start: file
@@ -18,26 +18,29 @@ class GeneratedParser(Parser):
         while True:
             _last = self.file()
             file = _last
-            if not _last: break
-            return file;
+            if not _last:
+                break
+            return file
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def file(self) -> Optional[Any]:
         # file: statements? $
         mark = self._mark()
         while True:
-            _last = self.statements(),
+            _last = (self.statements(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect('ENDMARKER')
+            if not _last:
+                break
+            _last = self.expect("ENDMARKER")
             _endmarker = _last
-            if not _last: break
-            return [opt, _endmarker];
+            if not _last:
+                break
+            return [opt, _endmarker]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def interactive(self) -> Optional[Any]:
@@ -46,10 +49,11 @@ class GeneratedParser(Parser):
         while True:
             _last = self.statement_newline()
             statement_newline = _last
-            if not _last: break
-            return statement_newline;
+            if not _last:
+                break
+            return statement_newline
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def eval(self) -> Optional[Any]:
@@ -58,49 +62,67 @@ class GeneratedParser(Parser):
         while True:
             _last = self.expressions()
             expressions = _last
-            if not _last: break
-            _last = self._loop0_1(),
+            if not _last:
+                break
+            _last = (self._loop0_1(),)
             _loop0_1 = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect('ENDMARKER')
+            if not _last:
+                break
+            _last = self.expect("ENDMARKER")
             _endmarker = _last
-            if not _last: break
-            return [expressions, _loop0_1, _endmarker];
+            if not _last:
+                break
+            return [expressions, _loop0_1, _endmarker]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def func_type(self) -> Optional[Any]:
         # func_type: '(' type_expressions? ')' '->' expression NEWLINE* $
         mark = self._mark()
         while True:
-            _last = self.expect('(')
+            _last = self.expect("(")
             literal = _last
-            if not _last: break
-            _last = self.type_expressions(),
+            if not _last:
+                break
+            _last = (self.type_expressions(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(')')
+            if not _last:
+                break
+            _last = self.expect(")")
             literal_1 = _last
-            if not _last: break
-            _last = self.expect('->')
+            if not _last:
+                break
+            _last = self.expect("->")
             literal_2 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            _last = self._loop0_2(),
+            if not _last:
+                break
+            _last = (self._loop0_2(),)
             _loop0_2 = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect('ENDMARKER')
+            if not _last:
+                break
+            _last = self.expect("ENDMARKER")
             _endmarker = _last
-            if not _last: break
-            return [literal, opt, literal_1, literal_2, expression, _loop0_2, _endmarker];
+            if not _last:
+                break
+            return [
+                literal,
+                opt,
+                literal_1,
+                literal_2,
+                expression,
+                _loop0_2,
+                _endmarker,
+            ]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def fstring(self) -> Optional[Any]:
@@ -109,10 +131,11 @@ class GeneratedParser(Parser):
         while True:
             _last = self.star_expressions()
             star_expressions = _last
-            if not _last: break
-            return star_expressions;
+            if not _last:
+                break
+            return star_expressions
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def type_expressions(self) -> Optional[Any]:
@@ -121,100 +144,133 @@ class GeneratedParser(Parser):
         while True:
             _last = self._gather_3()
             _gather_3 = _last
-            if not _last: break
-            _last = self.expect(',')
+            if not _last:
+                break
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
-            _last = self.expect('*')
+            if not _last:
+                break
+            _last = self.expect("*")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            _last = self.expect(',')
+            if not _last:
+                break
+            _last = self.expect(",")
             literal_2 = _last
-            if not _last: break
-            _last = self.expect('**')
+            if not _last:
+                break
+            _last = self.expect("**")
             literal_3 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression_1 = _last
-            if not _last: break
-            return [_gather_3, literal, literal_1, expression, literal_2, literal_3, expression_1];
+            if not _last:
+                break
+            return [
+                _gather_3,
+                literal,
+                literal_1,
+                expression,
+                literal_2,
+                literal_3,
+                expression_1,
+            ]
         self._reset(mark)
         while True:
             _last = self._gather_5()
             _gather_5 = _last
-            if not _last: break
-            _last = self.expect(',')
+            if not _last:
+                break
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
-            _last = self.expect('*')
+            if not _last:
+                break
+            _last = self.expect("*")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            return [_gather_5, literal, literal_1, expression];
+            if not _last:
+                break
+            return [_gather_5, literal, literal_1, expression]
         self._reset(mark)
         while True:
             _last = self._gather_7()
             _gather_7 = _last
-            if not _last: break
-            _last = self.expect(',')
+            if not _last:
+                break
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
-            _last = self.expect('**')
+            if not _last:
+                break
+            _last = self.expect("**")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            return [_gather_7, literal, literal_1, expression];
+            if not _last:
+                break
+            return [_gather_7, literal, literal_1, expression]
         self._reset(mark)
         while True:
-            _last = self.expect('*')
+            _last = self.expect("*")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            _last = self.expect(',')
+            if not _last:
+                break
+            _last = self.expect(",")
             literal_1 = _last
-            if not _last: break
-            _last = self.expect('**')
+            if not _last:
+                break
+            _last = self.expect("**")
             literal_2 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression_1 = _last
-            if not _last: break
-            return [literal, expression, literal_1, literal_2, expression_1];
+            if not _last:
+                break
+            return [literal, expression, literal_1, literal_2, expression_1]
         self._reset(mark)
         while True:
-            _last = self.expect('*')
+            _last = self.expect("*")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            return [literal, expression];
+            if not _last:
+                break
+            return [literal, expression]
         self._reset(mark)
         while True:
-            _last = self.expect('**')
+            _last = self.expect("**")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            return [literal, expression];
+            if not _last:
+                break
+            return [literal, expression]
         self._reset(mark)
         while True:
             _last = self._gather_9()
             _gather_9 = _last
-            if not _last: break
-            return _gather_9;
+            if not _last:
+                break
+            return _gather_9
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def statements(self) -> Optional[Any]:
@@ -223,10 +279,11 @@ class GeneratedParser(Parser):
         while True:
             _last = self._loop1_11()
             _loop1_11 = _last
-            if not _last: break
-            return _loop1_11;
+            if not _last:
+                break
+            return _loop1_11
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def statement(self) -> Optional[Any]:
@@ -235,16 +292,18 @@ class GeneratedParser(Parser):
         while True:
             _last = self.compound_stmt()
             compound_stmt = _last
-            if not _last: break
-            return compound_stmt;
+            if not _last:
+                break
+            return compound_stmt
         self._reset(mark)
         while True:
             _last = self.simple_stmt()
             simple_stmt = _last
-            if not _last: break
-            return simple_stmt;
+            if not _last:
+                break
+            return simple_stmt
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def statement_newline(self) -> Optional[Any]:
@@ -253,31 +312,36 @@ class GeneratedParser(Parser):
         while True:
             _last = self.compound_stmt()
             compound_stmt = _last
-            if not _last: break
-            _last = self.expect('NEWLINE')
+            if not _last:
+                break
+            _last = self.expect("NEWLINE")
             _newline = _last
-            if not _last: break
-            return [compound_stmt, _newline];
+            if not _last:
+                break
+            return [compound_stmt, _newline]
         self._reset(mark)
         while True:
             _last = self.simple_stmt()
             simple_stmt = _last
-            if not _last: break
-            return simple_stmt;
+            if not _last:
+                break
+            return simple_stmt
         self._reset(mark)
         while True:
-            _last = self.expect('NEWLINE')
+            _last = self.expect("NEWLINE")
             _newline = _last
-            if not _last: break
-            return _newline;
+            if not _last:
+                break
+            return _newline
         self._reset(mark)
         while True:
-            _last = self.expect('ENDMARKER')
+            _last = self.expect("ENDMARKER")
             _endmarker = _last
-            if not _last: break
-            return _endmarker;
+            if not _last:
+                break
+            return _endmarker
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def simple_stmt(self) -> Optional[Any]:
@@ -286,28 +350,34 @@ class GeneratedParser(Parser):
         while True:
             _last = self.small_stmt()
             small_stmt = _last
-            if not _last: break
-            _last = self.negative_lookahead(self.expect, ';')
-            if not _last: break
-            _last = self.expect('NEWLINE')
+            if not _last:
+                break
+            _last = self.negative_lookahead(self.expect, ";")
+            if not _last:
+                break
+            _last = self.expect("NEWLINE")
             _newline = _last
-            if not _last: break
-            return [small_stmt, _newline];
+            if not _last:
+                break
+            return [small_stmt, _newline]
         self._reset(mark)
         while True:
             _last = self._gather_12()
             _gather_12 = _last
-            if not _last: break
-            _last = self.expect(';'),
+            if not _last:
+                break
+            _last = (self.expect(";"),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect('NEWLINE')
+            if not _last:
+                break
+            _last = self.expect("NEWLINE")
             _newline = _last
-            if not _last: break
-            return [_gather_12, opt, _newline];
+            if not _last:
+                break
+            return [_gather_12, opt, _newline]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def small_stmt(self) -> Optional[Any]:
@@ -316,82 +386,95 @@ class GeneratedParser(Parser):
         while True:
             _last = self.assignment()
             assignment = _last
-            if not _last: break
-            return assignment;
+            if not _last:
+                break
+            return assignment
         self._reset(mark)
         while True:
             _last = self.star_expressions()
             star_expressions = _last
-            if not _last: break
-            return star_expressions;
+            if not _last:
+                break
+            return star_expressions
         self._reset(mark)
         while True:
             _last = self.return_stmt()
             return_stmt = _last
-            if not _last: break
-            return return_stmt;
+            if not _last:
+                break
+            return return_stmt
         self._reset(mark)
         while True:
             _last = self.import_stmt()
             import_stmt = _last
-            if not _last: break
-            return import_stmt;
+            if not _last:
+                break
+            return import_stmt
         self._reset(mark)
         while True:
             _last = self.raise_stmt()
             raise_stmt = _last
-            if not _last: break
-            return raise_stmt;
+            if not _last:
+                break
+            return raise_stmt
         self._reset(mark)
         while True:
-            _last = self.expect('pass')
+            _last = self.expect("pass")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
             _last = self.del_stmt()
             del_stmt = _last
-            if not _last: break
-            return del_stmt;
+            if not _last:
+                break
+            return del_stmt
         self._reset(mark)
         while True:
             _last = self.yield_stmt()
             yield_stmt = _last
-            if not _last: break
-            return yield_stmt;
+            if not _last:
+                break
+            return yield_stmt
         self._reset(mark)
         while True:
             _last = self.assert_stmt()
             assert_stmt = _last
-            if not _last: break
-            return assert_stmt;
+            if not _last:
+                break
+            return assert_stmt
         self._reset(mark)
         while True:
-            _last = self.expect('break')
+            _last = self.expect("break")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
-            _last = self.expect('continue')
+            _last = self.expect("continue")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
             _last = self.global_stmt()
             global_stmt = _last
-            if not _last: break
-            return global_stmt;
+            if not _last:
+                break
+            return global_stmt
         self._reset(mark)
         while True:
             _last = self.nonlocal_stmt()
             nonlocal_stmt = _last
-            if not _last: break
-            return nonlocal_stmt;
+            if not _last:
+                break
+            return nonlocal_stmt
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def compound_stmt(self) -> Optional[Any]:
@@ -400,46 +483,53 @@ class GeneratedParser(Parser):
         while True:
             _last = self.function_def()
             function_def = _last
-            if not _last: break
-            return function_def;
+            if not _last:
+                break
+            return function_def
         self._reset(mark)
         while True:
             _last = self.if_stmt()
             if_stmt = _last
-            if not _last: break
-            return if_stmt;
+            if not _last:
+                break
+            return if_stmt
         self._reset(mark)
         while True:
             _last = self.class_def()
             class_def = _last
-            if not _last: break
-            return class_def;
+            if not _last:
+                break
+            return class_def
         self._reset(mark)
         while True:
             _last = self.with_stmt()
             with_stmt = _last
-            if not _last: break
-            return with_stmt;
+            if not _last:
+                break
+            return with_stmt
         self._reset(mark)
         while True:
             _last = self.for_stmt()
             for_stmt = _last
-            if not _last: break
-            return for_stmt;
+            if not _last:
+                break
+            return for_stmt
         self._reset(mark)
         while True:
             _last = self.try_stmt()
             try_stmt = _last
-            if not _last: break
-            return try_stmt;
+            if not _last:
+                break
+            return try_stmt
         self._reset(mark)
         while True:
             _last = self.while_stmt()
             while_stmt = _last
-            if not _last: break
-            return while_stmt;
+            if not _last:
+                break
+            return while_stmt
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def assignment(self) -> Optional[Any]:
@@ -448,183 +538,216 @@ class GeneratedParser(Parser):
         while True:
             _last = self.name()
             name = _last
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            _last = self._tmp_14(),
+            if not _last:
+                break
+            _last = (self._tmp_14(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [name, literal, expression, opt];
+            if not _last:
+                break
+            return [name, literal, expression, opt]
         self._reset(mark)
         while True:
             _last = self._tmp_15()
             _tmp_15 = _last
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            _last = self._tmp_16(),
+            if not _last:
+                break
+            _last = (self._tmp_16(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [_tmp_15, literal, expression, opt];
+            if not _last:
+                break
+            return [_tmp_15, literal, expression, opt]
         self._reset(mark)
         while True:
             _last = self._loop1_17()
             _loop1_17 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self._tmp_18()
             _tmp_18 = _last
-            if not _last: break
-            _last = self.negative_lookahead(self.expect, '=')
-            if not _last: break
-            _last = self.type_comment(),
+            if not _last:
+                break
+            _last = self.negative_lookahead(self.expect, "=")
+            if not _last:
+                break
+            _last = (self.type_comment(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [_loop1_17, _tmp_18, opt];
+            if not _last:
+                break
+            return [_loop1_17, _tmp_18, opt]
         self._reset(mark)
         cut = False
         while True:
             _last = self.single_target()
             single_target = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.augassign()
             augassign = _last
-            if not _last: break
+            if not _last:
+                break
             _last = True
             cut = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self._tmp_19()
             _tmp_19 = _last
-            if not _last: break
-            return [single_target, augassign, _tmp_19];
+            if not _last:
+                break
+            return [single_target, augassign, _tmp_19]
         self._reset(mark)
         if cut:
-            return None;
-        return None;
+            return None
+        return None
 
     @memoize
     def augassign(self) -> Optional[Any]:
         # augassign: '+=' | '-=' | '*=' | '@=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>=' | '**=' | '//='
         mark = self._mark()
         while True:
-            _last = self.expect('+=')
+            _last = self.expect("+=")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
-            _last = self.expect('-=')
+            _last = self.expect("-=")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
-            _last = self.expect('*=')
+            _last = self.expect("*=")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
-            _last = self.expect('@=')
+            _last = self.expect("@=")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
-            _last = self.expect('/=')
+            _last = self.expect("/=")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
-            _last = self.expect('%=')
+            _last = self.expect("%=")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
-            _last = self.expect('&=')
+            _last = self.expect("&=")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
-            _last = self.expect('|=')
+            _last = self.expect("|=")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
-            _last = self.expect('^=')
+            _last = self.expect("^=")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
-            _last = self.expect('<<=')
+            _last = self.expect("<<=")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
-            _last = self.expect('>>=')
+            _last = self.expect(">>=")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
-            _last = self.expect('**=')
+            _last = self.expect("**=")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
-            _last = self.expect('//=')
+            _last = self.expect("//=")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def global_stmt(self) -> Optional[Any]:
         # global_stmt: 'global' ','.NAME+
         mark = self._mark()
         while True:
-            _last = self.expect('global')
+            _last = self.expect("global")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self._gather_20()
             _gather_20 = _last
-            if not _last: break
-            return [literal, _gather_20];
+            if not _last:
+                break
+            return [literal, _gather_20]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def nonlocal_stmt(self) -> Optional[Any]:
         # nonlocal_stmt: 'nonlocal' ','.NAME+
         mark = self._mark()
         while True:
-            _last = self.expect('nonlocal')
+            _last = self.expect("nonlocal")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self._gather_22()
             _gather_22 = _last
-            if not _last: break
-            return [literal, _gather_22];
+            if not _last:
+                break
+            return [literal, _gather_22]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def yield_stmt(self) -> Optional[Any]:
@@ -633,46 +756,55 @@ class GeneratedParser(Parser):
         while True:
             _last = self.yield_expr()
             yield_expr = _last
-            if not _last: break
-            return yield_expr;
+            if not _last:
+                break
+            return yield_expr
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def assert_stmt(self) -> Optional[Any]:
         # assert_stmt: 'assert' expression [',' expression]
         mark = self._mark()
         while True:
-            _last = self.expect('assert')
+            _last = self.expect("assert")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            _last = self._tmp_24(),
+            if not _last:
+                break
+            _last = (self._tmp_24(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [literal, expression, opt];
+            if not _last:
+                break
+            return [literal, expression, opt]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def del_stmt(self) -> Optional[Any]:
         # del_stmt: 'del' del_targets &(';' | NEWLINE)
         mark = self._mark()
         while True:
-            _last = self.expect('del')
+            _last = self.expect("del")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.del_targets()
             del_targets = _last
-            if not _last: break
-            _last = self.positive_lookahead(self._tmp_25, )
-            if not _last: break
-            return [literal, del_targets];
+            if not _last:
+                break
+            _last = self.positive_lookahead(
+                self._tmp_25,
+            )
+            if not _last:
+                break
+            return [literal, del_targets]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def import_stmt(self) -> Optional[Any]:
@@ -681,107 +813,127 @@ class GeneratedParser(Parser):
         while True:
             _last = self.import_name()
             import_name = _last
-            if not _last: break
-            return import_name;
+            if not _last:
+                break
+            return import_name
         self._reset(mark)
         while True:
             _last = self.import_from()
             import_from = _last
-            if not _last: break
-            return import_from;
+            if not _last:
+                break
+            return import_from
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def import_name(self) -> Optional[Any]:
         # import_name: 'import' dotted_as_names
         mark = self._mark()
         while True:
-            _last = self.expect('import')
+            _last = self.expect("import")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.dotted_as_names()
             dotted_as_names = _last
-            if not _last: break
-            return [literal, dotted_as_names];
+            if not _last:
+                break
+            return [literal, dotted_as_names]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def import_from(self) -> Optional[Any]:
         # import_from: 'from' (('.' | '...'))* dotted_name 'import' import_from_targets | 'from' (('.' | '...'))+ 'import' import_from_targets
         mark = self._mark()
         while True:
-            _last = self.expect('from')
+            _last = self.expect("from")
             literal = _last
-            if not _last: break
-            _last = self._loop0_26(),
+            if not _last:
+                break
+            _last = (self._loop0_26(),)
             _loop0_26 = _last[0]
             _last = True
-            if not _last: break
+            if not _last:
+                break
             _last = self.dotted_name()
             dotted_name = _last
-            if not _last: break
-            _last = self.expect('import')
+            if not _last:
+                break
+            _last = self.expect("import")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.import_from_targets()
             import_from_targets = _last
-            if not _last: break
-            return [literal, _loop0_26, dotted_name, literal_1, import_from_targets];
+            if not _last:
+                break
+            return [literal, _loop0_26, dotted_name, literal_1, import_from_targets]
         self._reset(mark)
         while True:
-            _last = self.expect('from')
+            _last = self.expect("from")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self._loop1_27()
             _loop1_27 = _last
-            if not _last: break
-            _last = self.expect('import')
+            if not _last:
+                break
+            _last = self.expect("import")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.import_from_targets()
             import_from_targets = _last
-            if not _last: break
-            return [literal, _loop1_27, literal_1, import_from_targets];
+            if not _last:
+                break
+            return [literal, _loop1_27, literal_1, import_from_targets]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def import_from_targets(self) -> Optional[Any]:
         # import_from_targets: '(' import_from_as_names ','? ')' | import_from_as_names !',' | '*'
         mark = self._mark()
         while True:
-            _last = self.expect('(')
+            _last = self.expect("(")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.import_from_as_names()
             import_from_as_names = _last
-            if not _last: break
-            _last = self.expect(','),
+            if not _last:
+                break
+            _last = (self.expect(","),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(')')
+            if not _last:
+                break
+            _last = self.expect(")")
             literal_1 = _last
-            if not _last: break
-            return [literal, import_from_as_names, opt, literal_1];
+            if not _last:
+                break
+            return [literal, import_from_as_names, opt, literal_1]
         self._reset(mark)
         while True:
             _last = self.import_from_as_names()
             import_from_as_names = _last
-            if not _last: break
-            _last = self.negative_lookahead(self.expect, ',')
-            if not _last: break
-            return import_from_as_names;
+            if not _last:
+                break
+            _last = self.negative_lookahead(self.expect, ",")
+            if not _last:
+                break
+            return import_from_as_names
         self._reset(mark)
         while True:
-            _last = self.expect('*')
+            _last = self.expect("*")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def import_from_as_names(self) -> Optional[Any]:
@@ -790,10 +942,11 @@ class GeneratedParser(Parser):
         while True:
             _last = self._gather_28()
             _gather_28 = _last
-            if not _last: break
-            return _gather_28;
+            if not _last:
+                break
+            return _gather_28
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def import_from_as_name(self) -> Optional[Any]:
@@ -802,14 +955,16 @@ class GeneratedParser(Parser):
         while True:
             _last = self.name()
             name = _last
-            if not _last: break
-            _last = self._tmp_30(),
+            if not _last:
+                break
+            _last = (self._tmp_30(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [name, opt];
+            if not _last:
+                break
+            return [name, opt]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def dotted_as_names(self) -> Optional[Any]:
@@ -818,10 +973,11 @@ class GeneratedParser(Parser):
         while True:
             _last = self._gather_31()
             _gather_31 = _last
-            if not _last: break
-            return _gather_31;
+            if not _last:
+                break
+            return _gather_31
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def dotted_as_name(self) -> Optional[Any]:
@@ -830,14 +986,16 @@ class GeneratedParser(Parser):
         while True:
             _last = self.dotted_name()
             dotted_name = _last
-            if not _last: break
-            _last = self._tmp_33(),
+            if not _last:
+                break
+            _last = (self._tmp_33(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [dotted_name, opt];
+            if not _last:
+                break
+            return [dotted_name, opt]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize_left_rec
     def dotted_name(self) -> Optional[Any]:
@@ -846,151 +1004,183 @@ class GeneratedParser(Parser):
         while True:
             _last = self.dotted_name()
             dotted_name = _last
-            if not _last: break
-            _last = self.expect('.')
+            if not _last:
+                break
+            _last = self.expect(".")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.name()
             name = _last
-            if not _last: break
-            return [dotted_name, literal, name];
+            if not _last:
+                break
+            return [dotted_name, literal, name]
         self._reset(mark)
         while True:
             _last = self.name()
             name = _last
-            if not _last: break
-            return name;
+            if not _last:
+                break
+            return name
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def if_stmt(self) -> Optional[Any]:
         # if_stmt: 'if' named_expression ':' block elif_stmt | 'if' named_expression ':' block else_block?
         mark = self._mark()
         while True:
-            _last = self.expect('if')
+            _last = self.expect("if")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.named_expression()
             named_expression = _last
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.block()
             block = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.elif_stmt()
             elif_stmt = _last
-            if not _last: break
-            return [literal, named_expression, literal_1, block, elif_stmt];
+            if not _last:
+                break
+            return [literal, named_expression, literal_1, block, elif_stmt]
         self._reset(mark)
         while True:
-            _last = self.expect('if')
+            _last = self.expect("if")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.named_expression()
             named_expression = _last
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.block()
             block = _last
-            if not _last: break
-            _last = self.else_block(),
+            if not _last:
+                break
+            _last = (self.else_block(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [literal, named_expression, literal_1, block, opt];
+            if not _last:
+                break
+            return [literal, named_expression, literal_1, block, opt]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def elif_stmt(self) -> Optional[Any]:
         # elif_stmt: 'elif' named_expression ':' block elif_stmt | 'elif' named_expression ':' block else_block?
         mark = self._mark()
         while True:
-            _last = self.expect('elif')
+            _last = self.expect("elif")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.named_expression()
             named_expression = _last
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.block()
             block = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.elif_stmt()
             elif_stmt = _last
-            if not _last: break
-            return [literal, named_expression, literal_1, block, elif_stmt];
+            if not _last:
+                break
+            return [literal, named_expression, literal_1, block, elif_stmt]
         self._reset(mark)
         while True:
-            _last = self.expect('elif')
+            _last = self.expect("elif")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.named_expression()
             named_expression = _last
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.block()
             block = _last
-            if not _last: break
-            _last = self.else_block(),
+            if not _last:
+                break
+            _last = (self.else_block(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [literal, named_expression, literal_1, block, opt];
+            if not _last:
+                break
+            return [literal, named_expression, literal_1, block, opt]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def else_block(self) -> Optional[Any]:
         # else_block: 'else' ':' block
         mark = self._mark()
         while True:
-            _last = self.expect('else')
+            _last = self.expect("else")
             literal = _last
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.block()
             block = _last
-            if not _last: break
-            return [literal, literal_1, block];
+            if not _last:
+                break
+            return [literal, literal_1, block]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def while_stmt(self) -> Optional[Any]:
         # while_stmt: 'while' named_expression ':' block else_block?
         mark = self._mark()
         while True:
-            _last = self.expect('while')
+            _last = self.expect("while")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.named_expression()
             named_expression = _last
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.block()
             block = _last
-            if not _last: break
-            _last = self.else_block(),
+            if not _last:
+                break
+            _last = (self.else_block(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [literal, named_expression, literal_1, block, opt];
+            if not _last:
+                break
+            return [literal, named_expression, literal_1, block, opt]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def for_stmt(self) -> Optional[Any]:
@@ -998,178 +1188,251 @@ class GeneratedParser(Parser):
         mark = self._mark()
         cut = False
         while True:
-            _last = self.expect('for')
+            _last = self.expect("for")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.star_targets()
             star_targets = _last
-            if not _last: break
-            _last = self.expect('in')
+            if not _last:
+                break
+            _last = self.expect("in")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = True
             cut = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.star_expressions()
             star_expressions = _last
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal_2 = _last
-            if not _last: break
-            _last = self.type_comment(),
+            if not _last:
+                break
+            _last = (self.type_comment(),)
             opt = _last[0]
             _last = True
-            if not _last: break
+            if not _last:
+                break
             _last = self.block()
             block = _last
-            if not _last: break
-            _last = self.else_block(),
+            if not _last:
+                break
+            _last = (self.else_block(),)
             opt_1 = _last[0]
             _last = True
-            if not _last: break
-            return [literal, star_targets, literal_1, star_expressions, literal_2, opt, block, opt_1];
+            if not _last:
+                break
+            return [
+                literal,
+                star_targets,
+                literal_1,
+                star_expressions,
+                literal_2,
+                opt,
+                block,
+                opt_1,
+            ]
         self._reset(mark)
         if cut:
-            return None;
+            return None
         cut = False
         while True:
-            _last = self.expect('ASYNC')
+            _last = self.expect("ASYNC")
             _async = _last
-            if not _last: break
-            _last = self.expect('for')
+            if not _last:
+                break
+            _last = self.expect("for")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.star_targets()
             star_targets = _last
-            if not _last: break
-            _last = self.expect('in')
+            if not _last:
+                break
+            _last = self.expect("in")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = True
             cut = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.star_expressions()
             star_expressions = _last
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal_2 = _last
-            if not _last: break
-            _last = self.type_comment(),
+            if not _last:
+                break
+            _last = (self.type_comment(),)
             opt = _last[0]
             _last = True
-            if not _last: break
+            if not _last:
+                break
             _last = self.block()
             block = _last
-            if not _last: break
-            _last = self.else_block(),
+            if not _last:
+                break
+            _last = (self.else_block(),)
             opt_1 = _last[0]
             _last = True
-            if not _last: break
-            return [_async, literal, star_targets, literal_1, star_expressions, literal_2, opt, block, opt_1];
+            if not _last:
+                break
+            return [
+                _async,
+                literal,
+                star_targets,
+                literal_1,
+                star_expressions,
+                literal_2,
+                opt,
+                block,
+                opt_1,
+            ]
         self._reset(mark)
         if cut:
-            return None;
-        return None;
+            return None
+        return None
 
     @memoize
     def with_stmt(self) -> Optional[Any]:
         # with_stmt: 'with' '(' ','.with_item+ ','? ')' ':' block | 'with' ','.with_item+ ':' TYPE_COMMENT? block | ASYNC 'with' '(' ','.with_item+ ','? ')' ':' block | ASYNC 'with' ','.with_item+ ':' TYPE_COMMENT? block
         mark = self._mark()
         while True:
-            _last = self.expect('with')
+            _last = self.expect("with")
             literal = _last
-            if not _last: break
-            _last = self.expect('(')
+            if not _last:
+                break
+            _last = self.expect("(")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self._gather_34()
             _gather_34 = _last
-            if not _last: break
-            _last = self.expect(','),
+            if not _last:
+                break
+            _last = (self.expect(","),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(')')
+            if not _last:
+                break
+            _last = self.expect(")")
             literal_2 = _last
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal_3 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.block()
             block = _last
-            if not _last: break
-            return [literal, literal_1, _gather_34, opt, literal_2, literal_3, block];
+            if not _last:
+                break
+            return [literal, literal_1, _gather_34, opt, literal_2, literal_3, block]
         self._reset(mark)
         while True:
-            _last = self.expect('with')
+            _last = self.expect("with")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self._gather_36()
             _gather_36 = _last
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal_1 = _last
-            if not _last: break
-            _last = self.type_comment(),
+            if not _last:
+                break
+            _last = (self.type_comment(),)
             opt = _last[0]
             _last = True
-            if not _last: break
+            if not _last:
+                break
             _last = self.block()
             block = _last
-            if not _last: break
-            return [literal, _gather_36, literal_1, opt, block];
+            if not _last:
+                break
+            return [literal, _gather_36, literal_1, opt, block]
         self._reset(mark)
         while True:
-            _last = self.expect('ASYNC')
+            _last = self.expect("ASYNC")
             _async = _last
-            if not _last: break
-            _last = self.expect('with')
+            if not _last:
+                break
+            _last = self.expect("with")
             literal = _last
-            if not _last: break
-            _last = self.expect('(')
+            if not _last:
+                break
+            _last = self.expect("(")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self._gather_38()
             _gather_38 = _last
-            if not _last: break
-            _last = self.expect(','),
+            if not _last:
+                break
+            _last = (self.expect(","),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(')')
+            if not _last:
+                break
+            _last = self.expect(")")
             literal_2 = _last
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal_3 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.block()
             block = _last
-            if not _last: break
-            return [_async, literal, literal_1, _gather_38, opt, literal_2, literal_3, block];
+            if not _last:
+                break
+            return [
+                _async,
+                literal,
+                literal_1,
+                _gather_38,
+                opt,
+                literal_2,
+                literal_3,
+                block,
+            ]
         self._reset(mark)
         while True:
-            _last = self.expect('ASYNC')
+            _last = self.expect("ASYNC")
             _async = _last
-            if not _last: break
-            _last = self.expect('with')
+            if not _last:
+                break
+            _last = self.expect("with")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self._gather_40()
             _gather_40 = _last
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal_1 = _last
-            if not _last: break
-            _last = self.type_comment(),
+            if not _last:
+                break
+            _last = (self.type_comment(),)
             opt = _last[0]
             _last = True
-            if not _last: break
+            if not _last:
+                break
             _last = self.block()
             block = _last
-            if not _last: break
-            return [_async, literal, _gather_40, literal_1, opt, block];
+            if not _last:
+                break
+            return [_async, literal, _gather_40, literal_1, opt, block]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def with_item(self) -> Optional[Any]:
@@ -1178,164 +1441,198 @@ class GeneratedParser(Parser):
         while True:
             _last = self.expression()
             expression = _last
-            if not _last: break
-            _last = self.expect('as')
+            if not _last:
+                break
+            _last = self.expect("as")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.star_target()
             star_target = _last
-            if not _last: break
-            _last = self.positive_lookahead(self._tmp_42, )
-            if not _last: break
-            return [expression, literal, star_target];
+            if not _last:
+                break
+            _last = self.positive_lookahead(
+                self._tmp_42,
+            )
+            if not _last:
+                break
+            return [expression, literal, star_target]
         self._reset(mark)
         while True:
             _last = self.expression()
             expression = _last
-            if not _last: break
-            return expression;
+            if not _last:
+                break
+            return expression
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def try_stmt(self) -> Optional[Any]:
         # try_stmt: 'try' ':' block finally_block | 'try' ':' block except_block+ else_block? finally_block?
         mark = self._mark()
         while True:
-            _last = self.expect('try')
+            _last = self.expect("try")
             literal = _last
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.block()
             block = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.finally_block()
             finally_block = _last
-            if not _last: break
-            return [literal, literal_1, block, finally_block];
+            if not _last:
+                break
+            return [literal, literal_1, block, finally_block]
         self._reset(mark)
         while True:
-            _last = self.expect('try')
+            _last = self.expect("try")
             literal = _last
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.block()
             block = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self._loop1_43()
             _loop1_43 = _last
-            if not _last: break
-            _last = self.else_block(),
+            if not _last:
+                break
+            _last = (self.else_block(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.finally_block(),
+            if not _last:
+                break
+            _last = (self.finally_block(),)
             opt_1 = _last[0]
             _last = True
-            if not _last: break
-            return [literal, literal_1, block, _loop1_43, opt, opt_1];
+            if not _last:
+                break
+            return [literal, literal_1, block, _loop1_43, opt, opt_1]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def except_block(self) -> Optional[Any]:
         # except_block: 'except' expression ['as' NAME] ':' block | 'except' ':' block
         mark = self._mark()
         while True:
-            _last = self.expect('except')
+            _last = self.expect("except")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            _last = self._tmp_44(),
+            if not _last:
+                break
+            _last = (self._tmp_44(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.block()
             block = _last
-            if not _last: break
-            return [literal, expression, opt, literal_1, block];
+            if not _last:
+                break
+            return [literal, expression, opt, literal_1, block]
         self._reset(mark)
         while True:
-            _last = self.expect('except')
+            _last = self.expect("except")
             literal = _last
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.block()
             block = _last
-            if not _last: break
-            return [literal, literal_1, block];
+            if not _last:
+                break
+            return [literal, literal_1, block]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def finally_block(self) -> Optional[Any]:
         # finally_block: 'finally' ':' block
         mark = self._mark()
         while True:
-            _last = self.expect('finally')
+            _last = self.expect("finally")
             literal = _last
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.block()
             block = _last
-            if not _last: break
-            return [literal, literal_1, block];
+            if not _last:
+                break
+            return [literal, literal_1, block]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def return_stmt(self) -> Optional[Any]:
         # return_stmt: 'return' star_expressions?
         mark = self._mark()
         while True:
-            _last = self.expect('return')
+            _last = self.expect("return")
             literal = _last
-            if not _last: break
-            _last = self.star_expressions(),
+            if not _last:
+                break
+            _last = (self.star_expressions(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [literal, opt];
+            if not _last:
+                break
+            return [literal, opt]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def raise_stmt(self) -> Optional[Any]:
         # raise_stmt: 'raise' expression ['from' expression] | 'raise'
         mark = self._mark()
         while True:
-            _last = self.expect('raise')
+            _last = self.expect("raise")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            _last = self._tmp_45(),
+            if not _last:
+                break
+            _last = (self._tmp_45(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [literal, expression, opt];
+            if not _last:
+                break
+            return [literal, expression, opt]
         self._reset(mark)
         while True:
-            _last = self.expect('raise')
+            _last = self.expect("raise")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def function_def(self) -> Optional[Any]:
@@ -1344,117 +1641,166 @@ class GeneratedParser(Parser):
         while True:
             _last = self.decorators()
             decorators = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.function_def_raw()
             function_def_raw = _last
-            if not _last: break
-            return [decorators, function_def_raw];
+            if not _last:
+                break
+            return [decorators, function_def_raw]
         self._reset(mark)
         while True:
             _last = self.function_def_raw()
             function_def_raw = _last
-            if not _last: break
-            return function_def_raw;
+            if not _last:
+                break
+            return function_def_raw
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def function_def_raw(self) -> Optional[Any]:
         # function_def_raw: 'def' NAME '(' params? ')' ['->' expression] ':' func_type_comment? block | ASYNC 'def' NAME '(' params? ')' ['->' expression] ':' func_type_comment? block
         mark = self._mark()
         while True:
-            _last = self.expect('def')
+            _last = self.expect("def")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.name()
             name = _last
-            if not _last: break
-            _last = self.expect('(')
+            if not _last:
+                break
+            _last = self.expect("(")
             literal_1 = _last
-            if not _last: break
-            _last = self.params(),
+            if not _last:
+                break
+            _last = (self.params(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(')')
+            if not _last:
+                break
+            _last = self.expect(")")
             literal_2 = _last
-            if not _last: break
-            _last = self._tmp_46(),
+            if not _last:
+                break
+            _last = (self._tmp_46(),)
             opt_1 = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal_3 = _last
-            if not _last: break
-            _last = self.func_type_comment(),
+            if not _last:
+                break
+            _last = (self.func_type_comment(),)
             opt_2 = _last[0]
             _last = True
-            if not _last: break
+            if not _last:
+                break
             _last = self.block()
             block = _last
-            if not _last: break
-            return [literal, name, literal_1, opt, literal_2, opt_1, literal_3, opt_2, block];
+            if not _last:
+                break
+            return [
+                literal,
+                name,
+                literal_1,
+                opt,
+                literal_2,
+                opt_1,
+                literal_3,
+                opt_2,
+                block,
+            ]
         self._reset(mark)
         while True:
-            _last = self.expect('ASYNC')
+            _last = self.expect("ASYNC")
             _async = _last
-            if not _last: break
-            _last = self.expect('def')
+            if not _last:
+                break
+            _last = self.expect("def")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.name()
             name = _last
-            if not _last: break
-            _last = self.expect('(')
+            if not _last:
+                break
+            _last = self.expect("(")
             literal_1 = _last
-            if not _last: break
-            _last = self.params(),
+            if not _last:
+                break
+            _last = (self.params(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(')')
+            if not _last:
+                break
+            _last = self.expect(")")
             literal_2 = _last
-            if not _last: break
-            _last = self._tmp_47(),
+            if not _last:
+                break
+            _last = (self._tmp_47(),)
             opt_1 = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal_3 = _last
-            if not _last: break
-            _last = self.func_type_comment(),
+            if not _last:
+                break
+            _last = (self.func_type_comment(),)
             opt_2 = _last[0]
             _last = True
-            if not _last: break
+            if not _last:
+                break
             _last = self.block()
             block = _last
-            if not _last: break
-            return [_async, literal, name, literal_1, opt, literal_2, opt_1, literal_3, opt_2, block];
+            if not _last:
+                break
+            return [
+                _async,
+                literal,
+                name,
+                literal_1,
+                opt,
+                literal_2,
+                opt_1,
+                literal_3,
+                opt_2,
+                block,
+            ]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def func_type_comment(self) -> Optional[Any]:
         # func_type_comment: NEWLINE TYPE_COMMENT &(NEWLINE INDENT) | TYPE_COMMENT
         mark = self._mark()
         while True:
-            _last = self.expect('NEWLINE')
+            _last = self.expect("NEWLINE")
             _newline = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.type_comment()
             type_comment = _last
-            if not _last: break
-            _last = self.positive_lookahead(self._tmp_48, )
-            if not _last: break
-            return [_newline, type_comment];
+            if not _last:
+                break
+            _last = self.positive_lookahead(
+                self._tmp_48,
+            )
+            if not _last:
+                break
+            return [_newline, type_comment]
         self._reset(mark)
         while True:
             _last = self.type_comment()
             type_comment = _last
-            if not _last: break
-            return type_comment;
+            if not _last:
+                break
+            return type_comment
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def params(self) -> Optional[Any]:
@@ -1463,10 +1809,11 @@ class GeneratedParser(Parser):
         while True:
             _last = self.parameters()
             parameters = _last
-            if not _last: break
-            return parameters;
+            if not _last:
+                break
+            return parameters
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def parameters(self) -> Optional[Any]:
@@ -1475,66 +1822,79 @@ class GeneratedParser(Parser):
         while True:
             _last = self.slash_no_default()
             slash_no_default = _last
-            if not _last: break
-            _last = self._loop0_49(),
+            if not _last:
+                break
+            _last = (self._loop0_49(),)
             _loop0_49 = _last[0]
             _last = True
-            if not _last: break
-            _last = self._loop0_50(),
+            if not _last:
+                break
+            _last = (self._loop0_50(),)
             _loop0_50 = _last[0]
             _last = True
-            if not _last: break
-            _last = self.star_etc(),
+            if not _last:
+                break
+            _last = (self.star_etc(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [slash_no_default, _loop0_49, _loop0_50, opt];
+            if not _last:
+                break
+            return [slash_no_default, _loop0_49, _loop0_50, opt]
         self._reset(mark)
         while True:
             _last = self.slash_with_default()
             slash_with_default = _last
-            if not _last: break
-            _last = self._loop0_51(),
+            if not _last:
+                break
+            _last = (self._loop0_51(),)
             _loop0_51 = _last[0]
             _last = True
-            if not _last: break
-            _last = self.star_etc(),
+            if not _last:
+                break
+            _last = (self.star_etc(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [slash_with_default, _loop0_51, opt];
+            if not _last:
+                break
+            return [slash_with_default, _loop0_51, opt]
         self._reset(mark)
         while True:
             _last = self._loop1_52()
             _loop1_52 = _last
-            if not _last: break
-            _last = self._loop0_53(),
+            if not _last:
+                break
+            _last = (self._loop0_53(),)
             _loop0_53 = _last[0]
             _last = True
-            if not _last: break
-            _last = self.star_etc(),
+            if not _last:
+                break
+            _last = (self.star_etc(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [_loop1_52, _loop0_53, opt];
+            if not _last:
+                break
+            return [_loop1_52, _loop0_53, opt]
         self._reset(mark)
         while True:
             _last = self._loop1_54()
             _loop1_54 = _last
-            if not _last: break
-            _last = self.star_etc(),
+            if not _last:
+                break
+            _last = (self.star_etc(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [_loop1_54, opt];
+            if not _last:
+                break
+            return [_loop1_54, opt]
         self._reset(mark)
         while True:
             _last = self.star_etc()
             star_etc = _last
-            if not _last: break
-            return star_etc;
+            if not _last:
+                break
+            return star_etc
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def slash_no_default(self) -> Optional[Any]:
@@ -1543,124 +1903,149 @@ class GeneratedParser(Parser):
         while True:
             _last = self._loop1_55()
             _loop1_55 = _last
-            if not _last: break
-            _last = self.expect('/')
+            if not _last:
+                break
+            _last = self.expect("/")
             literal = _last
-            if not _last: break
-            _last = self.expect(',')
+            if not _last:
+                break
+            _last = self.expect(",")
             literal_1 = _last
-            if not _last: break
-            return [_loop1_55, literal, literal_1];
+            if not _last:
+                break
+            return [_loop1_55, literal, literal_1]
         self._reset(mark)
         while True:
             _last = self._loop1_56()
             _loop1_56 = _last
-            if not _last: break
-            _last = self.expect('/')
+            if not _last:
+                break
+            _last = self.expect("/")
             literal = _last
-            if not _last: break
-            _last = self.positive_lookahead(self.expect, ')')
-            if not _last: break
-            return [_loop1_56, literal];
+            if not _last:
+                break
+            _last = self.positive_lookahead(self.expect, ")")
+            if not _last:
+                break
+            return [_loop1_56, literal]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def slash_with_default(self) -> Optional[Any]:
         # slash_with_default: param_no_default* param_with_default+ '/' ',' | param_no_default* param_with_default+ '/' &')'
         mark = self._mark()
         while True:
-            _last = self._loop0_57(),
+            _last = (self._loop0_57(),)
             _loop0_57 = _last[0]
             _last = True
-            if not _last: break
+            if not _last:
+                break
             _last = self._loop1_58()
             _loop1_58 = _last
-            if not _last: break
-            _last = self.expect('/')
+            if not _last:
+                break
+            _last = self.expect("/")
             literal = _last
-            if not _last: break
-            _last = self.expect(',')
+            if not _last:
+                break
+            _last = self.expect(",")
             literal_1 = _last
-            if not _last: break
-            return [_loop0_57, _loop1_58, literal, literal_1];
+            if not _last:
+                break
+            return [_loop0_57, _loop1_58, literal, literal_1]
         self._reset(mark)
         while True:
-            _last = self._loop0_59(),
+            _last = (self._loop0_59(),)
             _loop0_59 = _last[0]
             _last = True
-            if not _last: break
+            if not _last:
+                break
             _last = self._loop1_60()
             _loop1_60 = _last
-            if not _last: break
-            _last = self.expect('/')
+            if not _last:
+                break
+            _last = self.expect("/")
             literal = _last
-            if not _last: break
-            _last = self.positive_lookahead(self.expect, ')')
-            if not _last: break
-            return [_loop0_59, _loop1_60, literal];
+            if not _last:
+                break
+            _last = self.positive_lookahead(self.expect, ")")
+            if not _last:
+                break
+            return [_loop0_59, _loop1_60, literal]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def star_etc(self) -> Optional[Any]:
         # star_etc: '*' param_no_default param_maybe_default* kwds? | '*' ',' param_maybe_default+ kwds? | kwds
         mark = self._mark()
         while True:
-            _last = self.expect('*')
+            _last = self.expect("*")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.param_no_default()
             param_no_default = _last
-            if not _last: break
-            _last = self._loop0_61(),
+            if not _last:
+                break
+            _last = (self._loop0_61(),)
             _loop0_61 = _last[0]
             _last = True
-            if not _last: break
-            _last = self.kwds(),
+            if not _last:
+                break
+            _last = (self.kwds(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [literal, param_no_default, _loop0_61, opt];
+            if not _last:
+                break
+            return [literal, param_no_default, _loop0_61, opt]
         self._reset(mark)
         while True:
-            _last = self.expect('*')
+            _last = self.expect("*")
             literal = _last
-            if not _last: break
-            _last = self.expect(',')
+            if not _last:
+                break
+            _last = self.expect(",")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self._loop1_62()
             _loop1_62 = _last
-            if not _last: break
-            _last = self.kwds(),
+            if not _last:
+                break
+            _last = (self.kwds(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [literal, literal_1, _loop1_62, opt];
+            if not _last:
+                break
+            return [literal, literal_1, _loop1_62, opt]
         self._reset(mark)
         while True:
             _last = self.kwds()
             kwds = _last
-            if not _last: break
-            return kwds;
+            if not _last:
+                break
+            return kwds
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def kwds(self) -> Optional[Any]:
         # kwds: '**' param_no_default
         mark = self._mark()
         while True:
-            _last = self.expect('**')
+            _last = self.expect("**")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.param_no_default()
             param_no_default = _last
-            if not _last: break
-            return [literal, param_no_default];
+            if not _last:
+                break
+            return [literal, param_no_default]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def param_no_default(self) -> Optional[Any]:
@@ -1669,29 +2054,35 @@ class GeneratedParser(Parser):
         while True:
             _last = self.param()
             param = _last
-            if not _last: break
-            _last = self.expect(',')
+            if not _last:
+                break
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
-            _last = self.type_comment(),
+            if not _last:
+                break
+            _last = (self.type_comment(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [param, literal, opt];
+            if not _last:
+                break
+            return [param, literal, opt]
         self._reset(mark)
         while True:
             _last = self.param()
             param = _last
-            if not _last: break
-            _last = self.type_comment(),
+            if not _last:
+                break
+            _last = (self.type_comment(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.positive_lookahead(self.expect, ')')
-            if not _last: break
-            return [param, opt];
+            if not _last:
+                break
+            _last = self.positive_lookahead(self.expect, ")")
+            if not _last:
+                break
+            return [param, opt]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def param_with_default(self) -> Optional[Any]:
@@ -1700,35 +2091,43 @@ class GeneratedParser(Parser):
         while True:
             _last = self.param()
             param = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.default()
             default = _last
-            if not _last: break
-            _last = self.expect(',')
+            if not _last:
+                break
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
-            _last = self.type_comment(),
+            if not _last:
+                break
+            _last = (self.type_comment(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [param, default, literal, opt];
+            if not _last:
+                break
+            return [param, default, literal, opt]
         self._reset(mark)
         while True:
             _last = self.param()
             param = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.default()
             default = _last
-            if not _last: break
-            _last = self.type_comment(),
+            if not _last:
+                break
+            _last = (self.type_comment(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.positive_lookahead(self.expect, ')')
-            if not _last: break
-            return [param, default, opt];
+            if not _last:
+                break
+            _last = self.positive_lookahead(self.expect, ")")
+            if not _last:
+                break
+            return [param, default, opt]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def param_maybe_default(self) -> Optional[Any]:
@@ -1737,37 +2136,45 @@ class GeneratedParser(Parser):
         while True:
             _last = self.param()
             param = _last
-            if not _last: break
-            _last = self.default(),
+            if not _last:
+                break
+            _last = (self.default(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(',')
+            if not _last:
+                break
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
-            _last = self.type_comment(),
+            if not _last:
+                break
+            _last = (self.type_comment(),)
             opt_1 = _last[0]
             _last = True
-            if not _last: break
-            return [param, opt, literal, opt_1];
+            if not _last:
+                break
+            return [param, opt, literal, opt_1]
         self._reset(mark)
         while True:
             _last = self.param()
             param = _last
-            if not _last: break
-            _last = self.default(),
+            if not _last:
+                break
+            _last = (self.default(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.type_comment(),
+            if not _last:
+                break
+            _last = (self.type_comment(),)
             opt_1 = _last[0]
             _last = True
-            if not _last: break
-            _last = self.positive_lookahead(self.expect, ')')
-            if not _last: break
-            return [param, opt, opt_1];
+            if not _last:
+                break
+            _last = self.positive_lookahead(self.expect, ")")
+            if not _last:
+                break
+            return [param, opt, opt_1]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def param(self) -> Optional[Any]:
@@ -1776,44 +2183,50 @@ class GeneratedParser(Parser):
         while True:
             _last = self.name()
             name = _last
-            if not _last: break
-            _last = self.annotation(),
+            if not _last:
+                break
+            _last = (self.annotation(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [name, opt];
+            if not _last:
+                break
+            return [name, opt]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def annotation(self) -> Optional[Any]:
         # annotation: ':' expression
         mark = self._mark()
         while True:
-            _last = self.expect(':')
+            _last = self.expect(":")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            return [literal, expression];
+            if not _last:
+                break
+            return [literal, expression]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def default(self) -> Optional[Any]:
         # default: '=' expression
         mark = self._mark()
         while True:
-            _last = self.expect('=')
+            _last = self.expect("=")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            return [literal, expression];
+            if not _last:
+                break
+            return [literal, expression]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def decorators(self) -> Optional[Any]:
@@ -1822,10 +2235,11 @@ class GeneratedParser(Parser):
         while True:
             _last = self._loop1_63()
             _loop1_63 = _last
-            if not _last: break
-            return _loop1_63;
+            if not _last:
+                break
+            return _loop1_63
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def class_def(self) -> Optional[Any]:
@@ -1834,71 +2248,84 @@ class GeneratedParser(Parser):
         while True:
             _last = self.decorators()
             decorators = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.class_def_raw()
             class_def_raw = _last
-            if not _last: break
-            return [decorators, class_def_raw];
+            if not _last:
+                break
+            return [decorators, class_def_raw]
         self._reset(mark)
         while True:
             _last = self.class_def_raw()
             class_def_raw = _last
-            if not _last: break
-            return class_def_raw;
+            if not _last:
+                break
+            return class_def_raw
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def class_def_raw(self) -> Optional[Any]:
         # class_def_raw: 'class' NAME ['(' arguments? ')'] ':' block
         mark = self._mark()
         while True:
-            _last = self.expect('class')
+            _last = self.expect("class")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.name()
             name = _last
-            if not _last: break
-            _last = self._tmp_64(),
+            if not _last:
+                break
+            _last = (self._tmp_64(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.block()
             block = _last
-            if not _last: break
-            return [literal, name, opt, literal_1, block];
+            if not _last:
+                break
+            return [literal, name, opt, literal_1, block]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def block(self) -> Optional[Any]:
         # block: NEWLINE INDENT statements DEDENT | simple_stmt
         mark = self._mark()
         while True:
-            _last = self.expect('NEWLINE')
+            _last = self.expect("NEWLINE")
             _newline = _last
-            if not _last: break
-            _last = self.expect('INDENT')
+            if not _last:
+                break
+            _last = self.expect("INDENT")
             _indent = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.statements()
             statements = _last
-            if not _last: break
-            _last = self.expect('DEDENT')
+            if not _last:
+                break
+            _last = self.expect("DEDENT")
             _dedent = _last
-            if not _last: break
-            return [_newline, _indent, statements, _dedent];
+            if not _last:
+                break
+            return [_newline, _indent, statements, _dedent]
         self._reset(mark)
         while True:
             _last = self.simple_stmt()
             simple_stmt = _last
-            if not _last: break
-            return simple_stmt;
+            if not _last:
+                break
+            return simple_stmt
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def star_expressions(self) -> Optional[Any]:
@@ -1907,53 +2334,62 @@ class GeneratedParser(Parser):
         while True:
             _last = self.star_expression()
             star_expression = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self._loop1_65()
             _loop1_65 = _last
-            if not _last: break
-            _last = self.expect(','),
+            if not _last:
+                break
+            _last = (self.expect(","),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [star_expression, _loop1_65, opt];
+            if not _last:
+                break
+            return [star_expression, _loop1_65, opt]
         self._reset(mark)
         while True:
             _last = self.star_expression()
             star_expression = _last
-            if not _last: break
-            _last = self.expect(',')
+            if not _last:
+                break
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
-            return [star_expression, literal];
+            if not _last:
+                break
+            return [star_expression, literal]
         self._reset(mark)
         while True:
             _last = self.star_expression()
             star_expression = _last
-            if not _last: break
-            return star_expression;
+            if not _last:
+                break
+            return star_expression
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def star_expression(self) -> Optional[Any]:
         # star_expression: '*' bitwise_or | expression
         mark = self._mark()
         while True:
-            _last = self.expect('*')
+            _last = self.expect("*")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.bitwise_or()
             bitwise_or = _last
-            if not _last: break
-            return [literal, bitwise_or];
+            if not _last:
+                break
+            return [literal, bitwise_or]
         self._reset(mark)
         while True:
             _last = self.expression()
             expression = _last
-            if not _last: break
-            return expression;
+            if not _last:
+                break
+            return expression
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def star_named_expressions(self) -> Optional[Any]:
@@ -1962,35 +2398,40 @@ class GeneratedParser(Parser):
         while True:
             _last = self._gather_66()
             _gather_66 = _last
-            if not _last: break
-            _last = self.expect(','),
+            if not _last:
+                break
+            _last = (self.expect(","),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [_gather_66, opt];
+            if not _last:
+                break
+            return [_gather_66, opt]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def star_named_expression(self) -> Optional[Any]:
         # star_named_expression: '*' bitwise_or | named_expression
         mark = self._mark()
         while True:
-            _last = self.expect('*')
+            _last = self.expect("*")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.bitwise_or()
             bitwise_or = _last
-            if not _last: break
-            return [literal, bitwise_or];
+            if not _last:
+                break
+            return [literal, bitwise_or]
         self._reset(mark)
         while True:
             _last = self.named_expression()
             named_expression = _last
-            if not _last: break
-            return named_expression;
+            if not _last:
+                break
+            return named_expression
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def named_expression(self) -> Optional[Any]:
@@ -2000,29 +2441,35 @@ class GeneratedParser(Parser):
         while True:
             _last = self.name()
             name = _last
-            if not _last: break
-            _last = self.expect(':=')
+            if not _last:
+                break
+            _last = self.expect(":=")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = True
             cut = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            return [name, literal, expression];
+            if not _last:
+                break
+            return [name, literal, expression]
         self._reset(mark)
         if cut:
-            return None;
+            return None
         while True:
             _last = self.expression()
             expression = _last
-            if not _last: break
-            _last = self.negative_lookahead(self.expect, ':=')
-            if not _last: break
-            return expression;
+            if not _last:
+                break
+            _last = self.negative_lookahead(self.expect, ":=")
+            if not _last:
+                break
+            return expression
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def annotated_rhs(self) -> Optional[Any]:
@@ -2031,16 +2478,18 @@ class GeneratedParser(Parser):
         while True:
             _last = self.yield_expr()
             yield_expr = _last
-            if not _last: break
-            return yield_expr;
+            if not _last:
+                break
+            return yield_expr
         self._reset(mark)
         while True:
             _last = self.star_expressions()
             star_expressions = _last
-            if not _last: break
-            return star_expressions;
+            if not _last:
+                break
+            return star_expressions
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def expressions(self) -> Optional[Any]:
@@ -2049,32 +2498,38 @@ class GeneratedParser(Parser):
         while True:
             _last = self.expression()
             expression = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self._loop1_68()
             _loop1_68 = _last
-            if not _last: break
-            _last = self.expect(','),
+            if not _last:
+                break
+            _last = (self.expect(","),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [expression, _loop1_68, opt];
+            if not _last:
+                break
+            return [expression, _loop1_68, opt]
         self._reset(mark)
         while True:
             _last = self.expression()
             expression = _last
-            if not _last: break
-            _last = self.expect(',')
+            if not _last:
+                break
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
-            return [expression, literal];
+            if not _last:
+                break
+            return [expression, literal]
         self._reset(mark)
         while True:
             _last = self.expression()
             expression = _last
-            if not _last: break
-            return expression;
+            if not _last:
+                break
+            return expression
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def expression(self) -> Optional[Any]:
@@ -2083,56 +2538,67 @@ class GeneratedParser(Parser):
         while True:
             _last = self.disjunction()
             disjunction = _last
-            if not _last: break
-            _last = self.expect('if')
+            if not _last:
+                break
+            _last = self.expect("if")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.disjunction()
             disjunction_1 = _last
-            if not _last: break
-            _last = self.expect('else')
+            if not _last:
+                break
+            _last = self.expect("else")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            return [disjunction, literal, disjunction_1, literal_1, expression];
+            if not _last:
+                break
+            return [disjunction, literal, disjunction_1, literal_1, expression]
         self._reset(mark)
         while True:
             _last = self.disjunction()
             disjunction = _last
-            if not _last: break
-            return disjunction;
+            if not _last:
+                break
+            return disjunction
         self._reset(mark)
         while True:
             _last = self.lambdef()
             lambdef = _last
-            if not _last: break
-            return lambdef;
+            if not _last:
+                break
+            return lambdef
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def lambdef(self) -> Optional[Any]:
         # lambdef: 'lambda' lambda_params? ':' expression
         mark = self._mark()
         while True:
-            _last = self.expect('lambda')
+            _last = self.expect("lambda")
             literal = _last
-            if not _last: break
-            _last = self.lambda_params(),
+            if not _last:
+                break
+            _last = (self.lambda_params(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            return [literal, opt, literal_1, expression];
+            if not _last:
+                break
+            return [literal, opt, literal_1, expression]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def lambda_params(self) -> Optional[Any]:
@@ -2141,10 +2607,11 @@ class GeneratedParser(Parser):
         while True:
             _last = self.lambda_parameters()
             lambda_parameters = _last
-            if not _last: break
-            return lambda_parameters;
+            if not _last:
+                break
+            return lambda_parameters
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def lambda_parameters(self) -> Optional[Any]:
@@ -2153,66 +2620,79 @@ class GeneratedParser(Parser):
         while True:
             _last = self.lambda_slash_no_default()
             lambda_slash_no_default = _last
-            if not _last: break
-            _last = self._loop0_69(),
+            if not _last:
+                break
+            _last = (self._loop0_69(),)
             _loop0_69 = _last[0]
             _last = True
-            if not _last: break
-            _last = self._loop0_70(),
+            if not _last:
+                break
+            _last = (self._loop0_70(),)
             _loop0_70 = _last[0]
             _last = True
-            if not _last: break
-            _last = self.lambda_star_etc(),
+            if not _last:
+                break
+            _last = (self.lambda_star_etc(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [lambda_slash_no_default, _loop0_69, _loop0_70, opt];
+            if not _last:
+                break
+            return [lambda_slash_no_default, _loop0_69, _loop0_70, opt]
         self._reset(mark)
         while True:
             _last = self.lambda_slash_with_default()
             lambda_slash_with_default = _last
-            if not _last: break
-            _last = self._loop0_71(),
+            if not _last:
+                break
+            _last = (self._loop0_71(),)
             _loop0_71 = _last[0]
             _last = True
-            if not _last: break
-            _last = self.lambda_star_etc(),
+            if not _last:
+                break
+            _last = (self.lambda_star_etc(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [lambda_slash_with_default, _loop0_71, opt];
+            if not _last:
+                break
+            return [lambda_slash_with_default, _loop0_71, opt]
         self._reset(mark)
         while True:
             _last = self._loop1_72()
             _loop1_72 = _last
-            if not _last: break
-            _last = self._loop0_73(),
+            if not _last:
+                break
+            _last = (self._loop0_73(),)
             _loop0_73 = _last[0]
             _last = True
-            if not _last: break
-            _last = self.lambda_star_etc(),
+            if not _last:
+                break
+            _last = (self.lambda_star_etc(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [_loop1_72, _loop0_73, opt];
+            if not _last:
+                break
+            return [_loop1_72, _loop0_73, opt]
         self._reset(mark)
         while True:
             _last = self._loop1_74()
             _loop1_74 = _last
-            if not _last: break
-            _last = self.lambda_star_etc(),
+            if not _last:
+                break
+            _last = (self.lambda_star_etc(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [_loop1_74, opt];
+            if not _last:
+                break
+            return [_loop1_74, opt]
         self._reset(mark)
         while True:
             _last = self.lambda_star_etc()
             lambda_star_etc = _last
-            if not _last: break
-            return lambda_star_etc;
+            if not _last:
+                break
+            return lambda_star_etc
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def lambda_slash_no_default(self) -> Optional[Any]:
@@ -2221,124 +2701,149 @@ class GeneratedParser(Parser):
         while True:
             _last = self._loop1_75()
             _loop1_75 = _last
-            if not _last: break
-            _last = self.expect('/')
+            if not _last:
+                break
+            _last = self.expect("/")
             literal = _last
-            if not _last: break
-            _last = self.expect(',')
+            if not _last:
+                break
+            _last = self.expect(",")
             literal_1 = _last
-            if not _last: break
-            return [_loop1_75, literal, literal_1];
+            if not _last:
+                break
+            return [_loop1_75, literal, literal_1]
         self._reset(mark)
         while True:
             _last = self._loop1_76()
             _loop1_76 = _last
-            if not _last: break
-            _last = self.expect('/')
+            if not _last:
+                break
+            _last = self.expect("/")
             literal = _last
-            if not _last: break
-            _last = self.positive_lookahead(self.expect, ':')
-            if not _last: break
-            return [_loop1_76, literal];
+            if not _last:
+                break
+            _last = self.positive_lookahead(self.expect, ":")
+            if not _last:
+                break
+            return [_loop1_76, literal]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def lambda_slash_with_default(self) -> Optional[Any]:
         # lambda_slash_with_default: lambda_param_no_default* lambda_param_with_default+ '/' ',' | lambda_param_no_default* lambda_param_with_default+ '/' &':'
         mark = self._mark()
         while True:
-            _last = self._loop0_77(),
+            _last = (self._loop0_77(),)
             _loop0_77 = _last[0]
             _last = True
-            if not _last: break
+            if not _last:
+                break
             _last = self._loop1_78()
             _loop1_78 = _last
-            if not _last: break
-            _last = self.expect('/')
+            if not _last:
+                break
+            _last = self.expect("/")
             literal = _last
-            if not _last: break
-            _last = self.expect(',')
+            if not _last:
+                break
+            _last = self.expect(",")
             literal_1 = _last
-            if not _last: break
-            return [_loop0_77, _loop1_78, literal, literal_1];
+            if not _last:
+                break
+            return [_loop0_77, _loop1_78, literal, literal_1]
         self._reset(mark)
         while True:
-            _last = self._loop0_79(),
+            _last = (self._loop0_79(),)
             _loop0_79 = _last[0]
             _last = True
-            if not _last: break
+            if not _last:
+                break
             _last = self._loop1_80()
             _loop1_80 = _last
-            if not _last: break
-            _last = self.expect('/')
+            if not _last:
+                break
+            _last = self.expect("/")
             literal = _last
-            if not _last: break
-            _last = self.positive_lookahead(self.expect, ':')
-            if not _last: break
-            return [_loop0_79, _loop1_80, literal];
+            if not _last:
+                break
+            _last = self.positive_lookahead(self.expect, ":")
+            if not _last:
+                break
+            return [_loop0_79, _loop1_80, literal]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def lambda_star_etc(self) -> Optional[Any]:
         # lambda_star_etc: '*' lambda_param_no_default lambda_param_maybe_default* lambda_kwds? | '*' ',' lambda_param_maybe_default+ lambda_kwds? | lambda_kwds
         mark = self._mark()
         while True:
-            _last = self.expect('*')
+            _last = self.expect("*")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.lambda_param_no_default()
             lambda_param_no_default = _last
-            if not _last: break
-            _last = self._loop0_81(),
+            if not _last:
+                break
+            _last = (self._loop0_81(),)
             _loop0_81 = _last[0]
             _last = True
-            if not _last: break
-            _last = self.lambda_kwds(),
+            if not _last:
+                break
+            _last = (self.lambda_kwds(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [literal, lambda_param_no_default, _loop0_81, opt];
+            if not _last:
+                break
+            return [literal, lambda_param_no_default, _loop0_81, opt]
         self._reset(mark)
         while True:
-            _last = self.expect('*')
+            _last = self.expect("*")
             literal = _last
-            if not _last: break
-            _last = self.expect(',')
+            if not _last:
+                break
+            _last = self.expect(",")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self._loop1_82()
             _loop1_82 = _last
-            if not _last: break
-            _last = self.lambda_kwds(),
+            if not _last:
+                break
+            _last = (self.lambda_kwds(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [literal, literal_1, _loop1_82, opt];
+            if not _last:
+                break
+            return [literal, literal_1, _loop1_82, opt]
         self._reset(mark)
         while True:
             _last = self.lambda_kwds()
             lambda_kwds = _last
-            if not _last: break
-            return lambda_kwds;
+            if not _last:
+                break
+            return lambda_kwds
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def lambda_kwds(self) -> Optional[Any]:
         # lambda_kwds: '**' lambda_param_no_default
         mark = self._mark()
         while True:
-            _last = self.expect('**')
+            _last = self.expect("**")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.lambda_param_no_default()
             lambda_param_no_default = _last
-            if not _last: break
-            return [literal, lambda_param_no_default];
+            if not _last:
+                break
+            return [literal, lambda_param_no_default]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def lambda_param_no_default(self) -> Optional[Any]:
@@ -2347,21 +2852,25 @@ class GeneratedParser(Parser):
         while True:
             _last = self.lambda_param()
             lambda_param = _last
-            if not _last: break
-            _last = self.expect(',')
+            if not _last:
+                break
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
-            return [lambda_param, literal];
+            if not _last:
+                break
+            return [lambda_param, literal]
         self._reset(mark)
         while True:
             _last = self.lambda_param()
             lambda_param = _last
-            if not _last: break
-            _last = self.positive_lookahead(self.expect, ':')
-            if not _last: break
-            return lambda_param;
+            if not _last:
+                break
+            _last = self.positive_lookahead(self.expect, ":")
+            if not _last:
+                break
+            return lambda_param
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def lambda_param_with_default(self) -> Optional[Any]:
@@ -2370,27 +2879,33 @@ class GeneratedParser(Parser):
         while True:
             _last = self.lambda_param()
             lambda_param = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.default()
             default = _last
-            if not _last: break
-            _last = self.expect(',')
+            if not _last:
+                break
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
-            return [lambda_param, default, literal];
+            if not _last:
+                break
+            return [lambda_param, default, literal]
         self._reset(mark)
         while True:
             _last = self.lambda_param()
             lambda_param = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.default()
             default = _last
-            if not _last: break
-            _last = self.positive_lookahead(self.expect, ':')
-            if not _last: break
-            return [lambda_param, default];
+            if not _last:
+                break
+            _last = self.positive_lookahead(self.expect, ":")
+            if not _last:
+                break
+            return [lambda_param, default]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def lambda_param_maybe_default(self) -> Optional[Any]:
@@ -2399,29 +2914,35 @@ class GeneratedParser(Parser):
         while True:
             _last = self.lambda_param()
             lambda_param = _last
-            if not _last: break
-            _last = self.default(),
+            if not _last:
+                break
+            _last = (self.default(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(',')
+            if not _last:
+                break
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
-            return [lambda_param, opt, literal];
+            if not _last:
+                break
+            return [lambda_param, opt, literal]
         self._reset(mark)
         while True:
             _last = self.lambda_param()
             lambda_param = _last
-            if not _last: break
-            _last = self.default(),
+            if not _last:
+                break
+            _last = (self.default(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.positive_lookahead(self.expect, ':')
-            if not _last: break
-            return [lambda_param, opt];
+            if not _last:
+                break
+            _last = self.positive_lookahead(self.expect, ":")
+            if not _last:
+                break
+            return [lambda_param, opt]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def lambda_param(self) -> Optional[Any]:
@@ -2430,10 +2951,11 @@ class GeneratedParser(Parser):
         while True:
             _last = self.name()
             name = _last
-            if not _last: break
-            return name;
+            if not _last:
+                break
+            return name
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def disjunction(self) -> Optional[Any]:
@@ -2442,19 +2964,22 @@ class GeneratedParser(Parser):
         while True:
             _last = self.conjunction()
             conjunction = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self._loop1_83()
             _loop1_83 = _last
-            if not _last: break
-            return [conjunction, _loop1_83];
+            if not _last:
+                break
+            return [conjunction, _loop1_83]
         self._reset(mark)
         while True:
             _last = self.conjunction()
             conjunction = _last
-            if not _last: break
-            return conjunction;
+            if not _last:
+                break
+            return conjunction
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def conjunction(self) -> Optional[Any]:
@@ -2463,40 +2988,46 @@ class GeneratedParser(Parser):
         while True:
             _last = self.inversion()
             inversion = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self._loop1_84()
             _loop1_84 = _last
-            if not _last: break
-            return [inversion, _loop1_84];
+            if not _last:
+                break
+            return [inversion, _loop1_84]
         self._reset(mark)
         while True:
             _last = self.inversion()
             inversion = _last
-            if not _last: break
-            return inversion;
+            if not _last:
+                break
+            return inversion
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def inversion(self) -> Optional[Any]:
         # inversion: 'not' inversion | comparison
         mark = self._mark()
         while True:
-            _last = self.expect('not')
+            _last = self.expect("not")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.inversion()
             inversion = _last
-            if not _last: break
-            return [literal, inversion];
+            if not _last:
+                break
+            return [literal, inversion]
         self._reset(mark)
         while True:
             _last = self.comparison()
             comparison = _last
-            if not _last: break
-            return comparison;
+            if not _last:
+                break
+            return comparison
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def comparison(self) -> Optional[Any]:
@@ -2505,19 +3036,22 @@ class GeneratedParser(Parser):
         while True:
             _last = self.bitwise_or()
             bitwise_or = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self._loop1_85()
             _loop1_85 = _last
-            if not _last: break
-            return [bitwise_or, _loop1_85];
+            if not _last:
+                break
+            return [bitwise_or, _loop1_85]
         self._reset(mark)
         while True:
             _last = self.bitwise_or()
             bitwise_or = _last
-            if not _last: break
-            return bitwise_or;
+            if not _last:
+                break
+            return bitwise_or
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def compare_op_bitwise_or_pair(self) -> Optional[Any]:
@@ -2526,220 +3060,252 @@ class GeneratedParser(Parser):
         while True:
             _last = self.eq_bitwise_or()
             eq_bitwise_or = _last
-            if not _last: break
-            return eq_bitwise_or;
+            if not _last:
+                break
+            return eq_bitwise_or
         self._reset(mark)
         while True:
             _last = self.noteq_bitwise_or()
             noteq_bitwise_or = _last
-            if not _last: break
-            return noteq_bitwise_or;
+            if not _last:
+                break
+            return noteq_bitwise_or
         self._reset(mark)
         while True:
             _last = self.lte_bitwise_or()
             lte_bitwise_or = _last
-            if not _last: break
-            return lte_bitwise_or;
+            if not _last:
+                break
+            return lte_bitwise_or
         self._reset(mark)
         while True:
             _last = self.lt_bitwise_or()
             lt_bitwise_or = _last
-            if not _last: break
-            return lt_bitwise_or;
+            if not _last:
+                break
+            return lt_bitwise_or
         self._reset(mark)
         while True:
             _last = self.gte_bitwise_or()
             gte_bitwise_or = _last
-            if not _last: break
-            return gte_bitwise_or;
+            if not _last:
+                break
+            return gte_bitwise_or
         self._reset(mark)
         while True:
             _last = self.gt_bitwise_or()
             gt_bitwise_or = _last
-            if not _last: break
-            return gt_bitwise_or;
+            if not _last:
+                break
+            return gt_bitwise_or
         self._reset(mark)
         while True:
             _last = self.notin_bitwise_or()
             notin_bitwise_or = _last
-            if not _last: break
-            return notin_bitwise_or;
+            if not _last:
+                break
+            return notin_bitwise_or
         self._reset(mark)
         while True:
             _last = self.in_bitwise_or()
             in_bitwise_or = _last
-            if not _last: break
-            return in_bitwise_or;
+            if not _last:
+                break
+            return in_bitwise_or
         self._reset(mark)
         while True:
             _last = self.isnot_bitwise_or()
             isnot_bitwise_or = _last
-            if not _last: break
-            return isnot_bitwise_or;
+            if not _last:
+                break
+            return isnot_bitwise_or
         self._reset(mark)
         while True:
             _last = self.is_bitwise_or()
             is_bitwise_or = _last
-            if not _last: break
-            return is_bitwise_or;
+            if not _last:
+                break
+            return is_bitwise_or
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def eq_bitwise_or(self) -> Optional[Any]:
         # eq_bitwise_or: '==' bitwise_or
         mark = self._mark()
         while True:
-            _last = self.expect('==')
+            _last = self.expect("==")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.bitwise_or()
             bitwise_or = _last
-            if not _last: break
-            return [literal, bitwise_or];
+            if not _last:
+                break
+            return [literal, bitwise_or]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def noteq_bitwise_or(self) -> Optional[Any]:
         # noteq_bitwise_or: ('!=') bitwise_or
         mark = self._mark()
         while True:
-            _last = self.expect('!=')
+            _last = self.expect("!=")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.bitwise_or()
             bitwise_or = _last
-            if not _last: break
-            return [literal, bitwise_or];
+            if not _last:
+                break
+            return [literal, bitwise_or]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def lte_bitwise_or(self) -> Optional[Any]:
         # lte_bitwise_or: '<=' bitwise_or
         mark = self._mark()
         while True:
-            _last = self.expect('<=')
+            _last = self.expect("<=")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.bitwise_or()
             bitwise_or = _last
-            if not _last: break
-            return [literal, bitwise_or];
+            if not _last:
+                break
+            return [literal, bitwise_or]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def lt_bitwise_or(self) -> Optional[Any]:
         # lt_bitwise_or: '<' bitwise_or
         mark = self._mark()
         while True:
-            _last = self.expect('<')
+            _last = self.expect("<")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.bitwise_or()
             bitwise_or = _last
-            if not _last: break
-            return [literal, bitwise_or];
+            if not _last:
+                break
+            return [literal, bitwise_or]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def gte_bitwise_or(self) -> Optional[Any]:
         # gte_bitwise_or: '>=' bitwise_or
         mark = self._mark()
         while True:
-            _last = self.expect('>=')
+            _last = self.expect(">=")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.bitwise_or()
             bitwise_or = _last
-            if not _last: break
-            return [literal, bitwise_or];
+            if not _last:
+                break
+            return [literal, bitwise_or]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def gt_bitwise_or(self) -> Optional[Any]:
         # gt_bitwise_or: '>' bitwise_or
         mark = self._mark()
         while True:
-            _last = self.expect('>')
+            _last = self.expect(">")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.bitwise_or()
             bitwise_or = _last
-            if not _last: break
-            return [literal, bitwise_or];
+            if not _last:
+                break
+            return [literal, bitwise_or]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def notin_bitwise_or(self) -> Optional[Any]:
         # notin_bitwise_or: 'not' 'in' bitwise_or
         mark = self._mark()
         while True:
-            _last = self.expect('not')
+            _last = self.expect("not")
             literal = _last
-            if not _last: break
-            _last = self.expect('in')
+            if not _last:
+                break
+            _last = self.expect("in")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.bitwise_or()
             bitwise_or = _last
-            if not _last: break
-            return [literal, literal_1, bitwise_or];
+            if not _last:
+                break
+            return [literal, literal_1, bitwise_or]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def in_bitwise_or(self) -> Optional[Any]:
         # in_bitwise_or: 'in' bitwise_or
         mark = self._mark()
         while True:
-            _last = self.expect('in')
+            _last = self.expect("in")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.bitwise_or()
             bitwise_or = _last
-            if not _last: break
-            return [literal, bitwise_or];
+            if not _last:
+                break
+            return [literal, bitwise_or]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def isnot_bitwise_or(self) -> Optional[Any]:
         # isnot_bitwise_or: 'is' 'not' bitwise_or
         mark = self._mark()
         while True:
-            _last = self.expect('is')
+            _last = self.expect("is")
             literal = _last
-            if not _last: break
-            _last = self.expect('not')
+            if not _last:
+                break
+            _last = self.expect("not")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.bitwise_or()
             bitwise_or = _last
-            if not _last: break
-            return [literal, literal_1, bitwise_or];
+            if not _last:
+                break
+            return [literal, literal_1, bitwise_or]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def is_bitwise_or(self) -> Optional[Any]:
         # is_bitwise_or: 'is' bitwise_or
         mark = self._mark()
         while True:
-            _last = self.expect('is')
+            _last = self.expect("is")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.bitwise_or()
             bitwise_or = _last
-            if not _last: break
-            return [literal, bitwise_or];
+            if not _last:
+                break
+            return [literal, bitwise_or]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize_left_rec
     def bitwise_or(self) -> Optional[Any]:
@@ -2748,22 +3314,26 @@ class GeneratedParser(Parser):
         while True:
             _last = self.bitwise_or()
             bitwise_or = _last
-            if not _last: break
-            _last = self.expect('|')
+            if not _last:
+                break
+            _last = self.expect("|")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.bitwise_xor()
             bitwise_xor = _last
-            if not _last: break
-            return [bitwise_or, literal, bitwise_xor];
+            if not _last:
+                break
+            return [bitwise_or, literal, bitwise_xor]
         self._reset(mark)
         while True:
             _last = self.bitwise_xor()
             bitwise_xor = _last
-            if not _last: break
-            return bitwise_xor;
+            if not _last:
+                break
+            return bitwise_xor
         self._reset(mark)
-        return None;
+        return None
 
     @memoize_left_rec
     def bitwise_xor(self) -> Optional[Any]:
@@ -2772,22 +3342,26 @@ class GeneratedParser(Parser):
         while True:
             _last = self.bitwise_xor()
             bitwise_xor = _last
-            if not _last: break
-            _last = self.expect('^')
+            if not _last:
+                break
+            _last = self.expect("^")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.bitwise_and()
             bitwise_and = _last
-            if not _last: break
-            return [bitwise_xor, literal, bitwise_and];
+            if not _last:
+                break
+            return [bitwise_xor, literal, bitwise_and]
         self._reset(mark)
         while True:
             _last = self.bitwise_and()
             bitwise_and = _last
-            if not _last: break
-            return bitwise_and;
+            if not _last:
+                break
+            return bitwise_and
         self._reset(mark)
-        return None;
+        return None
 
     @memoize_left_rec
     def bitwise_and(self) -> Optional[Any]:
@@ -2796,22 +3370,26 @@ class GeneratedParser(Parser):
         while True:
             _last = self.bitwise_and()
             bitwise_and = _last
-            if not _last: break
-            _last = self.expect('&')
+            if not _last:
+                break
+            _last = self.expect("&")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.shift_expr()
             shift_expr = _last
-            if not _last: break
-            return [bitwise_and, literal, shift_expr];
+            if not _last:
+                break
+            return [bitwise_and, literal, shift_expr]
         self._reset(mark)
         while True:
             _last = self.shift_expr()
             shift_expr = _last
-            if not _last: break
-            return shift_expr;
+            if not _last:
+                break
+            return shift_expr
         self._reset(mark)
-        return None;
+        return None
 
     @memoize_left_rec
     def shift_expr(self) -> Optional[Any]:
@@ -2820,34 +3398,41 @@ class GeneratedParser(Parser):
         while True:
             _last = self.shift_expr()
             shift_expr = _last
-            if not _last: break
-            _last = self.expect('<<')
+            if not _last:
+                break
+            _last = self.expect("<<")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.sum()
             sum = _last
-            if not _last: break
-            return [shift_expr, literal, sum];
+            if not _last:
+                break
+            return [shift_expr, literal, sum]
         self._reset(mark)
         while True:
             _last = self.shift_expr()
             shift_expr = _last
-            if not _last: break
-            _last = self.expect('>>')
+            if not _last:
+                break
+            _last = self.expect(">>")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.sum()
             sum = _last
-            if not _last: break
-            return [shift_expr, literal, sum];
+            if not _last:
+                break
+            return [shift_expr, literal, sum]
         self._reset(mark)
         while True:
             _last = self.sum()
             sum = _last
-            if not _last: break
-            return sum;
+            if not _last:
+                break
+            return sum
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def units(self) -> Optional[Any]:
@@ -2856,46 +3441,56 @@ class GeneratedParser(Parser):
         while True:
             _last = self.name()
             name = _last
-            if not _last: break
-            _last = self.expect('/')
+            if not _last:
+                break
+            _last = self.expect("/")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.units()
             units = _last
-            if not _last: break
-            return [name, literal, units];
+            if not _last:
+                break
+            return [name, literal, units]
         self._reset(mark)
         while True:
             _last = self.name()
             name = _last
-            if not _last: break
-            _last = self.expect('*')
+            if not _last:
+                break
+            _last = self.expect("*")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.units()
             units = _last
-            if not _last: break
-            return [name, literal, units];
+            if not _last:
+                break
+            return [name, literal, units]
         self._reset(mark)
         while True:
             _last = self.name()
             name = _last
-            if not _last: break
-            _last = self.expect('**')
+            if not _last:
+                break
+            _last = self.expect("**")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.number()
             number = _last
-            if not _last: break
-            return [name, literal, number];
+            if not _last:
+                break
+            return [name, literal, number]
         self._reset(mark)
         while True:
             _last = self.name()
             name = _last
-            if not _last: break
-            return name;
+            if not _last:
+                break
+            return name
         self._reset(mark)
-        return None;
+        return None
 
     @memoize_left_rec
     def sum(self) -> Optional[Any]:
@@ -2904,34 +3499,41 @@ class GeneratedParser(Parser):
         while True:
             _last = self.sum()
             sum = _last
-            if not _last: break
-            _last = self.expect('+')
+            if not _last:
+                break
+            _last = self.expect("+")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.term()
             term = _last
-            if not _last: break
-            return [sum, literal, term];
+            if not _last:
+                break
+            return [sum, literal, term]
         self._reset(mark)
         while True:
             _last = self.sum()
             sum = _last
-            if not _last: break
-            _last = self.expect('-')
+            if not _last:
+                break
+            _last = self.expect("-")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.term()
             term = _last
-            if not _last: break
-            return [sum, literal, term];
+            if not _last:
+                break
+            return [sum, literal, term]
         self._reset(mark)
         while True:
             _last = self.term()
             term = _last
-            if not _last: break
-            return term;
+            if not _last:
+                break
+            return term
         self._reset(mark)
-        return None;
+        return None
 
     @memoize_left_rec
     def term(self) -> Optional[Any]:
@@ -2940,109 +3542,132 @@ class GeneratedParser(Parser):
         while True:
             _last = self.term()
             term = _last
-            if not _last: break
-            _last = self.expect('*')
+            if not _last:
+                break
+            _last = self.expect("*")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.factor()
             factor = _last
-            if not _last: break
-            return [term, literal, factor];
+            if not _last:
+                break
+            return [term, literal, factor]
         self._reset(mark)
         while True:
             _last = self.term()
             term = _last
-            if not _last: break
-            _last = self.expect('/')
+            if not _last:
+                break
+            _last = self.expect("/")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.factor()
             factor = _last
-            if not _last: break
-            return [term, literal, factor];
+            if not _last:
+                break
+            return [term, literal, factor]
         self._reset(mark)
         while True:
             _last = self.term()
             term = _last
-            if not _last: break
-            _last = self.expect('//')
+            if not _last:
+                break
+            _last = self.expect("//")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.factor()
             factor = _last
-            if not _last: break
-            return [term, literal, factor];
+            if not _last:
+                break
+            return [term, literal, factor]
         self._reset(mark)
         while True:
             _last = self.term()
             term = _last
-            if not _last: break
-            _last = self.expect('%')
+            if not _last:
+                break
+            _last = self.expect("%")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.factor()
             factor = _last
-            if not _last: break
-            return [term, literal, factor];
+            if not _last:
+                break
+            return [term, literal, factor]
         self._reset(mark)
         while True:
             _last = self.term()
             term = _last
-            if not _last: break
-            _last = self.expect('@')
+            if not _last:
+                break
+            _last = self.expect("@")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.factor()
             factor = _last
-            if not _last: break
-            return [term, literal, factor];
+            if not _last:
+                break
+            return [term, literal, factor]
         self._reset(mark)
         while True:
             _last = self.factor()
             factor = _last
-            if not _last: break
-            return factor;
+            if not _last:
+                break
+            return factor
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def factor(self) -> Optional[Any]:
         # factor: '+' factor | '-' factor | '~' factor | power
         mark = self._mark()
         while True:
-            _last = self.expect('+')
+            _last = self.expect("+")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.factor()
             factor = _last
-            if not _last: break
-            return [literal, factor];
+            if not _last:
+                break
+            return [literal, factor]
         self._reset(mark)
         while True:
-            _last = self.expect('-')
+            _last = self.expect("-")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.factor()
             factor = _last
-            if not _last: break
-            return [literal, factor];
+            if not _last:
+                break
+            return [literal, factor]
         self._reset(mark)
         while True:
-            _last = self.expect('~')
+            _last = self.expect("~")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.factor()
             factor = _last
-            if not _last: break
-            return [literal, factor];
+            if not _last:
+                break
+            return [literal, factor]
         self._reset(mark)
         while True:
             _last = self.power()
             power = _last
-            if not _last: break
-            return power;
+            if not _last:
+                break
+            return power
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def power(self) -> Optional[Any]:
@@ -3051,43 +3676,50 @@ class GeneratedParser(Parser):
         while True:
             _last = self.await_primary()
             await_primary = _last
-            if not _last: break
-            _last = self.expect('**')
+            if not _last:
+                break
+            _last = self.expect("**")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.factor()
             factor = _last
-            if not _last: break
-            return [await_primary, literal, factor];
+            if not _last:
+                break
+            return [await_primary, literal, factor]
         self._reset(mark)
         while True:
             _last = self.await_primary()
             await_primary = _last
-            if not _last: break
-            return await_primary;
+            if not _last:
+                break
+            return await_primary
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def await_primary(self) -> Optional[Any]:
         # await_primary: AWAIT primary | primary
         mark = self._mark()
         while True:
-            _last = self.expect('AWAIT')
+            _last = self.expect("AWAIT")
             _await = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.primary()
             primary = _last
-            if not _last: break
-            return [_await, primary];
+            if not _last:
+                break
+            return [_await, primary]
         self._reset(mark)
         while True:
             _last = self.primary()
             primary = _last
-            if not _last: break
-            return primary;
+            if not _last:
+                break
+            return primary
         self._reset(mark)
-        return None;
+        return None
 
     @memoize_left_rec
     def primary(self) -> Optional[Any]:
@@ -3096,68 +3728,83 @@ class GeneratedParser(Parser):
         while True:
             _last = self.primary()
             primary = _last
-            if not _last: break
-            _last = self.expect('.')
+            if not _last:
+                break
+            _last = self.expect(".")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.name()
             name = _last
-            if not _last: break
-            return [primary, literal, name];
+            if not _last:
+                break
+            return [primary, literal, name]
         self._reset(mark)
         while True:
             _last = self.primary()
             primary = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.genexp()
             genexp = _last
-            if not _last: break
-            return [primary, genexp];
+            if not _last:
+                break
+            return [primary, genexp]
         self._reset(mark)
         while True:
             _last = self.primary()
             primary = _last
-            if not _last: break
-            _last = self.expect('(')
+            if not _last:
+                break
+            _last = self.expect("(")
             literal = _last
-            if not _last: break
-            _last = self.arguments(),
+            if not _last:
+                break
+            _last = (self.arguments(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(')')
+            if not _last:
+                break
+            _last = self.expect(")")
             literal_1 = _last
-            if not _last: break
-            return [primary, literal, opt, literal_1];
+            if not _last:
+                break
+            return [primary, literal, opt, literal_1]
         self._reset(mark)
         while True:
             _last = self.primary()
             primary = _last
-            if not _last: break
-            _last = self.expect('[')
+            if not _last:
+                break
+            _last = self.expect("[")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.slices()
             slices = _last
-            if not _last: break
-            _last = self.expect(']')
+            if not _last:
+                break
+            _last = self.expect("]")
             literal_1 = _last
-            if not _last: break
-            return [primary, literal, slices, literal_1];
+            if not _last:
+                break
+            return [primary, literal, slices, literal_1]
         self._reset(mark)
         while True:
             _last = self.unit_atom()
             unit_atom = _last
-            if not _last: break
-            return unit_atom;
+            if not _last:
+                break
+            return unit_atom
         self._reset(mark)
         while True:
             _last = self.atom()
             atom = _last
-            if not _last: break
-            return atom;
+            if not _last:
+                break
+            return atom
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def slices(self) -> Optional[Any]:
@@ -3166,52 +3813,61 @@ class GeneratedParser(Parser):
         while True:
             _last = self.slice()
             slice = _last
-            if not _last: break
-            _last = self.negative_lookahead(self.expect, ',')
-            if not _last: break
-            return slice;
+            if not _last:
+                break
+            _last = self.negative_lookahead(self.expect, ",")
+            if not _last:
+                break
+            return slice
         self._reset(mark)
         while True:
             _last = self._gather_86()
             _gather_86 = _last
-            if not _last: break
-            _last = self.expect(','),
+            if not _last:
+                break
+            _last = (self.expect(","),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [_gather_86, opt];
+            if not _last:
+                break
+            return [_gather_86, opt]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def slice(self) -> Optional[Any]:
         # slice: expression? ':' expression? [':' expression?] | expression
         mark = self._mark()
         while True:
-            _last = self.expression(),
+            _last = (self.expression(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal = _last
-            if not _last: break
-            _last = self.expression(),
+            if not _last:
+                break
+            _last = (self.expression(),)
             opt_1 = _last[0]
             _last = True
-            if not _last: break
-            _last = self._tmp_88(),
+            if not _last:
+                break
+            _last = (self._tmp_88(),)
             opt_2 = _last[0]
             _last = True
-            if not _last: break
-            return [opt, literal, opt_1, opt_2];
+            if not _last:
+                break
+            return [opt, literal, opt_1, opt_2]
         self._reset(mark)
         while True:
             _last = self.expression()
             expression = _last
-            if not _last: break
-            return expression;
+            if not _last:
+                break
+            return expression
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def atom(self) -> Optional[Any]:
@@ -3220,70 +3876,81 @@ class GeneratedParser(Parser):
         while True:
             _last = self.name()
             name = _last
-            if not _last: break
-            return name;
+            if not _last:
+                break
+            return name
         self._reset(mark)
         while True:
-            _last = self.expect('True')
+            _last = self.expect("True")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
-            _last = self.expect('False')
+            _last = self.expect("False")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
-            _last = self.expect('None')
+            _last = self.expect("None")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
-            _last = self.expect('__peg_parser__')
+            _last = self.expect("__peg_parser__")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
             _last = self.strings()
             strings = _last
-            if not _last: break
-            return strings;
+            if not _last:
+                break
+            return strings
         self._reset(mark)
         while True:
             _last = self.number()
             number = _last
-            if not _last: break
-            return number;
+            if not _last:
+                break
+            return number
         self._reset(mark)
         while True:
             _last = self._tmp_89()
             _tmp_89 = _last
-            if not _last: break
-            return _tmp_89;
+            if not _last:
+                break
+            return _tmp_89
         self._reset(mark)
         while True:
             _last = self._tmp_90()
             _tmp_90 = _last
-            if not _last: break
-            return _tmp_90;
+            if not _last:
+                break
+            return _tmp_90
         self._reset(mark)
         while True:
             _last = self._tmp_91()
             _tmp_91 = _last
-            if not _last: break
-            return _tmp_91;
+            if not _last:
+                break
+            return _tmp_91
         self._reset(mark)
         while True:
-            _last = self.expect('...')
+            _last = self.expect("...")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def unit_atom(self) -> Optional[Any]:
@@ -3292,13 +3959,15 @@ class GeneratedParser(Parser):
         while True:
             _last = self.atom()
             a = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.units()
             u = _last
-            if not _last: break
-            return ( 'unit_atom' , a , u );
+            if not _last:
+                break
+            return ("unit_atom", a, u)
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def strings(self) -> Optional[Any]:
@@ -3307,29 +3976,33 @@ class GeneratedParser(Parser):
         while True:
             _last = self._loop1_92()
             _loop1_92 = _last
-            if not _last: break
-            return _loop1_92;
+            if not _last:
+                break
+            return _loop1_92
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def list(self) -> Optional[Any]:
         # list: '[' star_named_expressions? ']'
         mark = self._mark()
         while True:
-            _last = self.expect('[')
+            _last = self.expect("[")
             literal = _last
-            if not _last: break
-            _last = self.star_named_expressions(),
+            if not _last:
+                break
+            _last = (self.star_named_expressions(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(']')
+            if not _last:
+                break
+            _last = self.expect("]")
             literal_1 = _last
-            if not _last: break
-            return [literal, opt, literal_1];
+            if not _last:
+                break
+            return [literal, opt, literal_1]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def listcomp(self) -> Optional[Any]:
@@ -3337,63 +4010,74 @@ class GeneratedParser(Parser):
         mark = self._mark()
         cut = False
         while True:
-            _last = self.expect('[')
+            _last = self.expect("[")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.named_expression()
             named_expression = _last
-            if not _last: break
+            if not _last:
+                break
             _last = True
             cut = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.for_if_clauses()
             for_if_clauses = _last
-            if not _last: break
-            _last = self.expect(']')
+            if not _last:
+                break
+            _last = self.expect("]")
             literal_1 = _last
-            if not _last: break
-            return [literal, named_expression, for_if_clauses, literal_1];
+            if not _last:
+                break
+            return [literal, named_expression, for_if_clauses, literal_1]
         self._reset(mark)
         if cut:
-            return None;
-        return None;
+            return None
+        return None
 
     @memoize
     def tuple(self) -> Optional[Any]:
         # tuple: '(' [star_named_expression ',' star_named_expressions?] ')'
         mark = self._mark()
         while True:
-            _last = self.expect('(')
+            _last = self.expect("(")
             literal = _last
-            if not _last: break
-            _last = self._tmp_93(),
+            if not _last:
+                break
+            _last = (self._tmp_93(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(')')
+            if not _last:
+                break
+            _last = self.expect(")")
             literal_1 = _last
-            if not _last: break
-            return [literal, opt, literal_1];
+            if not _last:
+                break
+            return [literal, opt, literal_1]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def group(self) -> Optional[Any]:
         # group: '(' (yield_expr | named_expression) ')'
         mark = self._mark()
         while True:
-            _last = self.expect('(')
+            _last = self.expect("(")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self._tmp_94()
             _tmp_94 = _last
-            if not _last: break
-            _last = self.expect(')')
+            if not _last:
+                break
+            _last = self.expect(")")
             literal_1 = _last
-            if not _last: break
-            return [literal, _tmp_94, literal_1];
+            if not _last:
+                break
+            return [literal, _tmp_94, literal_1]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def genexp(self) -> Optional[Any]:
@@ -3401,44 +4085,52 @@ class GeneratedParser(Parser):
         mark = self._mark()
         cut = False
         while True:
-            _last = self.expect('(')
+            _last = self.expect("(")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.named_expression()
             named_expression = _last
-            if not _last: break
+            if not _last:
+                break
             _last = True
             cut = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.for_if_clauses()
             for_if_clauses = _last
-            if not _last: break
-            _last = self.expect(')')
+            if not _last:
+                break
+            _last = self.expect(")")
             literal_1 = _last
-            if not _last: break
-            return [literal, named_expression, for_if_clauses, literal_1];
+            if not _last:
+                break
+            return [literal, named_expression, for_if_clauses, literal_1]
         self._reset(mark)
         if cut:
-            return None;
-        return None;
+            return None
+        return None
 
     @memoize
     def set(self) -> Optional[Any]:
         # set: '{' star_named_expressions '}'
         mark = self._mark()
         while True:
-            _last = self.expect('{')
+            _last = self.expect("{")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.star_named_expressions()
             star_named_expressions = _last
-            if not _last: break
-            _last = self.expect('}')
+            if not _last:
+                break
+            _last = self.expect("}")
             literal_1 = _last
-            if not _last: break
-            return [literal, star_named_expressions, literal_1];
+            if not _last:
+                break
+            return [literal, star_named_expressions, literal_1]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def setcomp(self) -> Optional[Any]:
@@ -3446,66 +4138,78 @@ class GeneratedParser(Parser):
         mark = self._mark()
         cut = False
         while True:
-            _last = self.expect('{')
+            _last = self.expect("{")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.named_expression()
             named_expression = _last
-            if not _last: break
+            if not _last:
+                break
             _last = True
             cut = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.for_if_clauses()
             for_if_clauses = _last
-            if not _last: break
-            _last = self.expect('}')
+            if not _last:
+                break
+            _last = self.expect("}")
             literal_1 = _last
-            if not _last: break
-            return [literal, named_expression, for_if_clauses, literal_1];
+            if not _last:
+                break
+            return [literal, named_expression, for_if_clauses, literal_1]
         self._reset(mark)
         if cut:
-            return None;
-        return None;
+            return None
+        return None
 
     @memoize
     def dict(self) -> Optional[Any]:
         # dict: '{' double_starred_kvpairs? '}'
         mark = self._mark()
         while True:
-            _last = self.expect('{')
+            _last = self.expect("{")
             literal = _last
-            if not _last: break
-            _last = self.double_starred_kvpairs(),
+            if not _last:
+                break
+            _last = (self.double_starred_kvpairs(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect('}')
+            if not _last:
+                break
+            _last = self.expect("}")
             literal_1 = _last
-            if not _last: break
-            return [literal, opt, literal_1];
+            if not _last:
+                break
+            return [literal, opt, literal_1]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def dictcomp(self) -> Optional[Any]:
         # dictcomp: '{' kvpair for_if_clauses '}'
         mark = self._mark()
         while True:
-            _last = self.expect('{')
+            _last = self.expect("{")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.kvpair()
             kvpair = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.for_if_clauses()
             for_if_clauses = _last
-            if not _last: break
-            _last = self.expect('}')
+            if not _last:
+                break
+            _last = self.expect("}")
             literal_1 = _last
-            if not _last: break
-            return [literal, kvpair, for_if_clauses, literal_1];
+            if not _last:
+                break
+            return [literal, kvpair, for_if_clauses, literal_1]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def double_starred_kvpairs(self) -> Optional[Any]:
@@ -3514,35 +4218,40 @@ class GeneratedParser(Parser):
         while True:
             _last = self._gather_95()
             _gather_95 = _last
-            if not _last: break
-            _last = self.expect(','),
+            if not _last:
+                break
+            _last = (self.expect(","),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [_gather_95, opt];
+            if not _last:
+                break
+            return [_gather_95, opt]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def double_starred_kvpair(self) -> Optional[Any]:
         # double_starred_kvpair: '**' bitwise_or | kvpair
         mark = self._mark()
         while True:
-            _last = self.expect('**')
+            _last = self.expect("**")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.bitwise_or()
             bitwise_or = _last
-            if not _last: break
-            return [literal, bitwise_or];
+            if not _last:
+                break
+            return [literal, bitwise_or]
         self._reset(mark)
         while True:
             _last = self.kvpair()
             kvpair = _last
-            if not _last: break
-            return kvpair;
+            if not _last:
+                break
+            return kvpair
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def kvpair(self) -> Optional[Any]:
@@ -3551,16 +4260,19 @@ class GeneratedParser(Parser):
         while True:
             _last = self.expression()
             expression = _last
-            if not _last: break
-            _last = self.expect(':')
+            if not _last:
+                break
+            _last = self.expect(":")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression_1 = _last
-            if not _last: break
-            return [expression, literal, expression_1];
+            if not _last:
+                break
+            return [expression, literal, expression_1]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def for_if_clauses(self) -> Optional[Any]:
@@ -3569,10 +4281,11 @@ class GeneratedParser(Parser):
         while True:
             _last = self._loop1_97()
             _loop1_97 = _last
-            if not _last: break
-            return _loop1_97;
+            if not _last:
+                break
+            return _loop1_97
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def for_if_clause(self) -> Optional[Any]:
@@ -3580,86 +4293,104 @@ class GeneratedParser(Parser):
         mark = self._mark()
         cut = False
         while True:
-            _last = self.expect('ASYNC')
+            _last = self.expect("ASYNC")
             _async = _last
-            if not _last: break
-            _last = self.expect('for')
+            if not _last:
+                break
+            _last = self.expect("for")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.star_targets()
             star_targets = _last
-            if not _last: break
-            _last = self.expect('in')
+            if not _last:
+                break
+            _last = self.expect("in")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = True
             cut = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.disjunction()
             disjunction = _last
-            if not _last: break
-            _last = self._loop0_98(),
+            if not _last:
+                break
+            _last = (self._loop0_98(),)
             _loop0_98 = _last[0]
             _last = True
-            if not _last: break
-            return [_async, literal, star_targets, literal_1, disjunction, _loop0_98];
+            if not _last:
+                break
+            return [_async, literal, star_targets, literal_1, disjunction, _loop0_98]
         self._reset(mark)
         if cut:
-            return None;
+            return None
         cut = False
         while True:
-            _last = self.expect('for')
+            _last = self.expect("for")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.star_targets()
             star_targets = _last
-            if not _last: break
-            _last = self.expect('in')
+            if not _last:
+                break
+            _last = self.expect("in")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = True
             cut = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.disjunction()
             disjunction = _last
-            if not _last: break
-            _last = self._loop0_99(),
+            if not _last:
+                break
+            _last = (self._loop0_99(),)
             _loop0_99 = _last[0]
             _last = True
-            if not _last: break
-            return [literal, star_targets, literal_1, disjunction, _loop0_99];
+            if not _last:
+                break
+            return [literal, star_targets, literal_1, disjunction, _loop0_99]
         self._reset(mark)
         if cut:
-            return None;
-        return None;
+            return None
+        return None
 
     @memoize
     def yield_expr(self) -> Optional[Any]:
         # yield_expr: 'yield' 'from' expression | 'yield' star_expressions?
         mark = self._mark()
         while True:
-            _last = self.expect('yield')
+            _last = self.expect("yield")
             literal = _last
-            if not _last: break
-            _last = self.expect('from')
+            if not _last:
+                break
+            _last = self.expect("from")
             literal_1 = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            return [literal, literal_1, expression];
+            if not _last:
+                break
+            return [literal, literal_1, expression]
         self._reset(mark)
         while True:
-            _last = self.expect('yield')
+            _last = self.expect("yield")
             literal = _last
-            if not _last: break
-            _last = self.star_expressions(),
+            if not _last:
+                break
+            _last = (self.star_expressions(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [literal, opt];
+            if not _last:
+                break
+            return [literal, opt]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def arguments(self) -> Optional[Any]:
@@ -3668,16 +4399,19 @@ class GeneratedParser(Parser):
         while True:
             _last = self.args()
             args = _last
-            if not _last: break
-            _last = self.expect(','),
+            if not _last:
+                break
+            _last = (self.expect(","),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.positive_lookahead(self.expect, ')')
-            if not _last: break
-            return [args, opt];
+            if not _last:
+                break
+            _last = self.positive_lookahead(self.expect, ")")
+            if not _last:
+                break
+            return [args, opt]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def args(self) -> Optional[Any]:
@@ -3686,20 +4420,23 @@ class GeneratedParser(Parser):
         while True:
             _last = self._gather_100()
             _gather_100 = _last
-            if not _last: break
-            _last = self._tmp_102(),
+            if not _last:
+                break
+            _last = (self._tmp_102(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [_gather_100, opt];
+            if not _last:
+                break
+            return [_gather_100, opt]
         self._reset(mark)
         while True:
             _last = self.kwargs()
             kwargs = _last
-            if not _last: break
-            return kwargs;
+            if not _last:
+                break
+            return kwargs
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def kwargs(self) -> Optional[Any]:
@@ -3708,43 +4445,50 @@ class GeneratedParser(Parser):
         while True:
             _last = self._gather_103()
             _gather_103 = _last
-            if not _last: break
-            _last = self.expect(',')
+            if not _last:
+                break
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self._gather_105()
             _gather_105 = _last
-            if not _last: break
-            return [_gather_103, literal, _gather_105];
+            if not _last:
+                break
+            return [_gather_103, literal, _gather_105]
         self._reset(mark)
         while True:
             _last = self._gather_107()
             _gather_107 = _last
-            if not _last: break
-            return _gather_107;
+            if not _last:
+                break
+            return _gather_107
         self._reset(mark)
         while True:
             _last = self._gather_109()
             _gather_109 = _last
-            if not _last: break
-            return _gather_109;
+            if not _last:
+                break
+            return _gather_109
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def starred_expression(self) -> Optional[Any]:
         # starred_expression: '*' expression
         mark = self._mark()
         while True:
-            _last = self.expect('*')
+            _last = self.expect("*")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            return [literal, expression];
+            if not _last:
+                break
+            return [literal, expression]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def kwarg_or_starred(self) -> Optional[Any]:
@@ -3753,22 +4497,26 @@ class GeneratedParser(Parser):
         while True:
             _last = self.name()
             name = _last
-            if not _last: break
-            _last = self.expect('=')
+            if not _last:
+                break
+            _last = self.expect("=")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            return [name, literal, expression];
+            if not _last:
+                break
+            return [name, literal, expression]
         self._reset(mark)
         while True:
             _last = self.starred_expression()
             starred_expression = _last
-            if not _last: break
-            return starred_expression;
+            if not _last:
+                break
+            return starred_expression
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def kwarg_or_double_starred(self) -> Optional[Any]:
@@ -3777,25 +4525,30 @@ class GeneratedParser(Parser):
         while True:
             _last = self.name()
             name = _last
-            if not _last: break
-            _last = self.expect('=')
+            if not _last:
+                break
+            _last = self.expect("=")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            return [name, literal, expression];
+            if not _last:
+                break
+            return [name, literal, expression]
         self._reset(mark)
         while True:
-            _last = self.expect('**')
+            _last = self.expect("**")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            return [literal, expression];
+            if not _last:
+                break
+            return [literal, expression]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def star_targets(self) -> Optional[Any]:
@@ -3804,26 +4557,31 @@ class GeneratedParser(Parser):
         while True:
             _last = self.star_target()
             star_target = _last
-            if not _last: break
-            _last = self.negative_lookahead(self.expect, ',')
-            if not _last: break
-            return star_target;
+            if not _last:
+                break
+            _last = self.negative_lookahead(self.expect, ",")
+            if not _last:
+                break
+            return star_target
         self._reset(mark)
         while True:
             _last = self.star_target()
             star_target = _last
-            if not _last: break
-            _last = self._loop0_111(),
+            if not _last:
+                break
+            _last = (self._loop0_111(),)
             _loop0_111 = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(','),
+            if not _last:
+                break
+            _last = (self.expect(","),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [star_target, _loop0_111, opt];
+            if not _last:
+                break
+            return [star_target, _loop0_111, opt]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def star_targets_list_seq(self) -> Optional[Any]:
@@ -3832,14 +4590,16 @@ class GeneratedParser(Parser):
         while True:
             _last = self._gather_112()
             _gather_112 = _last
-            if not _last: break
-            _last = self.expect(','),
+            if not _last:
+                break
+            _last = (self.expect(","),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [_gather_112, opt];
+            if not _last:
+                break
+            return [_gather_112, opt]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def star_targets_tuple_seq(self) -> Optional[Any]:
@@ -3848,47 +4608,55 @@ class GeneratedParser(Parser):
         while True:
             _last = self.star_target()
             star_target = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self._loop1_114()
             _loop1_114 = _last
-            if not _last: break
-            _last = self.expect(','),
+            if not _last:
+                break
+            _last = (self.expect(","),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [star_target, _loop1_114, opt];
+            if not _last:
+                break
+            return [star_target, _loop1_114, opt]
         self._reset(mark)
         while True:
             _last = self.star_target()
             star_target = _last
-            if not _last: break
-            _last = self.expect(',')
+            if not _last:
+                break
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
-            return [star_target, literal];
+            if not _last:
+                break
+            return [star_target, literal]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def star_target(self) -> Optional[Any]:
         # star_target: '*' (!'*' star_target) | target_with_star_atom
         mark = self._mark()
         while True:
-            _last = self.expect('*')
+            _last = self.expect("*")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self._tmp_115()
             _tmp_115 = _last
-            if not _last: break
-            return [literal, _tmp_115];
+            if not _last:
+                break
+            return [literal, _tmp_115]
         self._reset(mark)
         while True:
             _last = self.target_with_star_atom()
             target_with_star_atom = _last
-            if not _last: break
-            return target_with_star_atom;
+            if not _last:
+                break
+            return target_with_star_atom
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def target_with_star_atom(self) -> Optional[Any]:
@@ -3897,41 +4665,55 @@ class GeneratedParser(Parser):
         while True:
             _last = self.t_primary()
             t_primary = _last
-            if not _last: break
-            _last = self.expect('.')
+            if not _last:
+                break
+            _last = self.expect(".")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.name()
             name = _last
-            if not _last: break
-            _last = self.negative_lookahead(self.t_lookahead, )
-            if not _last: break
-            return [t_primary, literal, name];
+            if not _last:
+                break
+            _last = self.negative_lookahead(
+                self.t_lookahead,
+            )
+            if not _last:
+                break
+            return [t_primary, literal, name]
         self._reset(mark)
         while True:
             _last = self.t_primary()
             t_primary = _last
-            if not _last: break
-            _last = self.expect('[')
+            if not _last:
+                break
+            _last = self.expect("[")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.slices()
             slices = _last
-            if not _last: break
-            _last = self.expect(']')
+            if not _last:
+                break
+            _last = self.expect("]")
             literal_1 = _last
-            if not _last: break
-            _last = self.negative_lookahead(self.t_lookahead, )
-            if not _last: break
-            return [t_primary, literal, slices, literal_1];
+            if not _last:
+                break
+            _last = self.negative_lookahead(
+                self.t_lookahead,
+            )
+            if not _last:
+                break
+            return [t_primary, literal, slices, literal_1]
         self._reset(mark)
         while True:
             _last = self.star_atom()
             star_atom = _last
-            if not _last: break
-            return star_atom;
+            if not _last:
+                break
+            return star_atom
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def star_atom(self) -> Optional[Any]:
@@ -3940,48 +4722,58 @@ class GeneratedParser(Parser):
         while True:
             _last = self.name()
             name = _last
-            if not _last: break
-            return name;
+            if not _last:
+                break
+            return name
         self._reset(mark)
         while True:
-            _last = self.expect('(')
+            _last = self.expect("(")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.target_with_star_atom()
             target_with_star_atom = _last
-            if not _last: break
-            _last = self.expect(')')
+            if not _last:
+                break
+            _last = self.expect(")")
             literal_1 = _last
-            if not _last: break
-            return [literal, target_with_star_atom, literal_1];
+            if not _last:
+                break
+            return [literal, target_with_star_atom, literal_1]
         self._reset(mark)
         while True:
-            _last = self.expect('(')
+            _last = self.expect("(")
             literal = _last
-            if not _last: break
-            _last = self.star_targets_tuple_seq(),
+            if not _last:
+                break
+            _last = (self.star_targets_tuple_seq(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(')')
+            if not _last:
+                break
+            _last = self.expect(")")
             literal_1 = _last
-            if not _last: break
-            return [literal, opt, literal_1];
+            if not _last:
+                break
+            return [literal, opt, literal_1]
         self._reset(mark)
         while True:
-            _last = self.expect('[')
+            _last = self.expect("[")
             literal = _last
-            if not _last: break
-            _last = self.star_targets_list_seq(),
+            if not _last:
+                break
+            _last = (self.star_targets_list_seq(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(']')
+            if not _last:
+                break
+            _last = self.expect("]")
             literal_1 = _last
-            if not _last: break
-            return [literal, opt, literal_1];
+            if not _last:
+                break
+            return [literal, opt, literal_1]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def single_target(self) -> Optional[Any]:
@@ -3990,28 +4782,33 @@ class GeneratedParser(Parser):
         while True:
             _last = self.single_subscript_attribute_target()
             single_subscript_attribute_target = _last
-            if not _last: break
-            return single_subscript_attribute_target;
+            if not _last:
+                break
+            return single_subscript_attribute_target
         self._reset(mark)
         while True:
             _last = self.name()
             name = _last
-            if not _last: break
-            return name;
+            if not _last:
+                break
+            return name
         self._reset(mark)
         while True:
-            _last = self.expect('(')
+            _last = self.expect("(")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.single_target()
             single_target = _last
-            if not _last: break
-            _last = self.expect(')')
+            if not _last:
+                break
+            _last = self.expect(")")
             literal_1 = _last
-            if not _last: break
-            return [literal, single_target, literal_1];
+            if not _last:
+                break
+            return [literal, single_target, literal_1]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def single_subscript_attribute_target(self) -> Optional[Any]:
@@ -4020,35 +4817,48 @@ class GeneratedParser(Parser):
         while True:
             _last = self.t_primary()
             t_primary = _last
-            if not _last: break
-            _last = self.expect('.')
+            if not _last:
+                break
+            _last = self.expect(".")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.name()
             name = _last
-            if not _last: break
-            _last = self.negative_lookahead(self.t_lookahead, )
-            if not _last: break
-            return [t_primary, literal, name];
+            if not _last:
+                break
+            _last = self.negative_lookahead(
+                self.t_lookahead,
+            )
+            if not _last:
+                break
+            return [t_primary, literal, name]
         self._reset(mark)
         while True:
             _last = self.t_primary()
             t_primary = _last
-            if not _last: break
-            _last = self.expect('[')
+            if not _last:
+                break
+            _last = self.expect("[")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.slices()
             slices = _last
-            if not _last: break
-            _last = self.expect(']')
+            if not _last:
+                break
+            _last = self.expect("]")
             literal_1 = _last
-            if not _last: break
-            _last = self.negative_lookahead(self.t_lookahead, )
-            if not _last: break
-            return [t_primary, literal, slices, literal_1];
+            if not _last:
+                break
+            _last = self.negative_lookahead(
+                self.t_lookahead,
+            )
+            if not _last:
+                break
+            return [t_primary, literal, slices, literal_1]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def del_targets(self) -> Optional[Any]:
@@ -4057,14 +4867,16 @@ class GeneratedParser(Parser):
         while True:
             _last = self._gather_116()
             _gather_116 = _last
-            if not _last: break
-            _last = self.expect(','),
+            if not _last:
+                break
+            _last = (self.expect(","),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [_gather_116, opt];
+            if not _last:
+                break
+            return [_gather_116, opt]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def del_target(self) -> Optional[Any]:
@@ -4073,41 +4885,55 @@ class GeneratedParser(Parser):
         while True:
             _last = self.t_primary()
             t_primary = _last
-            if not _last: break
-            _last = self.expect('.')
+            if not _last:
+                break
+            _last = self.expect(".")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.name()
             name = _last
-            if not _last: break
-            _last = self.negative_lookahead(self.t_lookahead, )
-            if not _last: break
-            return [t_primary, literal, name];
+            if not _last:
+                break
+            _last = self.negative_lookahead(
+                self.t_lookahead,
+            )
+            if not _last:
+                break
+            return [t_primary, literal, name]
         self._reset(mark)
         while True:
             _last = self.t_primary()
             t_primary = _last
-            if not _last: break
-            _last = self.expect('[')
+            if not _last:
+                break
+            _last = self.expect("[")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.slices()
             slices = _last
-            if not _last: break
-            _last = self.expect(']')
+            if not _last:
+                break
+            _last = self.expect("]")
             literal_1 = _last
-            if not _last: break
-            _last = self.negative_lookahead(self.t_lookahead, )
-            if not _last: break
-            return [t_primary, literal, slices, literal_1];
+            if not _last:
+                break
+            _last = self.negative_lookahead(
+                self.t_lookahead,
+            )
+            if not _last:
+                break
+            return [t_primary, literal, slices, literal_1]
         self._reset(mark)
         while True:
             _last = self.del_t_atom()
             del_t_atom = _last
-            if not _last: break
-            return del_t_atom;
+            if not _last:
+                break
+            return del_t_atom
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def del_t_atom(self) -> Optional[Any]:
@@ -4116,48 +4942,58 @@ class GeneratedParser(Parser):
         while True:
             _last = self.name()
             name = _last
-            if not _last: break
-            return name;
+            if not _last:
+                break
+            return name
         self._reset(mark)
         while True:
-            _last = self.expect('(')
+            _last = self.expect("(")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.del_target()
             del_target = _last
-            if not _last: break
-            _last = self.expect(')')
+            if not _last:
+                break
+            _last = self.expect(")")
             literal_1 = _last
-            if not _last: break
-            return [literal, del_target, literal_1];
+            if not _last:
+                break
+            return [literal, del_target, literal_1]
         self._reset(mark)
         while True:
-            _last = self.expect('(')
+            _last = self.expect("(")
             literal = _last
-            if not _last: break
-            _last = self.del_targets(),
+            if not _last:
+                break
+            _last = (self.del_targets(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(')')
+            if not _last:
+                break
+            _last = self.expect(")")
             literal_1 = _last
-            if not _last: break
-            return [literal, opt, literal_1];
+            if not _last:
+                break
+            return [literal, opt, literal_1]
         self._reset(mark)
         while True:
-            _last = self.expect('[')
+            _last = self.expect("[")
             literal = _last
-            if not _last: break
-            _last = self.del_targets(),
+            if not _last:
+                break
+            _last = (self.del_targets(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(']')
+            if not _last:
+                break
+            _last = self.expect("]")
             literal_1 = _last
-            if not _last: break
-            return [literal, opt, literal_1];
+            if not _last:
+                break
+            return [literal, opt, literal_1]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize_left_rec
     def t_primary(self) -> Optional[Any]:
@@ -4166,96 +5002,128 @@ class GeneratedParser(Parser):
         while True:
             _last = self.t_primary()
             t_primary = _last
-            if not _last: break
-            _last = self.expect('.')
+            if not _last:
+                break
+            _last = self.expect(".")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.name()
             name = _last
-            if not _last: break
-            _last = self.positive_lookahead(self.t_lookahead, )
-            if not _last: break
-            return [t_primary, literal, name];
+            if not _last:
+                break
+            _last = self.positive_lookahead(
+                self.t_lookahead,
+            )
+            if not _last:
+                break
+            return [t_primary, literal, name]
         self._reset(mark)
         while True:
             _last = self.t_primary()
             t_primary = _last
-            if not _last: break
-            _last = self.expect('[')
+            if not _last:
+                break
+            _last = self.expect("[")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.slices()
             slices = _last
-            if not _last: break
-            _last = self.expect(']')
+            if not _last:
+                break
+            _last = self.expect("]")
             literal_1 = _last
-            if not _last: break
-            _last = self.positive_lookahead(self.t_lookahead, )
-            if not _last: break
-            return [t_primary, literal, slices, literal_1];
+            if not _last:
+                break
+            _last = self.positive_lookahead(
+                self.t_lookahead,
+            )
+            if not _last:
+                break
+            return [t_primary, literal, slices, literal_1]
         self._reset(mark)
         while True:
             _last = self.t_primary()
             t_primary = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.genexp()
             genexp = _last
-            if not _last: break
-            _last = self.positive_lookahead(self.t_lookahead, )
-            if not _last: break
-            return [t_primary, genexp];
+            if not _last:
+                break
+            _last = self.positive_lookahead(
+                self.t_lookahead,
+            )
+            if not _last:
+                break
+            return [t_primary, genexp]
         self._reset(mark)
         while True:
             _last = self.t_primary()
             t_primary = _last
-            if not _last: break
-            _last = self.expect('(')
+            if not _last:
+                break
+            _last = self.expect("(")
             literal = _last
-            if not _last: break
-            _last = self.arguments(),
+            if not _last:
+                break
+            _last = (self.arguments(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(')')
+            if not _last:
+                break
+            _last = self.expect(")")
             literal_1 = _last
-            if not _last: break
-            _last = self.positive_lookahead(self.t_lookahead, )
-            if not _last: break
-            return [t_primary, literal, opt, literal_1];
+            if not _last:
+                break
+            _last = self.positive_lookahead(
+                self.t_lookahead,
+            )
+            if not _last:
+                break
+            return [t_primary, literal, opt, literal_1]
         self._reset(mark)
         while True:
             _last = self.atom()
             atom = _last
-            if not _last: break
-            _last = self.positive_lookahead(self.t_lookahead, )
-            if not _last: break
-            return atom;
+            if not _last:
+                break
+            _last = self.positive_lookahead(
+                self.t_lookahead,
+            )
+            if not _last:
+                break
+            return atom
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def t_lookahead(self) -> Optional[Any]:
         # t_lookahead: '(' | '[' | '.'
         mark = self._mark()
         while True:
-            _last = self.expect('(')
+            _last = self.expect("(")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
-            _last = self.expect('[')
+            _last = self.expect("[")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
-            _last = self.expect('.')
+            _last = self.expect(".")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop0_1(self) -> Optional[Any]:
@@ -4263,13 +5131,14 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect('NEWLINE')
+            _last = self.expect("NEWLINE")
             _newline = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(_newline)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop0_2(self) -> Optional[Any]:
@@ -4277,13 +5146,14 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect('NEWLINE')
+            _last = self.expect("NEWLINE")
             _newline = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(_newline)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop0_4(self) -> Optional[Any]:
@@ -4291,16 +5161,18 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             elem = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(elem)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _gather_3(self) -> Optional[Any]:
@@ -4309,13 +5181,15 @@ class GeneratedParser(Parser):
         while True:
             _last = self.expression()
             elem = _last
-            if _last is not None: break
+            if _last is not None:
+                break
             _last = self._loop0_4()
             seq = _last
-            if _last is not None: break
-            return [elem] + seq;
+            if _last is not None:
+                break
+            return [elem] + seq
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop0_6(self) -> Optional[Any]:
@@ -4323,16 +5197,18 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             elem = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(elem)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _gather_5(self) -> Optional[Any]:
@@ -4341,13 +5217,15 @@ class GeneratedParser(Parser):
         while True:
             _last = self.expression()
             elem = _last
-            if _last is not None: break
+            if _last is not None:
+                break
             _last = self._loop0_6()
             seq = _last
-            if _last is not None: break
-            return [elem] + seq;
+            if _last is not None:
+                break
+            return [elem] + seq
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop0_8(self) -> Optional[Any]:
@@ -4355,16 +5233,18 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             elem = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(elem)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _gather_7(self) -> Optional[Any]:
@@ -4373,13 +5253,15 @@ class GeneratedParser(Parser):
         while True:
             _last = self.expression()
             elem = _last
-            if _last is not None: break
+            if _last is not None:
+                break
             _last = self._loop0_8()
             seq = _last
-            if _last is not None: break
-            return [elem] + seq;
+            if _last is not None:
+                break
+            return [elem] + seq
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop0_10(self) -> Optional[Any]:
@@ -4387,16 +5269,18 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             elem = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(elem)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _gather_9(self) -> Optional[Any]:
@@ -4405,13 +5289,15 @@ class GeneratedParser(Parser):
         while True:
             _last = self.expression()
             elem = _last
-            if _last is not None: break
+            if _last is not None:
+                break
             _last = self._loop0_10()
             seq = _last
-            if _last is not None: break
-            return [elem] + seq;
+            if _last is not None:
+                break
+            return [elem] + seq
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop1_11(self) -> Optional[Any]:
@@ -4421,11 +5307,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.statement()
             statement = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(statement)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop0_13(self) -> Optional[Any]:
@@ -4433,16 +5320,18 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect(';')
+            _last = self.expect(";")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.small_stmt()
             elem = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(elem)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _gather_12(self) -> Optional[Any]:
@@ -4451,67 +5340,77 @@ class GeneratedParser(Parser):
         while True:
             _last = self.small_stmt()
             elem = _last
-            if _last is not None: break
+            if _last is not None:
+                break
             _last = self._loop0_13()
             seq = _last
-            if _last is not None: break
-            return [elem] + seq;
+            if _last is not None:
+                break
+            return [elem] + seq
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_14(self) -> Optional[Any]:
         # _tmp_14: '=' annotated_rhs
         mark = self._mark()
         while True:
-            _last = self.expect('=')
+            _last = self.expect("=")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.annotated_rhs()
             annotated_rhs = _last
-            if not _last: break
-            return [literal, annotated_rhs];
+            if not _last:
+                break
+            return [literal, annotated_rhs]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_15(self) -> Optional[Any]:
         # _tmp_15: '(' single_target ')' | single_subscript_attribute_target
         mark = self._mark()
         while True:
-            _last = self.expect('(')
+            _last = self.expect("(")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.single_target()
             single_target = _last
-            if not _last: break
-            _last = self.expect(')')
+            if not _last:
+                break
+            _last = self.expect(")")
             literal_1 = _last
-            if not _last: break
-            return [literal, single_target, literal_1];
+            if not _last:
+                break
+            return [literal, single_target, literal_1]
         self._reset(mark)
         while True:
             _last = self.single_subscript_attribute_target()
             single_subscript_attribute_target = _last
-            if not _last: break
-            return single_subscript_attribute_target;
+            if not _last:
+                break
+            return single_subscript_attribute_target
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_16(self) -> Optional[Any]:
         # _tmp_16: '=' annotated_rhs
         mark = self._mark()
         while True:
-            _last = self.expect('=')
+            _last = self.expect("=")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.annotated_rhs()
             annotated_rhs = _last
-            if not _last: break
-            return [literal, annotated_rhs];
+            if not _last:
+                break
+            return [literal, annotated_rhs]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop1_17(self) -> Optional[Any]:
@@ -4521,11 +5420,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self._tmp_118()
             _tmp_118 = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(_tmp_118)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _tmp_18(self) -> Optional[Any]:
@@ -4534,16 +5434,18 @@ class GeneratedParser(Parser):
         while True:
             _last = self.yield_expr()
             yield_expr = _last
-            if not _last: break
-            return yield_expr;
+            if not _last:
+                break
+            return yield_expr
         self._reset(mark)
         while True:
             _last = self.star_expressions()
             star_expressions = _last
-            if not _last: break
-            return star_expressions;
+            if not _last:
+                break
+            return star_expressions
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_19(self) -> Optional[Any]:
@@ -4552,16 +5454,18 @@ class GeneratedParser(Parser):
         while True:
             _last = self.yield_expr()
             yield_expr = _last
-            if not _last: break
-            return yield_expr;
+            if not _last:
+                break
+            return yield_expr
         self._reset(mark)
         while True:
             _last = self.star_expressions()
             star_expressions = _last
-            if not _last: break
-            return star_expressions;
+            if not _last:
+                break
+            return star_expressions
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop0_21(self) -> Optional[Any]:
@@ -4569,16 +5473,18 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.name()
             elem = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(elem)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _gather_20(self) -> Optional[Any]:
@@ -4587,13 +5493,15 @@ class GeneratedParser(Parser):
         while True:
             _last = self.name()
             elem = _last
-            if _last is not None: break
+            if _last is not None:
+                break
             _last = self._loop0_21()
             seq = _last
-            if _last is not None: break
-            return [elem] + seq;
+            if _last is not None:
+                break
+            return [elem] + seq
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop0_23(self) -> Optional[Any]:
@@ -4601,16 +5509,18 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.name()
             elem = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(elem)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _gather_22(self) -> Optional[Any]:
@@ -4619,46 +5529,52 @@ class GeneratedParser(Parser):
         while True:
             _last = self.name()
             elem = _last
-            if _last is not None: break
+            if _last is not None:
+                break
             _last = self._loop0_23()
             seq = _last
-            if _last is not None: break
-            return [elem] + seq;
+            if _last is not None:
+                break
+            return [elem] + seq
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_24(self) -> Optional[Any]:
         # _tmp_24: ',' expression
         mark = self._mark()
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            return [literal, expression];
+            if not _last:
+                break
+            return [literal, expression]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_25(self) -> Optional[Any]:
         # _tmp_25: ';' | NEWLINE
         mark = self._mark()
         while True:
-            _last = self.expect(';')
+            _last = self.expect(";")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
-            _last = self.expect('NEWLINE')
+            _last = self.expect("NEWLINE")
             _newline = _last
-            if not _last: break
-            return _newline;
+            if not _last:
+                break
+            return _newline
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop0_26(self) -> Optional[Any]:
@@ -4668,11 +5584,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self._tmp_119()
             _tmp_119 = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(_tmp_119)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop1_27(self) -> Optional[Any]:
@@ -4682,11 +5599,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self._tmp_120()
             _tmp_120 = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(_tmp_120)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop0_29(self) -> Optional[Any]:
@@ -4694,16 +5612,18 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.import_from_as_name()
             elem = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(elem)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _gather_28(self) -> Optional[Any]:
@@ -4712,28 +5632,32 @@ class GeneratedParser(Parser):
         while True:
             _last = self.import_from_as_name()
             elem = _last
-            if _last is not None: break
+            if _last is not None:
+                break
             _last = self._loop0_29()
             seq = _last
-            if _last is not None: break
-            return [elem] + seq;
+            if _last is not None:
+                break
+            return [elem] + seq
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_30(self) -> Optional[Any]:
         # _tmp_30: 'as' NAME
         mark = self._mark()
         while True:
-            _last = self.expect('as')
+            _last = self.expect("as")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.name()
             name = _last
-            if not _last: break
-            return [literal, name];
+            if not _last:
+                break
+            return [literal, name]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop0_32(self) -> Optional[Any]:
@@ -4741,16 +5665,18 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.dotted_as_name()
             elem = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(elem)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _gather_31(self) -> Optional[Any]:
@@ -4759,28 +5685,32 @@ class GeneratedParser(Parser):
         while True:
             _last = self.dotted_as_name()
             elem = _last
-            if _last is not None: break
+            if _last is not None:
+                break
             _last = self._loop0_32()
             seq = _last
-            if _last is not None: break
-            return [elem] + seq;
+            if _last is not None:
+                break
+            return [elem] + seq
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_33(self) -> Optional[Any]:
         # _tmp_33: 'as' NAME
         mark = self._mark()
         while True:
-            _last = self.expect('as')
+            _last = self.expect("as")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.name()
             name = _last
-            if not _last: break
-            return [literal, name];
+            if not _last:
+                break
+            return [literal, name]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop0_35(self) -> Optional[Any]:
@@ -4788,16 +5718,18 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.with_item()
             elem = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(elem)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _gather_34(self) -> Optional[Any]:
@@ -4806,13 +5738,15 @@ class GeneratedParser(Parser):
         while True:
             _last = self.with_item()
             elem = _last
-            if _last is not None: break
+            if _last is not None:
+                break
             _last = self._loop0_35()
             seq = _last
-            if _last is not None: break
-            return [elem] + seq;
+            if _last is not None:
+                break
+            return [elem] + seq
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop0_37(self) -> Optional[Any]:
@@ -4820,16 +5754,18 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.with_item()
             elem = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(elem)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _gather_36(self) -> Optional[Any]:
@@ -4838,13 +5774,15 @@ class GeneratedParser(Parser):
         while True:
             _last = self.with_item()
             elem = _last
-            if _last is not None: break
+            if _last is not None:
+                break
             _last = self._loop0_37()
             seq = _last
-            if _last is not None: break
-            return [elem] + seq;
+            if _last is not None:
+                break
+            return [elem] + seq
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop0_39(self) -> Optional[Any]:
@@ -4852,16 +5790,18 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.with_item()
             elem = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(elem)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _gather_38(self) -> Optional[Any]:
@@ -4870,13 +5810,15 @@ class GeneratedParser(Parser):
         while True:
             _last = self.with_item()
             elem = _last
-            if _last is not None: break
+            if _last is not None:
+                break
             _last = self._loop0_39()
             seq = _last
-            if _last is not None: break
-            return [elem] + seq;
+            if _last is not None:
+                break
+            return [elem] + seq
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop0_41(self) -> Optional[Any]:
@@ -4884,16 +5826,18 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.with_item()
             elem = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(elem)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _gather_40(self) -> Optional[Any]:
@@ -4902,37 +5846,42 @@ class GeneratedParser(Parser):
         while True:
             _last = self.with_item()
             elem = _last
-            if _last is not None: break
+            if _last is not None:
+                break
             _last = self._loop0_41()
             seq = _last
-            if _last is not None: break
-            return [elem] + seq;
+            if _last is not None:
+                break
+            return [elem] + seq
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_42(self) -> Optional[Any]:
         # _tmp_42: ',' | ')' | ':'
         mark = self._mark()
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
-            _last = self.expect(')')
+            _last = self.expect(")")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
-            _last = self.expect(':')
+            _last = self.expect(":")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop1_43(self) -> Optional[Any]:
@@ -4942,86 +5891,97 @@ class GeneratedParser(Parser):
         while True:
             _last = self.except_block()
             except_block = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(except_block)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _tmp_44(self) -> Optional[Any]:
         # _tmp_44: 'as' NAME
         mark = self._mark()
         while True:
-            _last = self.expect('as')
+            _last = self.expect("as")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.name()
             name = _last
-            if not _last: break
-            return [literal, name];
+            if not _last:
+                break
+            return [literal, name]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_45(self) -> Optional[Any]:
         # _tmp_45: 'from' expression
         mark = self._mark()
         while True:
-            _last = self.expect('from')
+            _last = self.expect("from")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            return [literal, expression];
+            if not _last:
+                break
+            return [literal, expression]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_46(self) -> Optional[Any]:
         # _tmp_46: '->' expression
         mark = self._mark()
         while True:
-            _last = self.expect('->')
+            _last = self.expect("->")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            return [literal, expression];
+            if not _last:
+                break
+            return [literal, expression]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_47(self) -> Optional[Any]:
         # _tmp_47: '->' expression
         mark = self._mark()
         while True:
-            _last = self.expect('->')
+            _last = self.expect("->")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            return [literal, expression];
+            if not _last:
+                break
+            return [literal, expression]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_48(self) -> Optional[Any]:
         # _tmp_48: NEWLINE INDENT
         mark = self._mark()
         while True:
-            _last = self.expect('NEWLINE')
+            _last = self.expect("NEWLINE")
             _newline = _last
-            if not _last: break
-            _last = self.expect('INDENT')
+            if not _last:
+                break
+            _last = self.expect("INDENT")
             _indent = _last
-            if not _last: break
-            return [_newline, _indent];
+            if not _last:
+                break
+            return [_newline, _indent]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop0_49(self) -> Optional[Any]:
@@ -5031,11 +5991,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.param_no_default()
             param_no_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(param_no_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop0_50(self) -> Optional[Any]:
@@ -5045,11 +6006,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.param_with_default()
             param_with_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(param_with_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop0_51(self) -> Optional[Any]:
@@ -5059,11 +6021,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.param_with_default()
             param_with_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(param_with_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop1_52(self) -> Optional[Any]:
@@ -5073,11 +6036,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.param_no_default()
             param_no_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(param_no_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop0_53(self) -> Optional[Any]:
@@ -5087,11 +6051,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.param_with_default()
             param_with_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(param_with_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop1_54(self) -> Optional[Any]:
@@ -5101,11 +6066,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.param_with_default()
             param_with_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(param_with_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop1_55(self) -> Optional[Any]:
@@ -5115,11 +6081,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.param_no_default()
             param_no_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(param_no_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop1_56(self) -> Optional[Any]:
@@ -5129,11 +6096,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.param_no_default()
             param_no_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(param_no_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop0_57(self) -> Optional[Any]:
@@ -5143,11 +6111,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.param_no_default()
             param_no_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(param_no_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop1_58(self) -> Optional[Any]:
@@ -5157,11 +6126,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.param_with_default()
             param_with_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(param_with_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop0_59(self) -> Optional[Any]:
@@ -5171,11 +6141,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.param_no_default()
             param_no_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(param_no_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop1_60(self) -> Optional[Any]:
@@ -5185,11 +6156,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.param_with_default()
             param_with_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(param_with_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop0_61(self) -> Optional[Any]:
@@ -5199,11 +6171,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.param_maybe_default()
             param_maybe_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(param_maybe_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop1_62(self) -> Optional[Any]:
@@ -5213,11 +6186,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.param_maybe_default()
             param_maybe_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(param_maybe_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop1_63(self) -> Optional[Any]:
@@ -5227,30 +6201,34 @@ class GeneratedParser(Parser):
         while True:
             _last = self._tmp_121()
             _tmp_121 = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(_tmp_121)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _tmp_64(self) -> Optional[Any]:
         # _tmp_64: '(' arguments? ')'
         mark = self._mark()
         while True:
-            _last = self.expect('(')
+            _last = self.expect("(")
             literal = _last
-            if not _last: break
-            _last = self.arguments(),
+            if not _last:
+                break
+            _last = (self.arguments(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            _last = self.expect(')')
+            if not _last:
+                break
+            _last = self.expect(")")
             literal_1 = _last
-            if not _last: break
-            return [literal, opt, literal_1];
+            if not _last:
+                break
+            return [literal, opt, literal_1]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop1_65(self) -> Optional[Any]:
@@ -5260,11 +6238,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self._tmp_122()
             _tmp_122 = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(_tmp_122)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop0_67(self) -> Optional[Any]:
@@ -5272,16 +6251,18 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.star_named_expression()
             elem = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(elem)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _gather_66(self) -> Optional[Any]:
@@ -5290,13 +6271,15 @@ class GeneratedParser(Parser):
         while True:
             _last = self.star_named_expression()
             elem = _last
-            if _last is not None: break
+            if _last is not None:
+                break
             _last = self._loop0_67()
             seq = _last
-            if _last is not None: break
-            return [elem] + seq;
+            if _last is not None:
+                break
+            return [elem] + seq
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop1_68(self) -> Optional[Any]:
@@ -5306,11 +6289,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self._tmp_123()
             _tmp_123 = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(_tmp_123)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop0_69(self) -> Optional[Any]:
@@ -5320,11 +6304,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.lambda_param_no_default()
             lambda_param_no_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(lambda_param_no_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop0_70(self) -> Optional[Any]:
@@ -5334,11 +6319,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.lambda_param_with_default()
             lambda_param_with_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(lambda_param_with_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop0_71(self) -> Optional[Any]:
@@ -5348,11 +6334,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.lambda_param_with_default()
             lambda_param_with_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(lambda_param_with_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop1_72(self) -> Optional[Any]:
@@ -5362,11 +6349,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.lambda_param_no_default()
             lambda_param_no_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(lambda_param_no_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop0_73(self) -> Optional[Any]:
@@ -5376,11 +6364,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.lambda_param_with_default()
             lambda_param_with_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(lambda_param_with_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop1_74(self) -> Optional[Any]:
@@ -5390,11 +6379,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.lambda_param_with_default()
             lambda_param_with_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(lambda_param_with_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop1_75(self) -> Optional[Any]:
@@ -5404,11 +6394,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.lambda_param_no_default()
             lambda_param_no_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(lambda_param_no_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop1_76(self) -> Optional[Any]:
@@ -5418,11 +6409,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.lambda_param_no_default()
             lambda_param_no_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(lambda_param_no_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop0_77(self) -> Optional[Any]:
@@ -5432,11 +6424,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.lambda_param_no_default()
             lambda_param_no_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(lambda_param_no_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop1_78(self) -> Optional[Any]:
@@ -5446,11 +6439,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.lambda_param_with_default()
             lambda_param_with_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(lambda_param_with_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop0_79(self) -> Optional[Any]:
@@ -5460,11 +6454,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.lambda_param_no_default()
             lambda_param_no_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(lambda_param_no_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop1_80(self) -> Optional[Any]:
@@ -5474,11 +6469,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.lambda_param_with_default()
             lambda_param_with_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(lambda_param_with_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop0_81(self) -> Optional[Any]:
@@ -5488,11 +6484,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.lambda_param_maybe_default()
             lambda_param_maybe_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(lambda_param_maybe_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop1_82(self) -> Optional[Any]:
@@ -5502,11 +6499,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.lambda_param_maybe_default()
             lambda_param_maybe_default = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(lambda_param_maybe_default)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop1_83(self) -> Optional[Any]:
@@ -5516,11 +6514,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self._tmp_124()
             _tmp_124 = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(_tmp_124)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop1_84(self) -> Optional[Any]:
@@ -5530,11 +6529,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self._tmp_125()
             _tmp_125 = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(_tmp_125)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop1_85(self) -> Optional[Any]:
@@ -5544,11 +6544,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.compare_op_bitwise_or_pair()
             compare_op_bitwise_or_pair = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(compare_op_bitwise_or_pair)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop0_87(self) -> Optional[Any]:
@@ -5556,16 +6557,18 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.slice()
             elem = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(elem)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _gather_86(self) -> Optional[Any]:
@@ -5574,29 +6577,33 @@ class GeneratedParser(Parser):
         while True:
             _last = self.slice()
             elem = _last
-            if _last is not None: break
+            if _last is not None:
+                break
             _last = self._loop0_87()
             seq = _last
-            if _last is not None: break
-            return [elem] + seq;
+            if _last is not None:
+                break
+            return [elem] + seq
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_88(self) -> Optional[Any]:
         # _tmp_88: ':' expression?
         mark = self._mark()
         while True:
-            _last = self.expect(':')
+            _last = self.expect(":")
             literal = _last
-            if not _last: break
-            _last = self.expression(),
+            if not _last:
+                break
+            _last = (self.expression(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [literal, opt];
+            if not _last:
+                break
+            return [literal, opt]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_89(self) -> Optional[Any]:
@@ -5605,22 +6612,25 @@ class GeneratedParser(Parser):
         while True:
             _last = self.tuple()
             tuple = _last
-            if not _last: break
-            return tuple;
+            if not _last:
+                break
+            return tuple
         self._reset(mark)
         while True:
             _last = self.group()
             group = _last
-            if not _last: break
-            return group;
+            if not _last:
+                break
+            return group
         self._reset(mark)
         while True:
             _last = self.genexp()
             genexp = _last
-            if not _last: break
-            return genexp;
+            if not _last:
+                break
+            return genexp
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_90(self) -> Optional[Any]:
@@ -5629,16 +6639,18 @@ class GeneratedParser(Parser):
         while True:
             _last = self.list()
             list = _last
-            if not _last: break
-            return list;
+            if not _last:
+                break
+            return list
         self._reset(mark)
         while True:
             _last = self.listcomp()
             listcomp = _last
-            if not _last: break
-            return listcomp;
+            if not _last:
+                break
+            return listcomp
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_91(self) -> Optional[Any]:
@@ -5647,28 +6659,32 @@ class GeneratedParser(Parser):
         while True:
             _last = self.dict()
             dict = _last
-            if not _last: break
-            return dict;
+            if not _last:
+                break
+            return dict
         self._reset(mark)
         while True:
             _last = self.set()
             set = _last
-            if not _last: break
-            return set;
+            if not _last:
+                break
+            return set
         self._reset(mark)
         while True:
             _last = self.dictcomp()
             dictcomp = _last
-            if not _last: break
-            return dictcomp;
+            if not _last:
+                break
+            return dictcomp
         self._reset(mark)
         while True:
             _last = self.setcomp()
             setcomp = _last
-            if not _last: break
-            return setcomp;
+            if not _last:
+                break
+            return setcomp
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop1_92(self) -> Optional[Any]:
@@ -5678,11 +6694,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.string()
             string = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(string)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _tmp_93(self) -> Optional[Any]:
@@ -5691,17 +6708,20 @@ class GeneratedParser(Parser):
         while True:
             _last = self.star_named_expression()
             star_named_expression = _last
-            if not _last: break
-            _last = self.expect(',')
+            if not _last:
+                break
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
-            _last = self.star_named_expressions(),
+            if not _last:
+                break
+            _last = (self.star_named_expressions(),)
             opt = _last[0]
             _last = True
-            if not _last: break
-            return [star_named_expression, literal, opt];
+            if not _last:
+                break
+            return [star_named_expression, literal, opt]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_94(self) -> Optional[Any]:
@@ -5710,16 +6730,18 @@ class GeneratedParser(Parser):
         while True:
             _last = self.yield_expr()
             yield_expr = _last
-            if not _last: break
-            return yield_expr;
+            if not _last:
+                break
+            return yield_expr
         self._reset(mark)
         while True:
             _last = self.named_expression()
             named_expression = _last
-            if not _last: break
-            return named_expression;
+            if not _last:
+                break
+            return named_expression
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop0_96(self) -> Optional[Any]:
@@ -5727,16 +6749,18 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.double_starred_kvpair()
             elem = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(elem)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _gather_95(self) -> Optional[Any]:
@@ -5745,13 +6769,15 @@ class GeneratedParser(Parser):
         while True:
             _last = self.double_starred_kvpair()
             elem = _last
-            if _last is not None: break
+            if _last is not None:
+                break
             _last = self._loop0_96()
             seq = _last
-            if _last is not None: break
-            return [elem] + seq;
+            if _last is not None:
+                break
+            return [elem] + seq
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop1_97(self) -> Optional[Any]:
@@ -5761,11 +6787,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self.for_if_clause()
             for_if_clause = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(for_if_clause)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop0_98(self) -> Optional[Any]:
@@ -5775,11 +6802,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self._tmp_126()
             _tmp_126 = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(_tmp_126)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop0_99(self) -> Optional[Any]:
@@ -5789,11 +6817,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self._tmp_127()
             _tmp_127 = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(_tmp_127)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop0_101(self) -> Optional[Any]:
@@ -5801,16 +6830,18 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self._tmp_128()
             elem = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(elem)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _gather_100(self) -> Optional[Any]:
@@ -5819,28 +6850,32 @@ class GeneratedParser(Parser):
         while True:
             _last = self._tmp_128()
             elem = _last
-            if _last is not None: break
+            if _last is not None:
+                break
             _last = self._loop0_101()
             seq = _last
-            if _last is not None: break
-            return [elem] + seq;
+            if _last is not None:
+                break
+            return [elem] + seq
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_102(self) -> Optional[Any]:
         # _tmp_102: ',' kwargs
         mark = self._mark()
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.kwargs()
             kwargs = _last
-            if not _last: break
-            return [literal, kwargs];
+            if not _last:
+                break
+            return [literal, kwargs]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop0_104(self) -> Optional[Any]:
@@ -5848,16 +6883,18 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.kwarg_or_starred()
             elem = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(elem)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _gather_103(self) -> Optional[Any]:
@@ -5866,13 +6903,15 @@ class GeneratedParser(Parser):
         while True:
             _last = self.kwarg_or_starred()
             elem = _last
-            if _last is not None: break
+            if _last is not None:
+                break
             _last = self._loop0_104()
             seq = _last
-            if _last is not None: break
-            return [elem] + seq;
+            if _last is not None:
+                break
+            return [elem] + seq
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop0_106(self) -> Optional[Any]:
@@ -5880,16 +6919,18 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.kwarg_or_double_starred()
             elem = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(elem)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _gather_105(self) -> Optional[Any]:
@@ -5898,13 +6939,15 @@ class GeneratedParser(Parser):
         while True:
             _last = self.kwarg_or_double_starred()
             elem = _last
-            if _last is not None: break
+            if _last is not None:
+                break
             _last = self._loop0_106()
             seq = _last
-            if _last is not None: break
-            return [elem] + seq;
+            if _last is not None:
+                break
+            return [elem] + seq
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop0_108(self) -> Optional[Any]:
@@ -5912,16 +6955,18 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.kwarg_or_starred()
             elem = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(elem)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _gather_107(self) -> Optional[Any]:
@@ -5930,13 +6975,15 @@ class GeneratedParser(Parser):
         while True:
             _last = self.kwarg_or_starred()
             elem = _last
-            if _last is not None: break
+            if _last is not None:
+                break
             _last = self._loop0_108()
             seq = _last
-            if _last is not None: break
-            return [elem] + seq;
+            if _last is not None:
+                break
+            return [elem] + seq
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop0_110(self) -> Optional[Any]:
@@ -5944,16 +6991,18 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.kwarg_or_double_starred()
             elem = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(elem)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _gather_109(self) -> Optional[Any]:
@@ -5962,13 +7011,15 @@ class GeneratedParser(Parser):
         while True:
             _last = self.kwarg_or_double_starred()
             elem = _last
-            if _last is not None: break
+            if _last is not None:
+                break
             _last = self._loop0_110()
             seq = _last
-            if _last is not None: break
-            return [elem] + seq;
+            if _last is not None:
+                break
+            return [elem] + seq
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop0_111(self) -> Optional[Any]:
@@ -5978,11 +7029,12 @@ class GeneratedParser(Parser):
         while True:
             _last = self._tmp_129()
             _tmp_129 = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(_tmp_129)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _loop0_113(self) -> Optional[Any]:
@@ -5990,16 +7042,18 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.star_target()
             elem = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(elem)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _gather_112(self) -> Optional[Any]:
@@ -6008,13 +7062,15 @@ class GeneratedParser(Parser):
         while True:
             _last = self.star_target()
             elem = _last
-            if _last is not None: break
+            if _last is not None:
+                break
             _last = self._loop0_113()
             seq = _last
-            if _last is not None: break
-            return [elem] + seq;
+            if _last is not None:
+                break
+            return [elem] + seq
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop1_114(self) -> Optional[Any]:
@@ -6024,25 +7080,28 @@ class GeneratedParser(Parser):
         while True:
             _last = self._tmp_130()
             _tmp_130 = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(_tmp_130)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _tmp_115(self) -> Optional[Any]:
         # _tmp_115: !'*' star_target
         mark = self._mark()
         while True:
-            _last = self.negative_lookahead(self.expect, '*')
-            if not _last: break
+            _last = self.negative_lookahead(self.expect, "*")
+            if not _last:
+                break
             _last = self.star_target()
             star_target = _last
-            if not _last: break
-            return star_target;
+            if not _last:
+                break
+            return star_target
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _loop0_117(self) -> Optional[Any]:
@@ -6050,16 +7109,18 @@ class GeneratedParser(Parser):
         mark = self._mark()
         children = []
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.del_target()
             elem = _last
-            if not _last: break
+            if not _last:
+                break
             children.append(elem)
             mark = self._mark()
         self._reset(mark)
-        return children;
+        return children
 
     @memoize
     def _gather_116(self) -> Optional[Any]:
@@ -6068,13 +7129,15 @@ class GeneratedParser(Parser):
         while True:
             _last = self.del_target()
             elem = _last
-            if _last is not None: break
+            if _last is not None:
+                break
             _last = self._loop0_117()
             seq = _last
-            if _last is not None: break
-            return [elem] + seq;
+            if _last is not None:
+                break
+            return [elem] + seq
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_118(self) -> Optional[Any]:
@@ -6083,157 +7146,178 @@ class GeneratedParser(Parser):
         while True:
             _last = self.star_targets()
             star_targets = _last
-            if not _last: break
-            _last = self.expect('=')
+            if not _last:
+                break
+            _last = self.expect("=")
             literal = _last
-            if not _last: break
-            return [star_targets, literal];
+            if not _last:
+                break
+            return [star_targets, literal]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_119(self) -> Optional[Any]:
         # _tmp_119: '.' | '...'
         mark = self._mark()
         while True:
-            _last = self.expect('.')
+            _last = self.expect(".")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
-            _last = self.expect('...')
+            _last = self.expect("...")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_120(self) -> Optional[Any]:
         # _tmp_120: '.' | '...'
         mark = self._mark()
         while True:
-            _last = self.expect('.')
+            _last = self.expect(".")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
         while True:
-            _last = self.expect('...')
+            _last = self.expect("...")
             literal = _last
-            if not _last: break
-            return literal;
+            if not _last:
+                break
+            return literal
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_121(self) -> Optional[Any]:
         # _tmp_121: '@' named_expression NEWLINE
         mark = self._mark()
         while True:
-            _last = self.expect('@')
+            _last = self.expect("@")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.named_expression()
             named_expression = _last
-            if not _last: break
-            _last = self.expect('NEWLINE')
+            if not _last:
+                break
+            _last = self.expect("NEWLINE")
             _newline = _last
-            if not _last: break
-            return [literal, named_expression, _newline];
+            if not _last:
+                break
+            return [literal, named_expression, _newline]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_122(self) -> Optional[Any]:
         # _tmp_122: ',' star_expression
         mark = self._mark()
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.star_expression()
             star_expression = _last
-            if not _last: break
-            return [literal, star_expression];
+            if not _last:
+                break
+            return [literal, star_expression]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_123(self) -> Optional[Any]:
         # _tmp_123: ',' expression
         mark = self._mark()
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.expression()
             expression = _last
-            if not _last: break
-            return [literal, expression];
+            if not _last:
+                break
+            return [literal, expression]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_124(self) -> Optional[Any]:
         # _tmp_124: 'or' conjunction
         mark = self._mark()
         while True:
-            _last = self.expect('or')
+            _last = self.expect("or")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.conjunction()
             conjunction = _last
-            if not _last: break
-            return [literal, conjunction];
+            if not _last:
+                break
+            return [literal, conjunction]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_125(self) -> Optional[Any]:
         # _tmp_125: 'and' inversion
         mark = self._mark()
         while True:
-            _last = self.expect('and')
+            _last = self.expect("and")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.inversion()
             inversion = _last
-            if not _last: break
-            return [literal, inversion];
+            if not _last:
+                break
+            return [literal, inversion]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_126(self) -> Optional[Any]:
         # _tmp_126: 'if' disjunction
         mark = self._mark()
         while True:
-            _last = self.expect('if')
+            _last = self.expect("if")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.disjunction()
             disjunction = _last
-            if not _last: break
-            return [literal, disjunction];
+            if not _last:
+                break
+            return [literal, disjunction]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_127(self) -> Optional[Any]:
         # _tmp_127: 'if' disjunction
         mark = self._mark()
         while True:
-            _last = self.expect('if')
+            _last = self.expect("if")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.disjunction()
             disjunction = _last
-            if not _last: break
-            return [literal, disjunction];
+            if not _last:
+                break
+            return [literal, disjunction]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_128(self) -> Optional[Any]:
@@ -6242,53 +7326,96 @@ class GeneratedParser(Parser):
         while True:
             _last = self.starred_expression()
             starred_expression = _last
-            if not _last: break
-            return starred_expression;
+            if not _last:
+                break
+            return starred_expression
         self._reset(mark)
         while True:
             _last = self.named_expression()
             named_expression = _last
-            if not _last: break
-            _last = self.negative_lookahead(self.expect, '=')
-            if not _last: break
-            return named_expression;
+            if not _last:
+                break
+            _last = self.negative_lookahead(self.expect, "=")
+            if not _last:
+                break
+            return named_expression
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_129(self) -> Optional[Any]:
         # _tmp_129: ',' star_target
         mark = self._mark()
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.star_target()
             star_target = _last
-            if not _last: break
-            return [literal, star_target];
+            if not _last:
+                break
+            return [literal, star_target]
         self._reset(mark)
-        return None;
+        return None
 
     @memoize
     def _tmp_130(self) -> Optional[Any]:
         # _tmp_130: ',' star_target
         mark = self._mark()
         while True:
-            _last = self.expect(',')
+            _last = self.expect(",")
             literal = _last
-            if not _last: break
+            if not _last:
+                break
             _last = self.star_target()
             star_target = _last
-            if not _last: break
-            return [literal, star_target];
+            if not _last:
+                break
+            return [literal, star_target]
         self._reset(mark)
-        return None;
+        return None
 
-    KEYWORDS = ('False', 'None', 'True', '__peg_parser__', 'and', 'as', 'assert', 'break', 'class', 'continue', 'def', 'del', 'elif', 'else', 'except', 'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is', 'lambda', 'nonlocal', 'not', 'or', 'pass', 'raise', 'return', 'try', 'while', 'with', 'yield')
+    KEYWORDS = (
+        "False",
+        "None",
+        "True",
+        "__peg_parser__",
+        "and",
+        "as",
+        "assert",
+        "break",
+        "class",
+        "continue",
+        "def",
+        "del",
+        "elif",
+        "else",
+        "except",
+        "finally",
+        "for",
+        "from",
+        "global",
+        "if",
+        "import",
+        "in",
+        "is",
+        "lambda",
+        "nonlocal",
+        "not",
+        "or",
+        "pass",
+        "raise",
+        "return",
+        "try",
+        "while",
+        "with",
+        "yield",
+    )
     SOFT_KEYWORDS = ()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from pegen.parser import simple_parser_main
+
     simple_parser_main(GeneratedParser)
