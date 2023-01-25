@@ -67,19 +67,15 @@ def transform(code: str) -> str:
   return "".join(ast_to_segments(tree, printfn))
 
 def transform_lines(lines):
-  print("transform_lines", lines)
   a = transform("".join(lines)).splitlines()
-  print("out", a)
   return a
 
 def hook_ipython():
   import IPython
   ip = IPython.get_ipython()
   if hasattr(ip, 'input_transformers_post'):
-    print("hooking new ip")
     ip.input_transformers_post.append(transform_lines)
   else:
-    print("hooking ip 5")
     # support IPython 5, which is used in Google Colab
     # https://ipython.org/ipython-doc/3/config/inputtransforms.html
     from IPython.core.inputtransformer import StatelessInputTransformer
