@@ -238,6 +238,7 @@ expressions:
     | expression (',' expression )+ [',']
     | expression ','
     | expression
+
 expression:
     | disjunction 'if' disjunction 'else' expression
     | disjunction
@@ -362,11 +363,11 @@ await_primary:
     | AWAIT primary
     | primary
 primary:
+    | p=primary u=units {('primary_with_units', p, u)}
     | primary '.' NAME
     | primary genexp
     | primary '(' [arguments] ')'
     | primary '[' slices ']'
-    | unit_atom
     | atom
 
 slices:
@@ -387,8 +388,6 @@ atom:
     | (list | listcomp)
     | (dict | set | dictcomp | setcomp)
     | '...'
-
-unit_atom: a=atom u=units {('unit_atom', a, u)}
 
 strings: STRING+
 list:
@@ -427,6 +426,7 @@ arguments:
 args:
     | ','.(starred_expression | named_expression !'=')+ [',' kwargs ]
     | kwargs
+
 kwargs:
     | ','.kwarg_or_starred+ ',' ','.kwarg_or_double_starred+
     | ','.kwarg_or_starred+

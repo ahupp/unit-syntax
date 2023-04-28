@@ -24,3 +24,16 @@ Fortress: https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.180.6323&rep
 ## TODO
 
 Test against various ipython and python versions
+Module import hook for arbitrary syntax transforms
+
+```
+# syntax: unit-literals
+```
+
+These don't compose very well though :(
+
+## Development
+
+To regenerate the parser:
+
+`python -m pegen grammar.txt -o unit_literals/parser.py`
