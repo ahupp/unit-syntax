@@ -1,16 +1,13 @@
-# unit-literals
 
-This package extends the python language to support literals with physical units:
+
+`unit-syntax` extends the Python language in Jupyter/IPython to support expressions with physical units:
 
   >>> speed = 5 m/s
   >>> distance = 20s * speed
 
-## Wait, what?
+## Why?
 
-This module is syntactic sugar to convert
-
-This module works by adding an IPython input hook, tokenizing the input, and
-transforming any numbers with units into a pint.Quantity.
+I often use python+jupyter as a calculator, and miss clarity and type checking of having
 
 ## Prior art
 
@@ -21,19 +18,20 @@ https://github.com/trzemecki/Unum
 
 Fortress: https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.180.6323&rep=rep1&type=pdf
 
-## TODO
-
-Test against various ipython and python versions
-Module import hook for arbitrary syntax transforms
-
-```
-# syntax: unit-literals
-```
-
-These don't compose very well though :(
 
 ## Development
 
 To regenerate the parser:
 
 `python -m pegen grammar.txt -o unit_literals/parser.py`
+
+Running tests:
+
+```
+ $ poetry install --with dev
+ $ poetry run pytest
+```
+
+## TODO
+
+* Test against various ipython and python versions

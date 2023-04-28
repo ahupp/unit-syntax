@@ -112,7 +112,7 @@ def ast_to_segments(node, output: OutputWriter):
         # retreive the children to direcly update the last token's end position
         first = first_child(node)
 
-        output.write_segment("unit_literals.Quantity(", first)
+        output.write_segment("unit_syntax.Quantity(", first)
         ast_to_segments(value_node, output)
         output.write_bare(', "')
         ast_to_segments(units_node, output)
@@ -135,22 +135,3 @@ def transform(code: str) -> str:
 
 def transform_lines(lines: list[str]) -> list[str]:
     return transform("".join(lines)).splitlines()
-
-
-def hook_ipython():
-    import IPython
-
-    ip = IPython.get_ipython()
-    if hasattr(ip, "input_transformers_post"):
-        ip.input_transformers_post.append(transform_lines)
-    else:
-        # support IPython 5, which is used in Google Colab
-        # https://ipython.org/ipython-doc/3/config/inputtransforms.html
-        from IPython.core.inputtransformer import StatelessInputTransformer
-
-        @StatelessInputTransformer.wrap
-        def fn(line):
-            return transform(line)
-
-        ip.input_splitter.logical_line_transforms.append(fn())
-        ip.input_transformer_manager.logical_line_transforms.append(fn())

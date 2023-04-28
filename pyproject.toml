@@ -1,9 +1,9 @@
 [tool.poetry]
-name = "unit-literals"
+name = "unit-syntax"
 version = "0.1.0"
 description = ""
 authors = ["Adam Hupp <adam@hupp.org>"]
-packages = [{include = "unit_literals"}]
+packages = [{include = "unit_syntax"}]
 
 [tool.poetry.dependencies]
 python = ">=3.8, < 4"
