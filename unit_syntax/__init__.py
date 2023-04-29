@@ -4,7 +4,6 @@ from typing import Iterator, Optional, Generator
 import pint
 from .parser import GeneratedParser
 from pegen.tokenizer import Tokenizer
-from pprint import pprint
 
 ureg = pint.UnitRegistry(auto_reduce_dimensions=True)
 
@@ -44,7 +43,7 @@ class SourcePosQuery:
         self.code_lines.append("")
 
     def between_pos(self, prev_end: Position, next_start: Position) -> Iterator[str]:
-        """returns the text between two tokens"""
+        """returns the text between two tokens, inclusive of prev_end and exclusive of next_start"""
 
         # convert to 0-based indexing because I'm not a maniac
         prev_end = prev_end[0] - 1, prev_end[1]
@@ -71,6 +70,12 @@ class OutputWriter:
         self.output = []
 
     def write_segment(self, lit: str, token: tokenize.TokenInfo, emit_gap=True):
+
+        # pegen rules of the form
+        #   '<sep>'.rule
+        #  match zero or more instances of `rule`` separated by `sep`, and sep is not included
+        # in the resulting tree.  Handle this include any un-emitted preceding text when emitting
+        # a token, except when we're actually emitting the translated units expressions.
         if emit_gap:
             gap = self.source.between_pos(self.prev_tok_end, token.start)
             self.output.extend(gap)
@@ -85,15 +90,15 @@ class OutputWriter:
         return "".join(self.output)
 
 
-def first_child(node):
+def first_token(node):
     if isinstance(node, list):
         for n in node:
             if n is not None:
-                return first_child(n)
+                return first_token(n)
     elif isinstance(node, tokenize.TokenInfo):
         return node
     elif isinstance(node, tuple):
-        return first_child(node[1])
+        return first_token(node[1])
     else:
         raise Exception("unknown node: ", node)
 
@@ -108,9 +113,10 @@ def ast_to_segments(node, output: OutputWriter):
         value_node = node[1]
         units_node = node[2]
 
-        # Gross hack: since we're customizing the output of the units and value
-        # retreive the children to direcly update the last token's end position
-        first = first_child(node)
+        # sinc we're emitting text that doesn't appear in the input code, we need to manually grab the
+        # first token of value node to ensure any preceding text is also emitted.  See comment in
+        # write_segment for more details.
+        first = first_token(node)
 
         output.write_segment("unit_syntax.Quantity(", first)
         ast_to_segments(value_node, output)
@@ -125,6 +131,7 @@ def ast_to_segments(node, output: OutputWriter):
 
 
 def transform(code: str) -> str:
+    """Transform a string of python with units into a standard python string"""
     tokens = generate_tokens(code)
     tree = parse(tokens)
     source_query = SourcePosQuery(code)
@@ -134,4 +141,4 @@ def transform(code: str) -> str:
 
 
 def transform_lines(lines: list[str]) -> list[str]:
-    return transform("".join(lines)).splitlines()
+    return transform("".join(lines)).splitlines(keepends=True)
