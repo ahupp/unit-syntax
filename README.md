@@ -8,10 +8,13 @@
 10 meter
 ```
 
-Units apply to the immediatly preceding "primary" term: a literal, variable, function call, or indexing operation.  The units term must start with an identifier and follows this grammar:
+Units apply to the immediatly preceding "primary" term: a literal, variable, function call, or indexing operation.  Put another way, they have maximum precedence: `a * 5 meters` is evaluated to `a * (5 meters)`.  
+
+The units term must start with an identifier and follows this grammar:
 
 ```
 units:
+    | '(' units ')'
     | NAME '/' units
     | NAME '*' units
     | NAME '**' NUMBER
@@ -26,7 +29,7 @@ Some examples to illustrate:
 x * 5 meters
 ```
 
-This is equivalent to `x * (5 meters)`, and desugars to `x * Quantity(5, "meters")`.  The units apply to the literal not the whole expression.
+This is equivalent to `x * (5 meters)`, and desugars to `x * Quantity(5, "meters")`.  The high precedence means units apply to the literal not the whole expression.
 
 `(88 miles / hours) furlongs / fortnight`
 
@@ -35,10 +38,13 @@ This creates a value of 88 miles per hour and then converts it to furlongs per f
 
 ```
 velocity = [5, 7] meters/second**2
+location = velocity * 2 seconds
 
+from numpy.linalg import norm
+distance = norm(location)
 ```
 
-Represents an acceleration vector
+Pint transparently supports numpy, so a list of values becomes a `numpy.array`.
 
 ## Why?  How?
 
@@ -75,4 +81,10 @@ Running tests:
  * Test against various ipython and python versions
  * Support standalone scripts through sys.meta_path
  * Check units at parse time
+ * Unit type hints, maybe checked with [@runtime_checkable](https://docs.python.org/3/library/typing.html#typing.runtime_checkable).  
+   ```
+   def speed(distance: Unit[meters], time: Unit[seconds]):
+      ...
+   ```
 
+    
