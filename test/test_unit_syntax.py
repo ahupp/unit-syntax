@@ -1,3 +1,4 @@
+from unit_syntax import transform
 import unit_syntax
 import pytest
 import numpy
@@ -19,10 +20,10 @@ second = 1024
 def dbg_transform(code):
     from pprint import pprint
 
-    tokens = list(unit_syntax.generate_tokens(code))
+    tokens = list(transform.generate_tokens(code))
     pprint(tokens)
-    pprint(unit_syntax.parse(iter(tokens)))
-    pprint(unit_syntax.transform(code))
+    pprint(transform.parse(iter(tokens)))
+    pprint(transform.transform(code))
 
 
 def do_mult(left, right):
@@ -30,7 +31,7 @@ def do_mult(left, right):
 
 
 def assert_quantity(code, value, units):
-    result = eval(unit_syntax.transform(code), globals())
+    result = eval(transform.transform(code), globals())
 
     if type(value) == float and type(result.magnitude) == float:
         assert result.magnitude == pytest.approx(value)

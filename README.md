@@ -1,5 +1,3 @@
-
-
 `unit-syntax` extends the Python language in Jupyter/IPython to support expressions with physical units:
 
 ```
@@ -8,7 +6,9 @@
 10 meter
 ```
 
-Units apply to the immediatly preceding "primary" term: a literal, variable, function call, or indexing operation.  Put another way, they have maximum precedence: `a * 5 meters` is evaluated to `a * (5 meters)`.  
+## Syntax
+
+Units apply to the immediately preceding "primary" term: a literal, variable, function call, or indexing operation.  Put another way, they have higher precedence than other operators: `a * 5 meters` is evaluated to `a * (5 meters)`.
 
 The units term must start with an identifier and follows this grammar:
 
@@ -19,11 +19,9 @@ units:
     | NAME '*' units
     | NAME '**' NUMBER
     | NAME
-
 ```
 
-Some examples to illustrate:
-
+## Examples
 
 ```
 x * 5 meters
@@ -31,10 +29,9 @@ x * 5 meters
 
 This is equivalent to `x * (5 meters)`, and desugars to `x * Quantity(5, "meters")`.  The high precedence means units apply to the literal not the whole expression.
 
-`(88 miles / hours) furlongs / fortnight`
+`(88 miles / hour) furlongs / fortnight`
 
 This creates a value of 88 miles per hour and then converts it to furlongs per fortnight (30064.3.., specifically).
-
 
 ```
 velocity = [5, 7] meters/second**2
@@ -45,6 +42,10 @@ distance = norm(location)
 ```
 
 Pint transparently supports numpy, so a list of values becomes a `numpy.array`.
+
+`10 cm * sin(45 degrees)`
+
+This is a syntax error because `sin` is parsed as part of the units; to resolve add parenthisize: `(10 cm) * sin(45 degrees)`
 
 ## Why?  How?
 
@@ -81,10 +82,15 @@ Running tests:
  * Test against various ipython and python versions
  * Support standalone scripts through sys.meta_path
  * Check units at parse time
- * Unit type hints, maybe checked with [@runtime_checkable](https://docs.python.org/3/library/typing.html#typing.runtime_checkable).  
+ * Unit type hints, maybe checked with [@runtime_checkable](https://docs.python.org/3/library/typing.html#typing.runtime_checkable).  More Pint typechecking [discussion](https://github.com/hgrecco/pint/issues/1166) 
    ```
    def speed(distance: Unit[meters], time: Unit[seconds]):
       ...
    ```
+ * Does not do the right thing when applied to generator expressions, e.g `(a for a in range(0, 4)) meters`
+ * Parenthisized units expressions
+ * `from unit_syntax import ipython`
+ * Demo colab notebook: https://colab.research.google.com/drive/1PInyLGZHnUzEuUVgMsLrUUNdCurXK7v1#scrollTo=JszzXmATY0TV
+ * Ensure it doesn't forcibly update ipython
+ 
 
-    

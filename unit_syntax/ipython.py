@@ -1,14 +1,15 @@
-from . import transform_lines
+from .transform import transform_lines
 
-
-def hook_ipython():
+def _hook_ipython():
     import IPython
 
     ip = IPython.get_ipython()
-    if hasattr(ip, "input_transformers_post"):
-        ip.input_transformers_post.append(transform_lines)
-    else:
+    if not hasattr(ip, "input_transformers_post"):
         raise ImportError("Unsupported IPython version")
 
+    ip.input_transformers_post.append(_transform_lines)
+    # ensure the module is still visible if imported via 
+    # `from unit_syntax import ipython` for some reason
+    ip.run_cell("import unit_syntax")    
 
-hook_ipython()
+_hook_ipython()
