@@ -335,8 +335,10 @@ shift_expr:
     | sum
 
 units:
+    | '(' units ')'
     | NAME '/' units
     | NAME '*' units
+    | NAME units
     | NAME '**' NUMBER
     | NAME
 

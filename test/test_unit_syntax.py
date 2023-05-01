@@ -43,7 +43,6 @@ def assert_quantity(code, value, units):
 
 
 def test_all():
-
     assert_quantity("12 meter", 12, "meter")
     assert_quantity("13 meter/s**2", 13, "meter/s**2")
     assert_quantity("2048 meter/second * 2 second", 4096, "meters")
@@ -56,6 +55,9 @@ def test_all():
     with pytest.raises(pint.errors.DimensionalityError):
         assert_quantity("2**4 meters", 16, "meters")
     assert_quantity("second * 1 meters", 1024, "meters")
+
+    assert_quantity("3 attoparsec liters", 3, "attoparsec*liters")
+    assert_quantity("37 tesla/(becquerel*second)", 37, "tesla/(becquerel*second)")
 
     # TODO
     # with pytest.raises(SyntaxError):

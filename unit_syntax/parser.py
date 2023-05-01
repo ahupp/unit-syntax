@@ -2277,8 +2277,17 @@ class GeneratedParser(Parser):
 
     @memoize
     def units(self) -> Optional[Any]:
-        # units: NAME '/' units | NAME '*' units | NAME '**' NUMBER | NAME
+        # units: '(' units ')' | NAME '/' units | NAME '*' units | NAME units | NAME '**' NUMBER | NAME
         mark = self._mark()
+        if (
+            (literal := self.expect('('))
+            and
+            (units := self.units())
+            and
+            (literal_1 := self.expect(')'))
+        ):
+            return [literal, units, literal_1];
+        self._reset(mark)
         if (
             (name := self.name())
             and
@@ -2296,6 +2305,13 @@ class GeneratedParser(Parser):
             (units := self.units())
         ):
             return [name, literal, units];
+        self._reset(mark)
+        if (
+            (name := self.name())
+            and
+            (units := self.units())
+        ):
+            return [name, units];
         self._reset(mark)
         if (
             (name := self.name())

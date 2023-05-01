@@ -82,15 +82,14 @@ Running tests:
  * Test against various ipython and python versions
  * Support standalone scripts through sys.meta_path
  * Check units at parse time
- * Unit type hints, maybe checked with [@runtime_checkable](https://docs.python.org/3/library/typing.html#typing.runtime_checkable).  More Pint typechecking [discussion](https://github.com/hgrecco/pint/issues/1166) 
+ * Unit type hints, maybe checked with [@runtime_checkable](https://docs.python.org/3/library/typing.html#typing.runtime_checkable).  More Pint typechecking [discussion](https://github.com/hgrecco/pint/issues/1166)
    ```
    def speed(distance: Unit[meters], time: Unit[seconds]):
       ...
    ```
  * Does not do the right thing when applied to generator expressions, e.g `(a for a in range(0, 4)) meters`
- * Parenthisized units expressions
  * `from unit_syntax import ipython`
  * Demo colab notebook: https://colab.research.google.com/drive/1PInyLGZHnUzEuUVgMsLrUUNdCurXK7v1#scrollTo=JszzXmATY0TV
  * Ensure it doesn't forcibly update ipython
- 
+
 
