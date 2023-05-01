@@ -16,7 +16,8 @@ Install the package with `pip install unit_syntax`.  Tip: In Google Colab, you c
 To enable unit-syntax in a Jupyter/IPython session run:
 
 ```python
-import unit_syntax.ipython
+import unit_syntax
+unit_syntax.enable_ipython()
 ```
 
 Note that in Jupyter this must be run in its own cell before any units expressions are evaluated.
@@ -88,6 +89,18 @@ F# (an OCaml derivative from Microsoft) also [has first class support for units]
 The Julia package [Unitful.jl](http://painterqubits.github.io/Unitful.jl/stable/)
 
 
+## Open questions and future work
+
+ * Fortress uses an `in` operator to apply units to a non-literal value, e.g `x in meters`.  This has the advantage of being unambiguous regardless of parenthesization.  In python this would conflcit with `value in [a, b, c]`, but `as` is
+
+  
+ * Test against various ipython and python versions
+ * Support standalone scripts through sys.meta_path
+ * Check units at parse time
+ * Unit type hints, maybe checked with [@runtime_checkable](https://docs.python.org/3/library/typing.html#typing.runtime_checkable).  More Pint typechecking [discussion](https://github.com/hgrecco/pint/issues/1166)
+ * Pint does not do the right thing when applied to generator expressions, e.g `(a for a in range(0, 4)) meters`
+ * Demo colab notebook: https://colab.research.google.com/drive/1PInyLGZHnUzEuUVgMsLrUUNdCurXK7v1#scrollTo=JszzXmATY0TV
+
 
 ## Development
 
@@ -101,22 +114,3 @@ Running tests:
  $ poetry install --with dev
  $ poetry run pytest
 ```
-
-## Open questions and future work
-
- * Fortress uses an `in` operator to apply units to a non-literal value, e.g `x in meters`.  This has the advantage of being unambiguous regardless of parenthesization, so you could write `x (meter seconds)/parsec` without conflicting with a function call grammar rules.
-
- * Test against various ipython and python versions
- * Support standalone scripts through sys.meta_path
- * Check units at parse time
- * Unit type hints, maybe checked with [@runtime_checkable](https://docs.python.org/3/library/typing.html#typing.runtime_checkable).  More Pint typechecking [discussion](https://github.com/hgrecco/pint/issues/1166)
-   ```
-   def speed(distance: Unit[meters], time: Unit[seconds]):
-      ...
-   ```
- * Pint does not do the right thing when applied to generator expressions, e.g `(a for a in range(0, 4)) meters`
- * `from unit_syntax import ipython`
- * Demo colab notebook: https://colab.research.google.com/drive/1PInyLGZHnUzEuUVgMsLrUUNdCurXK7v1#scrollTo=JszzXmATY0TV
- * Ensure it doesn't forcibly update ipython
-
-
