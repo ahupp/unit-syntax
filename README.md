@@ -11,7 +11,11 @@ Behind the scenes this is translated into standard Python that uses the excellen
 
 ## Getting Started
 
-Install the package with `pip install unit_syntax`.  Tip: In Google Colab, you can run this directly in a cell by prefixing the command with `!`.
+Install the package: 
+
+```shell
+$ pip install unit-syntax
+```
 
 To enable unit-syntax in a Jupyter/IPython session run:
 
@@ -20,9 +24,9 @@ import unit_syntax
 unit_syntax.enable_ipython()
 ```
 
-Note that in Jupyter this must be run in its own cell before any units expressions are evaluated.
+Note: in Jupyter this must be run in its own cell before any units expressions are evaluated.
 
-## Syntax
+## Usage
 
 Units apply to the preceding value (literal, variable, function call or indexing), and have higher precedence than other operators:
 
@@ -38,7 +42,7 @@ Values can be converted to another measurement system:
 (88 miles / hour) furlongs / fortnight
 ```
 
-Pint transparently supports numpy when available:
+Pint transparently [supports numpy](https://pint.readthedocs.io/en/stable/user/numpy.html) when available:
 
 ```python
 velocity = [5, 7] meters/second**2
@@ -46,20 +50,10 @@ location = velocity * 2 seconds
 distance_traveled = numpy.linalg.norm(location)
 ```
 
-Units must start with an identifier
-
-```python
-10 cm * sin(45 degrees)
-```
-
-This is a syntax error because `sin` is parsed as part of the units; to resolve add parentheses: `(10 cm) * sin(45 degrees)`
-
-
 The units term follows this grammar:
 
 ```
 units:
-    | '(' units ')'
     | NAME '/' units
     | NAME '*' units
     | NAME units
@@ -88,25 +82,25 @@ F# (an OCaml derivative from Microsoft) also [has first class support for units]
 
 The Julia package [Unitful.jl](http://painterqubits.github.io/Unitful.jl/stable/)
 
-
 ## Open questions and future work
 
  * Fortress uses an `in` operator to apply units to a non-literal value, e.g `x in meters`.  This has the advantage of being unambiguous regardless of parenthesization.  In python this would conflcit with `value in [a, b, c]`, but `as` is
 
-  
+ * Move to tree-sitter, which will be simpler and has a chance of providing syntax highlighting
  * Test against various ipython and python versions
  * Support standalone scripts through sys.meta_path
  * Check units at parse time
  * Unit type hints, maybe checked with [@runtime_checkable](https://docs.python.org/3/library/typing.html#typing.runtime_checkable).  More Pint typechecking [discussion](https://github.com/hgrecco/pint/issues/1166)
  * Pint does not do the right thing when applied to generator expressions, e.g `(a for a in range(0, 4)) meters`
  * Demo colab notebook: https://colab.research.google.com/drive/1PInyLGZHnUzEuUVgMsLrUUNdCurXK7v1#scrollTo=JszzXmATY0TV
-
+ * Describe parsing ambuguity like `1 meters * sin(45 degrees)`
+ * Figure out story around parenthesization
 
 ## Development
 
 To regenerate the parser:
 
-`python -m pegen grammar.txt -o unit_literals/parser.py`
+`python -m pegen grammar.txt -o unit_syntax/parser.py`
 
 Running tests:
 
