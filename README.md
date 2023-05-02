@@ -11,7 +11,7 @@ Behind the scenes this is translated into standard Python that uses the excellen
 
 ## Getting Started
 
-Install the package: 
+Install the package:
 
 ```shell
 $ pip install unit-syntax
@@ -28,7 +28,7 @@ Note: in Jupyter this must be run in its own cell before any units expressions a
 
 ## Usage
 
-Units apply to the preceding value (literal, variable, function call or indexing), and have higher precedence than other operators:
+Units apply to the preceding value (a literal, variable, function call or indexing), and have higher precedence than other operators:
 
 ```python
 x * 1.21 gigawatts
@@ -61,8 +61,6 @@ units:
     | NAME
 ```
 
-The syntax takes advantage of the fact that that in python its illegal for a NAME to follow a "primary" (literal, function call etc), so there's no ambiguity.  
-
 ## Why?  How?
 
 I like using Python+[Jupyter Notebook](https://jupyter.org/) as a calculator for physical problems and often wish it had the clarity and type checking of explicit units. [Pint](https://pint.readthedocs.io/) is great, but (IMO) its necessary verbosity makes it hard to see the underlying calculation that's going.
@@ -72,6 +70,9 @@ I like using Python+[Jupyter Notebook](https://jupyter.org/) as a calculator for
 This is possible without ambiguity in the python grammar because it's otherwise invalid for a "primary" (literal, function call etc) to be immediately followed by 
 
 `unit-syntax` cannot (currently) be used for standalone python scripts outside of IPython/Jupyter, but that's in principle possible through [meta_path import hooks](https://docs.python.org/3/reference/import.html#the-meta-path).
+
+The syntax takes advantage of the fact that that in python its illegal for a NAME to follow a "primary" (literal, function call etc), so there's no ambiguity.
+
 
 ## Prior Art
 
