@@ -23,13 +23,13 @@ jobs:
           path: dist/**/*
 
 
-  pypi-publish:
+  pypi-publish-test:
     needs: [build]
-    name: Upload release to PyPI
+    name: Upload release to Test PyPI
     runs-on: ubuntu-latest
     environment:
-      name: pypi
-      url: https://pypi.org/p/unit-syntax
+      name: testpypi
+      url: https://test.pypi.org/p/unit-syntax
     permissions:
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     steps:
