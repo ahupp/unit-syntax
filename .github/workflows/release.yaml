@@ -13,7 +13,7 @@ jobs:
         run: |
           python -m pip install poetry
           poetry install --with dev
-          pytest
+          poetry run pytest
           poetry build     
       - uses: actions/upload-artifact@v3
         name: Upload build artifacts
