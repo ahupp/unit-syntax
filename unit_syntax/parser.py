@@ -2277,41 +2277,32 @@ class GeneratedParser(Parser):
 
     @memoize
     def units(self) -> Optional[Any]:
-        # units: '(' units ')' | NAME '/' units | NAME '*' units | NAME units | NAME '**' NUMBER | NAME
+        # units: NAME '/' units_group | NAME '*' units_group | NAME units_group | NAME '**' NUMBER | NAME
         mark = self._mark()
-        if (
-            (literal := self.expect('('))
-            and
-            (units := self.units())
-            and
-            (literal_1 := self.expect(')'))
-        ):
-            return [literal, units, literal_1];
-        self._reset(mark)
         if (
             (name := self.name())
             and
             (literal := self.expect('/'))
             and
-            (units := self.units())
+            (units_group := self.units_group())
         ):
-            return [name, literal, units];
+            return [name, literal, units_group];
         self._reset(mark)
         if (
             (name := self.name())
             and
             (literal := self.expect('*'))
             and
-            (units := self.units())
+            (units_group := self.units_group())
         ):
-            return [name, literal, units];
+            return [name, literal, units_group];
         self._reset(mark)
         if (
             (name := self.name())
             and
-            (units := self.units())
+            (units_group := self.units_group())
         ):
-            return [name, units];
+            return [name, units_group];
         self._reset(mark)
         if (
             (name := self.name())
@@ -2326,6 +2317,26 @@ class GeneratedParser(Parser):
             (name := self.name())
         ):
             return name;
+        self._reset(mark)
+        return None;
+
+    @memoize
+    def units_group(self) -> Optional[Any]:
+        # units_group: '(' units_group ')' | units
+        mark = self._mark()
+        if (
+            (literal := self.expect('('))
+            and
+            (units_group := self.units_group())
+            and
+            (literal_1 := self.expect(')'))
+        ):
+            return [literal, units_group, literal_1];
+        self._reset(mark)
+        if (
+            (units := self.units())
+        ):
+            return units;
         self._reset(mark)
         return None;
 

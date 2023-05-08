@@ -16,6 +16,8 @@ dict_test = {"value": 37}
 
 second = 1024
 
+seven_furlong = unit_syntax.ureg.Quantity(7.0, "furlong")
+
 
 def dbg_transform(code):
     from pprint import pprint
@@ -28,6 +30,10 @@ def dbg_transform(code):
 
 def do_mult(left, right):
     return left * right
+
+
+def id(v):
+    return v
 
 
 def assert_quantity(code, value, units):
@@ -58,6 +64,9 @@ def test_all():
 
     assert_quantity("3 attoparsec liters", 3, "attoparsec*liters")
     assert_quantity("37 tesla/(becquerel*second)", 37, "tesla/(becquerel*second)")
+
+    assert_quantity("3.0*id(seven_furlong furlong)", 21.0, "furlongs")
+    assert_quantity("(seven_furlong furlong)*id(3.0)", 21.0, "furlongs")
 
     # TODO
     # with pytest.raises(SyntaxError):

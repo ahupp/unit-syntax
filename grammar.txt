@@ -335,12 +335,15 @@ shift_expr:
     | sum
 
 units:
-    | '(' units ')'
-    | NAME '/' units
-    | NAME '*' units
-    | NAME units
+    | NAME '/' units_group
+    | NAME '*' units_group
+    | NAME units_group
     | NAME '**' NUMBER
     | NAME
+
+units_group:
+    | '(' units_group ')'
+    | units
 
 sum:
     | sum '+' term
