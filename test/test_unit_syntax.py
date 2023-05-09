@@ -37,7 +37,10 @@ def id(v):
 
 
 def assert_quantity(code, value, units):
-    result = eval(transform.transform(code), globals())
+    code_assign = "result = " + code
+    glo = dict(globals())
+    exec(transform.transform(code_assign), glo)
+    result = glo["result"]
 
     if type(value) == float and type(result.magnitude) == float:
         assert result.magnitude == pytest.approx(value)
