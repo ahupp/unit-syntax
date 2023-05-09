@@ -36,11 +36,13 @@ def id(v):
     return v
 
 
-def assert_quantity(code, value, units):
-    code_assign = "result = " + code
+def assert_quantity_exec(code, value, units):
     glo = dict(globals())
-    exec(transform.transform(code_assign), glo)
+    exec(transform.transform(code), glo)
     result = glo["result"]
+
+    u = unit_syntax.ureg.Quantity(value, units)
+    result = result.to(u.units)
 
     if type(value) == float and type(result.magnitude) == float:
         assert result.magnitude == pytest.approx(value)
@@ -48,10 +50,29 @@ def assert_quantity(code, value, units):
         assert numpy.all(result.magnitude == value)
     else:
         assert result.magnitude == value
-    assert result.units == unit_syntax.ureg.Unit(units)
+    assert result.units == u.units
+
+
+def assert_quantity(code, value, units):
+    code_assign = "result = " + code
+    assert_quantity_exec(code_assign, value, units)
 
 
 def test_all():
+    assert_quantity_exec(
+        """
+from math import *
+def surface_area(radius):
+  return 2*pi*(radius meters)**2
+
+def total_surface_force(radius):
+    return (101 kilopascal)*surface_area(radius)
+result = total_surface_force(1.0)
+""",
+        634601.716025,
+        "N",
+    )
+
     assert_quantity("12 meter", 12, "meter")
     assert_quantity("13 meter/s**2", 13, "meter/s**2")
     assert_quantity("2048 meter/second * 2 second", 4096, "meters")

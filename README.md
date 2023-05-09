@@ -1,7 +1,6 @@
 `unit-syntax` extends the Python language in Jupyter/IPython to support expressions with physical units:
 
 ```python
->>> import unit_syntax.ipython
 >>> speed = 5 meters/second
 >>> 2 seconds * speed
 10 meter
@@ -36,7 +35,7 @@ Units apply to the preceding value (a literal, variable, function call or indexi
 x * 1.21 gigawatts
 ```
 
-This is equivalent to `x * (1.21 gigawatts)`, and desugars to something like `x * Quantity(1.21, "gigawatts")`.  The high precedence means units apply to the literal not the whole expression.
+This is equivalent to `x * (1.21 gigawatts)`, and desugars to something like `x * Quantity(1.21, "gigawatts")`. The high precedence means units apply to the literal not the whole expression.
 
 Values can be converted to another measurement system:
 
@@ -52,34 +51,36 @@ location = velocity * 2 seconds
 distance_traveled = numpy.linalg.norm(location)
 ```
 
+## The Grammar
+
 The units term follows this grammar:
 
 ```
 units:
-    | NAME '/' units
-    | NAME '*' units
-    | NAME units
+    | NAME '/' units_group
+    | NAME '*' units_group
+    | NAME units_group
     | NAME '**' NUMBER
     | NAME
+
+units_group:
+    | '(' units ')'
+    | units
 ```
 
-## Why?  How?
+## Why? How?
 
 I like using Python+[Jupyter Notebook](https://jupyter.org/) as a calculator for physical problems and often wish it had the clarity and type checking of explicit units. [Pint](https://pint.readthedocs.io/) is great, but (IMO) its necessary verbosity makes it hard to see the underlying calculation that's going.
 
-`unit-syntax` is an IPython/Jupyter [custom input transformer](https://ipython.readthedocs.io/en/stable/config/inputtransforms.html) that rewrites expressions with units into calls to `pint.Quantity`.
-
-This is possible without ambiguity in the python grammar because it's otherwise invalid for a "primary" (literal, function call etc) to be immediately followed by 
+`unit-syntax` is an IPython/Jupyter [custom input transformer](https://ipython.readthedocs.io/en/stable/config/inputtransforms.html) that rewrites expressions with units into calls to `pint.Quantity`. The parser is a lightly modified version of the Python grammar using the same parser generator ([pegen](https://github.com/we-like-parsers/pegen)) as Python itself.
 
 `unit-syntax` cannot (currently) be used for standalone python scripts outside of IPython/Jupyter, but that's in principle possible through [meta_path import hooks](https://docs.python.org/3/reference/import.html#the-meta-path).
 
 The syntax takes advantage of the fact that that in python its illegal for a NAME to follow a "primary" (literal, function call etc), so there's no ambiguity.
 
-
 ## Prior Art
 
-The immediate inspriration of `unit-syntax` is a language called [Fortress](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.180.6323&rep=rep1&type=pdf
-) from Sun Microsystems.  Fortress was intended as a modern Fortran, and had first-class support for units in both the syntax and type system.
+The immediate inspriration of `unit-syntax` is a language called [Fortress](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.180.6323&rep=rep1&type=pdf) from Sun Microsystems. Fortress was intended as a modern Fortran, and had first-class support for units in both the syntax and type system.
 
 F# (an OCaml derivative from Microsoft) also [has first class support for units](https://en.wikibooks.org/wiki/F_Sharp_Programming/Units_of_Measure).
 
@@ -87,17 +88,17 @@ The Julia package [Unitful.jl](http://painterqubits.github.io/Unitful.jl/stable/
 
 ## Open questions and future work
 
- * Fortress uses an `in` operator to apply units to a non-literal value, e.g `x in meters`.  This has the advantage of being unambiguous regardless of parenthesization.  In python this would conflcit with `value in [a, b, c]`, but `as` is
+- Fortress uses an `in` operator to apply units to a non-literal value, e.g `x in meters`. This has the advantage of being unambiguous regardless of parenthesization. In python this would conflcit with `value in [a, b, c]`, but `as` is
 
- * Move to tree-sitter, which will be simpler and has a chance of providing syntax highlighting
- * Test against various ipython and python versions
- * Support standalone scripts through sys.meta_path
- * Check units at parse time
- * Unit type hints, maybe checked with [@runtime_checkable](https://docs.python.org/3/library/typing.html#typing.runtime_checkable).  More Pint typechecking [discussion](https://github.com/hgrecco/pint/issues/1166)
- * Pint does not do the right thing when applied to generator expressions, e.g `(a for a in range(0, 4)) meters`
- * Demo colab notebook: https://colab.research.google.com/drive/1PInyLGZHnUzEuUVgMsLrUUNdCurXK7v1#scrollTo=JszzXmATY0TV
- * Describe parsing ambuguity like `1 meters * sin(45 degrees)`
- * Figure out story around parenthesization
+- Move to tree-sitter, which will be simpler and has a chance of providing syntax highlighting
+- Test against various ipython and python versions
+- Support standalone scripts through sys.meta_path
+- Check units at parse time
+- Unit type hints, maybe checked with [@runtime_checkable](https://docs.python.org/3/library/typing.html#typing.runtime_checkable). More Pint typechecking [discussion](https://github.com/hgrecco/pint/issues/1166)
+- Pint does not do the right thing when applied to generator expressions, e.g `(a for a in range(0, 4)) meters`
+- Demo colab notebook: https://colab.research.google.com/drive/1PInyLGZHnUzEuUVgMsLrUUNdCurXK7v1#scrollTo=JszzXmATY0TV
+- Describe parsing ambuguity like `1 meters * sin(45 degrees)`
+- Figure out story around parenthesization
 
 ## Development
 
@@ -114,16 +115,13 @@ Running tests:
 
 ## Future work and open questions
 
- * Parenthisized units expressions
- * Demo colab notebook
- * Move to tree-sitter so there's a chance of getting syntax highlighting
- * Jupyter syntax checks
- * Typography of output
- * Test against various ipython and python versions
- * Support standalone scripts through sys.meta_path
- * Check units at parse time
- * Unit type hints, maybe checked with [@runtime_checkable](https://docs.python.org/3/library/typing.html#typing.runtime_checkable).  More Pint typechecking [discussion](https://github.com/hgrecco/pint/issues/1166) 
- * Does not do the right thing when applied to generator expressions, e.g `(a for a in range(0, 4)) meters`
-
-
- 
+- Parenthisized units expressions
+- Demo colab notebook
+- Move to tree-sitter so there's a chance of getting syntax highlighting
+- Jupyter syntax checks
+- Typography of output
+- Test against various ipython and python versions
+- Support standalone scripts through sys.meta_path
+- Check units at parse time
+- Unit type hints, maybe checked with [@runtime_checkable](https://docs.python.org/3/library/typing.html#typing.runtime_checkable). More Pint typechecking [discussion](https://github.com/hgrecco/pint/issues/1166)
+- Does not do the right thing when applied to generator expressions, e.g `(a for a in range(0, 4)) meters`

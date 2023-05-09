@@ -342,7 +342,7 @@ units:
     | NAME
 
 units_group:
-    | '(' units_group ')'
+    | '(' units ')'
     | units
 
 sum:

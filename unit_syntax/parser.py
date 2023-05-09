@@ -2322,16 +2322,16 @@ class GeneratedParser(Parser):
 
     @memoize
     def units_group(self) -> Optional[Any]:
-        # units_group: '(' units_group ')' | units
+        # units_group: '(' units ')' | units
         mark = self._mark()
         if (
             (literal := self.expect('('))
             and
-            (units_group := self.units_group())
+            (units := self.units())
             and
             (literal_1 := self.expect(')'))
         ):
-            return [literal, units_group, literal_1];
+            return [literal, units, literal_1];
         self._reset(mark)
         if (
             (units := self.units())
