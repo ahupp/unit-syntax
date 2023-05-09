@@ -86,20 +86,6 @@ F# (an OCaml derivative from Microsoft) also [has first class support for units]
 
 The Julia package [Unitful.jl](http://painterqubits.github.io/Unitful.jl/stable/)
 
-## Open questions and future work
-
-- Fortress uses an `in` operator to apply units to a non-literal value, e.g `x in meters`. This has the advantage of being unambiguous regardless of parenthesization. In python this would conflcit with `value in [a, b, c]`, but `as` is
-
-- Move to tree-sitter, which will be simpler and has a chance of providing syntax highlighting
-- Test against various ipython and python versions
-- Support standalone scripts through sys.meta_path
-- Check units at parse time
-- Unit type hints, maybe checked with [@runtime_checkable](https://docs.python.org/3/library/typing.html#typing.runtime_checkable). More Pint typechecking [discussion](https://github.com/hgrecco/pint/issues/1166)
-- Pint does not do the right thing when applied to generator expressions, e.g `(a for a in range(0, 4)) meters`
-- Demo colab notebook: https://colab.research.google.com/drive/1PInyLGZHnUzEuUVgMsLrUUNdCurXK7v1#scrollTo=JszzXmATY0TV
-- Describe parsing ambuguity like `1 meters * sin(45 degrees)`
-- Figure out story around parenthesization
-
 ## Development
 
 To regenerate the parser:
@@ -115,13 +101,13 @@ Running tests:
 
 ## Future work and open questions
 
-- Parenthisized units expressions
-- Demo colab notebook
-- Move to tree-sitter so there's a chance of getting syntax highlighting
-- Jupyter syntax checks
-- Typography of output
+- Fortress uses an `in` operator to apply units to a non-literal value, e.g `x in meters`. This has the advantage of being unambiguous regardless of parenthesization. In python this would conflcit with `value in [a, b, c]`, but `as` is
+- Move to tree-sitter, which will be simpler and has a chance of providing syntax highlighting
 - Test against various ipython and python versions
 - Support standalone scripts through sys.meta_path
 - Check units at parse time
 - Unit type hints, maybe checked with [@runtime_checkable](https://docs.python.org/3/library/typing.html#typing.runtime_checkable). More Pint typechecking [discussion](https://github.com/hgrecco/pint/issues/1166)
-- Does not do the right thing when applied to generator expressions, e.g `(a for a in range(0, 4)) meters`
+- Pint does not do the right thing when applied to generator expressions, e.g `(a for a in range(0, 4)) meters`
+- Expand the demo Colab notebook
+- Detail parsing ... nuances e.g `1 meters * sin(45 degrees)`
+- Typography of output
