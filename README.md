@@ -41,9 +41,10 @@ Values can be converted to another measurement system:
 
 ```python
 (88 miles / hour) furlongs / fortnight
+(68 degF) degC
 ```
 
-Pint transparently [supports numpy](https://pint.readthedocs.io/en/stable/user/numpy.html) when available:
+Pint transparently [supports Numpy](https://pint.readthedocs.io/en/stable/user/numpy.html) when available:
 
 ```python
 velocity = [5, 7] meters/second**2
@@ -53,7 +54,7 @@ distance_traveled = numpy.linalg.norm(location)
 
 ## The Grammar
 
-The units term follows this grammar:
+The units syntax follows this grammar:
 
 ```
 units:
@@ -68,15 +69,20 @@ units_group:
     | units
 ```
 
+Some important things to notice:
+
+- Units _must_ begin with a NAME (e.g [a-zA-Z_]+). `units-syntax` takes advantage of the fact that the standard Python grammar does not allow a NAME to follow a `primary` (variable, literal, function call etc) rule. This means you cannot start a units expression with parenthesized units, e.g, `x (meters/second)` since that's ambiguous with a regular function call.
+- Units are matched greedily. So `x meters*sin(45 degrees)` is a syntax error because `meters*sin(angle)` is interpreted as a units expression.
+
 ## Why? How?
 
-I like using Python+[Jupyter Notebook](https://jupyter.org/) as a calculator for physical problems and often wish it had the clarity and type checking of explicit units. [Pint](https://pint.readthedocs.io/) is great, but (IMO) its necessary verbosity makes it hard to see the underlying calculation that's going.
+I like using Python+[Jupyter Notebook](https://jupyter.org/) as a calculator for physical problems and often wish it had the clarity and type checking of explicit units. [Pint](https://pint.readthedocs.io/) is great, but its (necessary) verbosity makes it hard to see the underlying calculation that's going.
 
 `unit-syntax` is an IPython/Jupyter [custom input transformer](https://ipython.readthedocs.io/en/stable/config/inputtransforms.html) that rewrites expressions with units into calls to `pint.Quantity`. The parser is a lightly modified version of the Python grammar using the same parser generator ([pegen](https://github.com/we-like-parsers/pegen)) as Python itself.
 
 `unit-syntax` cannot (currently) be used for standalone python scripts outside of IPython/Jupyter, but that's in principle possible through [meta_path import hooks](https://docs.python.org/3/reference/import.html#the-meta-path).
 
-The syntax takes advantage of the fact that that in python its illegal for a NAME to follow a "primary" (literal, function call etc), so there's no ambiguity.
+The parser is built with [pegen](https://github.com/we-like-parsers/pegen), which is a standalone version of the parser generator used by Python itself. The grammer is a lightly modified version of the canonical python grammar
 
 ## Prior Art
 
@@ -101,13 +107,12 @@ Running tests:
 
 ## Future work and open questions
 
-- Fortress uses an `in` operator to apply units to a non-literal value, e.g `x in meters`. This has the advantage of being unambiguous regardless of parenthesization. In python this would conflcit with `value in [a, b, c]`, but `as` is
+- Fortress uses an `in` operator to apply units to a non-literal value, e.g `x in meters`. This has the advantage of being unambiguous regardless of parenthesization. In python this would conflcit with `value in [a, b, c]`, but `as` reads similarly and has similar syntactic benefits.
 - Move to tree-sitter, which will be simpler and has a chance of providing syntax highlighting
 - Test against various ipython and python versions
 - Support standalone scripts through sys.meta_path
 - Check units at parse time
 - Unit type hints, maybe checked with [@runtime_checkable](https://docs.python.org/3/library/typing.html#typing.runtime_checkable). More Pint typechecking [discussion](https://github.com/hgrecco/pint/issues/1166)
-- Pint does not do the right thing when applied to generator expressions, e.g `(a for a in range(0, 4)) meters`
 - Expand the demo Colab notebook
-- Detail parsing ... nuances e.g `1 meters * sin(45 degrees)`
+- Detail parsing.. nuances e.g `1 meters * sin(45 degrees)`
 - Typography of output
