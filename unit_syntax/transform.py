@@ -6,6 +6,7 @@ from pegen.tokenizer import Tokenizer
 
 Position = tuple[int, int]
 
+
 class SourcePosQuery:
     """Return source ranges between two (line, column) pairs"""
 
@@ -42,7 +43,6 @@ class OutputWriter:
         self.output = []
 
     def write_segment(self, lit: str, token: tokenize.TokenInfo, emit_gap=True):
-
         # pegen rules of the form
         #   '<sep>'.rule
         #  match zero or more instances of `rule`` separated by `sep`, and sep is not included
@@ -104,8 +104,10 @@ def ast_to_segments(node, output: OutputWriter):
     else:
         raise Exception("unknown node: ", node)
 
+
 def generate_tokens(code: str) -> Iterator[tokenize.TokenInfo]:
     return tokenize.generate_tokens(StringIO(code).readline)
+
 
 def parse(tokens: Iterator[tokenize.TokenInfo]):
     VERBOSE = False
