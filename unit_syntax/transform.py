@@ -42,15 +42,14 @@ class OutputWriter:
         self.prev_tok_end = (0, 0)
         self.output = []
 
-    def write_segment(self, lit: str, token: tokenize.TokenInfo, emit_gap=True):
+    def write_segment(self, lit: str, token: tokenize.TokenInfo):
         # pegen rules of the form
         #   '<sep>'.rule
         #  match zero or more instances of `rule`` separated by `sep`, and sep is not included
         # in the resulting tree.  Handle this include any un-emitted preceding text when emitting
         # a token, except when we're actually emitting the translated units expressions.
-        if emit_gap:
-            gap = self.source.between_pos(self.prev_tok_end, token.start)
-            self.output.extend(gap)
+        gap = self.source.between_pos(self.prev_tok_end, token.start)
+        self.output.extend(gap)
         if token.end > self.prev_tok_end:
             self.prev_tok_end = token.end
         self.output.append(lit)
@@ -84,7 +83,7 @@ def ast_to_segments(node, output: OutputWriter):
             ast_to_segments(child, output)
     elif isinstance(node, tokenize.TokenInfo):
         output.write_segment(node.string, node)
-    elif isinstance(node, tuple) and node[0] == "primary_with_units":
+    elif isinstance(node, tuple) and node[0] == "value_with_units":
         value_node = node[1]
         units_node = node[2]
 
@@ -96,6 +95,7 @@ def ast_to_segments(node, output: OutputWriter):
         output.write_segment("unit_syntax.Quantity(", first)
         ast_to_segments(value_node, output)
         output.write_bare(', "')
+        output.prev_tok_end = first_token(units_node).start
         ast_to_segments(units_node, output)
         output.write_bare('")')
     elif node is None:

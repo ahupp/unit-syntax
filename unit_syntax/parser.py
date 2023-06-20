@@ -1645,7 +1645,27 @@ class GeneratedParser(Parser):
 
     @memoize
     def expression(self) -> Optional[Any]:
-        # expression: disjunction 'if' disjunction 'else' expression | disjunction | lambdef
+        # expression: expression_without_units 'as' units | expression_without_units
+        mark = self._mark()
+        if (
+            (e := self.expression_without_units())
+            and
+            (self.expect('as'))
+            and
+            (u := self.units())
+        ):
+            return ( 'value_with_units' , e , u );
+        self._reset(mark)
+        if (
+            (expression_without_units := self.expression_without_units())
+        ):
+            return expression_without_units;
+        self._reset(mark)
+        return None;
+
+    @memoize
+    def expression_without_units(self) -> Optional[Any]:
+        # expression_without_units: disjunction 'if' disjunction 'else' expression | disjunction | lambdef
         mark = self._mark()
         if (
             (disjunction := self.disjunction())
@@ -2275,55 +2295,44 @@ class GeneratedParser(Parser):
         self._reset(mark)
         return None;
 
-    @memoize
+    @memoize_left_rec
     def units(self) -> Optional[Any]:
-        # units: NAME '/' units_group | NAME '*' units_group | NAME units_group | NAME '**' NUMBER | NAME
+        # units: units '/' units | units '*' units | units units | units '**' NUMBER | '(' units ')' | NAME
         mark = self._mark()
         if (
-            (name := self.name())
+            (units := self.units())
             and
             (literal := self.expect('/'))
             and
-            (units_group := self.units_group())
+            (units_1 := self.units())
         ):
-            return [name, literal, units_group];
+            return [units, literal, units_1];
         self._reset(mark)
         if (
-            (name := self.name())
+            (units := self.units())
             and
             (literal := self.expect('*'))
             and
-            (units_group := self.units_group())
+            (units_1 := self.units())
         ):
-            return [name, literal, units_group];
+            return [units, literal, units_1];
         self._reset(mark)
         if (
-            (name := self.name())
+            (units := self.units())
             and
-            (units_group := self.units_group())
+            (units_1 := self.units())
         ):
-            return [name, units_group];
+            return [units, units_1];
         self._reset(mark)
         if (
-            (name := self.name())
+            (units := self.units())
             and
             (literal := self.expect('**'))
             and
             (number := self.number())
         ):
-            return [name, literal, number];
+            return [units, literal, number];
         self._reset(mark)
-        if (
-            (name := self.name())
-        ):
-            return name;
-        self._reset(mark)
-        return None;
-
-    @memoize
-    def units_group(self) -> Optional[Any]:
-        # units_group: '(' units ')' | units
-        mark = self._mark()
         if (
             (literal := self.expect('('))
             and
@@ -2334,9 +2343,9 @@ class GeneratedParser(Parser):
             return [literal, units, literal_1];
         self._reset(mark)
         if (
-            (units := self.units())
+            (name := self.name())
         ):
-            return units;
+            return name;
         self._reset(mark)
         return None;
 
@@ -2497,15 +2506,8 @@ class GeneratedParser(Parser):
 
     @memoize_left_rec
     def primary(self) -> Optional[Any]:
-        # primary: primary units | primary '.' NAME | primary genexp | primary '(' arguments? ')' | primary '[' slices ']' | atom
+        # primary: primary '.' NAME | primary genexp | primary '(' arguments? ')' | primary '[' slices ']' | atom
         mark = self._mark()
-        if (
-            (p := self.primary())
-            and
-            (u := self.units())
-        ):
-            return ( 'primary_with_units' , p , u );
-        self._reset(mark)
         if (
             (primary := self.primary())
             and
@@ -2595,7 +2597,7 @@ class GeneratedParser(Parser):
 
     @memoize
     def atom(self) -> Optional[Any]:
-        # atom: NAME | 'True' | 'False' | 'None' | '__peg_parser__' | strings | NUMBER | (tuple | group | genexp) | (list | listcomp) | (dict | set | dictcomp | setcomp) | '...'
+        # atom: NAME | 'True' | 'False' | 'None' | '__peg_parser__' | strings | unitable_atom units | unitable_atom | '...'
         mark = self._mark()
         if (
             (name := self.name())
@@ -2628,6 +2630,29 @@ class GeneratedParser(Parser):
             return strings;
         self._reset(mark)
         if (
+            (v := self.unitable_atom())
+            and
+            (u := self.units())
+        ):
+            return ( 'value_with_units' , v , u );
+        self._reset(mark)
+        if (
+            (unitable_atom := self.unitable_atom())
+        ):
+            return unitable_atom;
+        self._reset(mark)
+        if (
+            (literal := self.expect('...'))
+        ):
+            return literal;
+        self._reset(mark)
+        return None;
+
+    @memoize
+    def unitable_atom(self) -> Optional[Any]:
+        # unitable_atom: NUMBER | (tuple | group | genexp) | (list | listcomp) | (dict | set | dictcomp | setcomp)
+        mark = self._mark()
+        if (
             (number := self.number())
         ):
             return number;
@@ -2646,11 +2671,6 @@ class GeneratedParser(Parser):
             (_tmp_91 := self._tmp_91())
         ):
             return _tmp_91;
-        self._reset(mark)
-        if (
-            (literal := self.expect('...'))
-        ):
-            return literal;
         self._reset(mark)
         return None;
 
