@@ -50,7 +50,7 @@ Units have higher precedence than any other operator and only apply to the immed
 ```python
 x * 1.21 gigawatts
 x * y as gigawatts
-x 
+x
 ```
 
 This is equivalent to `x * (1.21 gigawatts)`, and desugars to something like `x * Quantity(1.21, "gigawatts")`. The high precedence means units apply to the literal not the whole expression.
@@ -101,10 +101,10 @@ Running tests:
 
 ## Future work and open questions
 
-- Move to tree-sitter, which will be simpler and has a chance of providing syntax highlighting
 - Test against various ipython and python versions
 - Support standalone scripts through sys.meta_path
 - Check units at parse time
 - Unit type hints, maybe checked with [@runtime_checkable](https://docs.python.org/3/library/typing.html#typing.runtime_checkable). More Pint typechecking [discussion](https://github.com/hgrecco/pint/issues/1166)
 - Expand the demo Colab notebook
 - Typography of output
+-

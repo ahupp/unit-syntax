@@ -240,10 +240,6 @@ expressions:
     | expression
 
 expression:
-    | e=expression_without_units 'as' u=units {('value_with_units', e, u)}
-    | expression_without_units
-
-expression_without_units:
     | disjunction 'if' disjunction 'else' expression
     | disjunction
     | lambdef
@@ -339,12 +335,15 @@ shift_expr:
     | sum
 
 units:
-    | units '/' units
-    | units '*' units
-    | units units
+    | units '/' units_group
+    | units '*' units_group
+    | units units_group
     | units '**' NUMBER
-    | '(' units ')'
     | NAME
+
+units_group:
+    | '(' units ')'
+    | units
 
 sum:
     | sum '+' term
@@ -369,6 +368,7 @@ await_primary:
     | AWAIT primary
     | primary
 primary:
+    | p=primary u=units {('value_with_units', p, u)}
     | primary '.' NAME
     | primary genexp
     | primary '(' [arguments] ')'
@@ -388,15 +388,11 @@ atom:
     | 'None'
     | '__peg_parser__'
     | strings
-    | v=unitable_atom u=units {('value_with_units', v, u)}
-    | unitable_atom
-    | '...'
-
-unitable_atom:
     | NUMBER
     | (tuple | group | genexp)
     | (list | listcomp)
     | (dict | set | dictcomp | setcomp)
+    | '...'
 
 strings: STRING+
 list:

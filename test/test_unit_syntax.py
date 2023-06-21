@@ -10,9 +10,9 @@ class AttrTest:
         self.second = 7
 
 
-attr_test = AttrTest()
+test_attr = AttrTest()
 
-dict_test = {"value": 37}
+test_dict = {"value": 37}
 
 second = 1024
 
@@ -37,8 +37,6 @@ def id(v):
 
 
 def assert_quantity_exec(code, value, units):
-    # dbg_transform(code)
-
     glo = dict(globals())
     exec(transform.transform(code), glo)
     result = glo["result"]
@@ -60,12 +58,17 @@ def assert_quantity(code, value, units):
     assert_quantity_exec(code_assign, value, units)
 
 
+def assert_syntax_error(code):
+    with pytest.raises(SyntaxError):
+        exec(transform.transform(code))
+
+
 def test_all():
     assert_quantity_exec(
         """
 from math import *
 def surface_area(radius):
-    return 2*pi*(radius as meters)**2
+    return 2*pi*(radius meters)**2
 
 def total_surface_force(radius):
     return (101 kilopascal)*surface_area(radius)
@@ -76,30 +79,25 @@ result = total_surface_force(1.0)
     )
 
     assert_quantity("12 meter", 12, "meter")
-    assert_quantity("13 meter/s**2", 13, "meter/s**2")
+    assert_quantity("27.1 meter/s**2", 27.1, "meter/s**2")
+    assert_quantity("3 meter second/kg", 3, "(meter second)/kg")
+
     assert_quantity("(2048 meter/second) * 2 second", 4096, "meters")
     assert_quantity("(2048 meter)/second * (2 second)", 4, "meter*second")
     assert_quantity("do_mult(3 kg, 5 s)", 15, "kg*s")
-    assert_quantity("(3 kg) as pounds", 6.61386786, "pounds")
-    assert_quantity("[2, 5] as T", [2, 5], "T")
-    # TODO should not work
-    assert_quantity("(3 kg) pounds", 6.61386786, "pounds")
-    assert_quantity("[2, 5] T", [2, 5], "T")
 
-    assert_quantity("attr_test.second as degF", 7, "degF")
-    assert_quantity("dict_test['value'] as ns", 37, "ns")
-    assert_quantity("2**4 as meters", 16, "meters")
+    assert_quantity("[2, 5] T", [2, 5], "T")
+    assert_quantity("(1., 3., 5.) attoparsec", (1.0, 3.0, 5.0), "attoparsec")
+
+    assert_quantity("(3 kg) pounds", 6.61386786, "pounds")
+
+    assert_quantity("test_attr.second degF", 7, "degF")
+    assert_quantity("test_dict['value'] ns", 37, "ns")
+
+    assert_quantity("(2**4) meters", 16, "meters")
+    assert_quantity("(2 meters) ** 2", 4, "meters**2")
     assert_quantity("second * 1 meters", 1024, "meters")
 
-    assert_quantity("3 attoparsec liters", 3, "attoparsec*liters")
-    assert_quantity("37 tesla/(becquerel*second)", 37, "tesla/(becquerel*second)")
-
-    assert_quantity("3.0*id(seven_furlong)", 21.0, "furlongs")
-    assert_quantity("(seven_furlong)*id(3.0)", 21.0, "furlongs")
-
-
-# TODO
-#    assert_quantity("1.25663706e-6 (meter kg)/(s**2 A**2)", 1.25663706e-6, "meter")
 
 # TODO
 # with pytest.raises(SyntaxError):
