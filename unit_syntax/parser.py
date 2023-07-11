@@ -2459,7 +2459,7 @@ class GeneratedParser(Parser):
 
     @memoize
     def power(self) -> Optional[Any]:
-        # power: await_primary '**' factor | await_primary
+        # power: await_primary '**' factor | await_primary units | await_primary
         mark = self._mark()
         if (
             (await_primary := self.await_primary())
@@ -2469,6 +2469,13 @@ class GeneratedParser(Parser):
             (factor := self.factor())
         ):
             return [await_primary, literal, factor];
+        self._reset(mark)
+        if (
+            (a := self.await_primary())
+            and
+            (u := self.units())
+        ):
+            return ( 'value_with_units' , a , u );
         self._reset(mark)
         if (
             (await_primary := self.await_primary())
@@ -2497,15 +2504,8 @@ class GeneratedParser(Parser):
 
     @memoize_left_rec
     def primary(self) -> Optional[Any]:
-        # primary: primary units | primary '.' NAME | primary genexp | primary '(' arguments? ')' | primary '[' slices ']' | atom
+        # primary: primary '.' NAME | primary genexp | primary '(' arguments? ')' | primary '[' slices ']' | atom
         mark = self._mark()
-        if (
-            (p := self.primary())
-            and
-            (u := self.units())
-        ):
-            return ( 'value_with_units' , p , u );
-        self._reset(mark)
         if (
             (primary := self.primary())
             and

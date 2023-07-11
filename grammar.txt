@@ -363,12 +363,12 @@ factor:
     | power
 power:
     | await_primary '**' factor
+    | a=await_primary u=units {('value_with_units', a, u)}
     | await_primary
 await_primary:
     | AWAIT primary
     | primary
 primary:
-    | p=primary u=units {('value_with_units', p, u)}
     | primary '.' NAME
     | primary genexp
     | primary '(' [arguments] ')'

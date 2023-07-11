@@ -11,7 +11,7 @@ class SourcePosQuery:
     """Return source ranges between two (line, column) pairs"""
 
     def __init__(self, code: str):
-        self.code_lines = code.splitlines()
+        self.code_lines = code.splitlines(keepends=True)
         # The ENDMARKER token points to one line past the end of the file
         self.code_lines.append("")
 
@@ -39,7 +39,8 @@ class OutputWriter:
 
     def __init__(self, source: SourcePosQuery):
         self.source = source
-        self.prev_tok_end = (0, 0)
+        # token lines are 1-indexed
+        self.prev_tok_end = (1, 0)
         self.output = []
 
     def write_segment(self, lit: str, token: tokenize.TokenInfo):
@@ -88,14 +89,17 @@ def ast_to_segments(node, output: OutputWriter):
         units_node = node[2]
 
         # sinc we're emitting text that doesn't appear in the input code, we need to manually grab the
-        # first token of value node to ensure any preceding text is also emitted.  See comment in
-        # write_segment for more details.
+        # first token of value node to ensure any preceding text is also emitted before it.
+        # e.g, for "(1 meters, 2 meters)", this ensures the comma is emitted *before* the Quantity constructor
+        # rather than inside it.
         first = first_token(node)
 
         output.write_segment("unit_syntax.Quantity(", first)
         ast_to_segments(value_node, output)
         output.write_bare(', "')
         output.prev_tok_end = first_token(units_node).start
+        # no need to escape this because the units grammar rule only allows
+        # identifiers, parens and math operations
         ast_to_segments(units_node, output)
         output.write_bare('")')
     elif node is None:
@@ -130,4 +134,6 @@ def transform(code: str) -> str:
 
 
 def transform_lines(lines: list[str]) -> list[str]:
+    """IPython transforms provide a list of strings in the current cell, but to parse correctly we
+    need to parse them as a single string"""
     return transform("".join(lines)).splitlines(keepends=True)
