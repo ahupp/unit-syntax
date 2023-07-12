@@ -56,14 +56,24 @@ def enable_ipython(debug_transform=False):
     # Overide default formatters to use reduced units.  This lets us keep using the
     # default registry for interop with other pint-using libraries, but gives more
     # sensible output in the notebook.
-    def add_formatter(mime, fn):
-        formatter = ip.display_formatter.formatters[mime]
-        formatter.for_type(pint.Quantity, fn)
+    def add_formatter(mime, display_fn_name):
+        formatter = ip.display_formatter.formatters.get(mime)
+        if formatter is None:
+            return
 
-    add_formatter("text/markdown", _format_quantity_markdown)
-    add_formatter("text/html", _format_quantity_html)
-    add_formatter("text/plain", _format_quantity_pretty)
-    add_formatter("text/latex", _format_quantity_latex)
+        fn = getattr(pint.Quantity, display_fn_name, None)
+        if fn is None:
+            return
+
+        def fmt_reduced(q, *args):
+            return fn(q.to_reduced_units(), *args)
+
+        formatter.for_type(pint.Quantity, fmt_reduced)
+
+    add_formatter("text/markdown", "_repr_markdown_")
+    add_formatter("text/html", "_repr_html_")
+    add_formatter("text/plain", "_repr_pretty_")
+    add_formatter("text/latex", "_repr_latex_")
 
     # ensure the module is still visible if imported via
     # `from unit_syntax import ipython` for some reason
