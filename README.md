@@ -42,7 +42,13 @@ position.x attoparsec
 velocity[player_id] meters/s
 ```
 
-Values can be converted to another measurement system:
+Units are parsed greedily and bind only to the immediately preceding value:
+
+```python
+x * 5 meters # x * (5 meters), not (x*5) meters
+```
+
+Quantities can be converted to another measurement system:
 
 ```python
 >>> (88 miles / hour) furlongs / fortnight
@@ -50,6 +56,14 @@ Values can be converted to another measurement system:
 >>> (0 degC) degF
 31.999999999999936 degree_Fahrenheit
 ```
+
+It's _highly_ recommended to parenthesize any complex that include units. For example:
+
+```python
+1 meters * sin(degrees)
+```
+
+This is desugared to `Quantity(1, "meters * sin(degrees)")`, when you probably wanted `(1 meters) * sin(degrees)`.
 
 Units _may not_ begin with parentheses (consider the possible
 interpretations of `x (meters)`). Parentheses are allowed anywhere else:
@@ -59,25 +73,40 @@ x (newton meters)/(second*kg) # parsed as a function call, will result in a runt
 x newton meters/(second*kg) # ok
 ```
 
-Units are parsed greedily and its highly recommended to parenthesize any complex expressions using units. For example:
+## Syntax Details
 
-```python
-1 meters * sin(degrees)
+The full grammar for units is:
+
+```
+units:
+    | units '/' units_group
+    | units '*' units_group
+    | units units_group
+    | units '**' NUMBER
+    | NAME
+
+units_group:
+    | '(' units ')'
+    | units
 ```
 
-This is desugared to `Quantity(1, "meters * sin(degrees)")`, when you probably wanted `(1 meters) * sin(degrees)`.
+Compound units allow the usual operators multiplication, division, and exponentiation with the usual precedence rules. Adjacent units without an operator are treated as multiplication.
+
+## Help!
+
+If you're getting an unexpected result, try using `unit_syntax.enable_ipython(debug_transform=True)`. This will log the transformed python code to the console.
 
 ## Should I use this?
 
-There are tradeoffs. When using unit-syntax as an interactive calculator the clarity of explicit units improves both readability and correctness. However, the new syntax also introduces _new_ opportunities for error if an expression is parsed in an unexpected way.
+There are tradeoffs. When using unit-syntax as an interactive calculator the clarity of explicit units improves both readability and correctness. However, the new syntax also introduces _new_ opportunities for error if an expression is parsed in an unexpected way. Usually this is obvious when used interactively, but it's something to be aware of.
+
+`unit-syntax` cannot (currently) be used for standalone python scripts outside of IPython/Jupyter, but that's in principle possible through [meta_path import hooks](https://docs.python.org/3/reference/import.html#the-meta-path).
 
 ## Why? How?
 
 I like using Python with [Jupyter Notebook](https://jupyter.org/) as a calculator for physical problems and often wish it had the clarity and type checking of explicit units. [Pint](https://pint.readthedocs.io/) is great, but its (necessary) verbosity makes it hard to see the underlying calculation that's going. Ultimately I want something that is as readable as what I'd write on paper using normal notation.
 
 `unit-syntax` is an IPython [custom input transformer](https://ipython.readthedocs.io/en/stable/config/inputtransforms.html) that rewrites expressions with units into calls to `pint.Quantity`. The parser is a lightly modified version of the Python grammar using the same parser generator ([pegen](https://github.com/we-like-parsers/pegen)) as Python itself.
-
-`unit-syntax` cannot (currently) be used for standalone python scripts outside of IPython/Jupyter, but that's in principle possible through [meta_path import hooks](https://docs.python.org/3/reference/import.html#the-meta-path).
 
 ## Prior Art
 
@@ -113,3 +142,7 @@ $ poetry run pytest
 - Expand the demo Colab notebook
 - Typography of output
 - Its too easy to get an unexpected parse if you forget parentheses.
+
+```
+
+```
