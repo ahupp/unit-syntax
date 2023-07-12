@@ -96,17 +96,15 @@ Compound units allow the usual operators multiplication, division, and exponenti
 
 If you're getting an unexpected result, try using `unit_syntax.enable_ipython(debug_transform=True)`. This will log the transformed python code to the console.
 
-## Should I use this?
-
-There are tradeoffs. When using unit-syntax as an interactive calculator the clarity of explicit units improves both readability and correctness. However, the new syntax also introduces _new_ opportunities for error if an expression is parsed in an unexpected way. Usually this is obvious when used interactively, but it's something to be aware of.
-
-`unit-syntax` cannot (currently) be used for standalone python scripts outside of IPython/Jupyter, but that's in principle possible through [meta_path import hooks](https://docs.python.org/3/reference/import.html#the-meta-path).
-
-## Why? How?
+## Why? How? Are you sure this a good idea?
 
 I like using Python with [Jupyter Notebook](https://jupyter.org/) as a calculator for physical problems and often wish it had the clarity and type checking of explicit units. [Pint](https://pint.readthedocs.io/) is great, but its (necessary) verbosity makes it hard to see the underlying calculation that's going. Ultimately I want something that is as readable as what I'd write on paper using normal notation.
 
 `unit-syntax` is an IPython [custom input transformer](https://ipython.readthedocs.io/en/stable/config/inputtransforms.html) that rewrites expressions with units into calls to `pint.Quantity`. The parser is a lightly modified version of the Python grammar using the same parser generator ([pegen](https://github.com/we-like-parsers/pegen)) as Python itself.
+
+Should you use this? There are tradeoffs. When using unit-syntax as an interactive calculator the clarity of explicit units improves both readability and correctness. However, the new syntax also introduces _new_ opportunities for error if an expression is parsed in an unexpected way. Usually this is obvious when used interactively, but it's something to be aware of.
+
+`unit-syntax` cannot (currently) be used for standalone python scripts outside of IPython/Jupyter, but that's in principle possible through [meta_path import hooks](https://docs.python.org/3/reference/import.html#the-meta-path).
 
 ## Prior Art
 
