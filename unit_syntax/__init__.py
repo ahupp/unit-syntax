@@ -11,22 +11,6 @@ def Quantity(value, units):
         return ureg.Quantity(value, units)
 
 
-def _format_quantity_markdown(q):
-    return q.to_reduced_units()._repr_markdown_()
-
-
-def _format_quantity_html(q):
-    return q.to_reduced_units()._repr_html_()
-
-
-def _format_quantity_pretty(q, p, cycle):
-    return q.to_reduced_units()._repr_pretty_(p, cycle)
-
-
-def _format_quantity_latex(q):
-    return q.to_reduced_units()._repr_latex_()
-
-
 def enable_ipython(debug_transform=False):
     """
     debug_transform -- if True, log the input and output of each transform

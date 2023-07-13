@@ -2277,7 +2277,7 @@ class GeneratedParser(Parser):
 
     @memoize_left_rec
     def units(self) -> Optional[Any]:
-        # units: units '/' units_group | units '*' units_group | units units_group | units '**' NUMBER | NAME
+        # units: units '/' units_group | units '*' units_group | units units_group | units '**' NUMBER | units '^' NUMBER | NAME
         mark = self._mark()
         if (
             (units := self.units())
@@ -2308,6 +2308,15 @@ class GeneratedParser(Parser):
             (units := self.units())
             and
             (literal := self.expect('**'))
+            and
+            (number := self.number())
+        ):
+            return [units, literal, number];
+        self._reset(mark)
+        if (
+            (units := self.units())
+            and
+            (literal := self.expect('^'))
             and
             (number := self.number())
         ):

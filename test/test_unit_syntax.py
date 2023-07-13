@@ -112,6 +112,9 @@ result = 1 meters
     assert_quantity("second * 1 meters", 1024, "meters")
     assert_quantity("-1 meters", -1, "meters")
 
+    assert_quantity("6.67 N m**2/kg**2", 6.67, "N*m**2/kg**2")
+    assert_quantity("6.67 N m^2/kg^2", 6.67, "N*m**2/kg**2")
+
 
 # TODO
 # with pytest.raises(SyntaxError):
