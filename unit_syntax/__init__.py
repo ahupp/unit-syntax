@@ -41,10 +41,6 @@ def enable_ipython(debug_transform=False):
     # default registry for interop with other pint-using libraries, but gives more
     # sensible output in the notebook.
     def add_formatter(mime, display_fn_name):
-        formatter = ip.display_formatter.formatters.get(mime)
-        if formatter is None:
-            return
-
         fn = getattr(pint.Quantity, display_fn_name, None)
         if fn is None:
             return
@@ -52,6 +48,7 @@ def enable_ipython(debug_transform=False):
         def fmt_reduced(q, *args):
             return fn(q.to_reduced_units(), *args)
 
+        formatter = ip.display_formatter.formatters[mime]
         formatter.for_type(pint.Quantity, fmt_reduced)
 
     add_formatter("text/markdown", "_repr_markdown_")
@@ -62,3 +59,10 @@ def enable_ipython(debug_transform=False):
     # ensure the module is still visible if imported via
     # `from unit_syntax import ipython` for some reason
     ip.run_cell("import unit_syntax")
+
+    try:
+        import matplotlib
+
+        pint.setup_matplotlib(True)
+    except ImportError:
+        pass

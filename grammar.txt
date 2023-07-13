@@ -339,7 +339,6 @@ units:
     | units '*' units_group
     | units units_group
     | units '**' NUMBER
-    | units '^' NUMBER
     | NAME
 
 units_group:

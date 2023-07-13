@@ -140,7 +140,5 @@ $ poetry run pytest
 - Expand the demo Colab notebook
 - Typography of output
 - Its too easy to get an unexpected parse if you forget parentheses.
-
-```
-
-```
+- make it work with numba
+- understand how numpy interop works

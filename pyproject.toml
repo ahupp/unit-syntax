@@ -9,7 +9,7 @@ description = "Physical unit literals for Jupyter and IPython"
 
 [tool.poetry.dependencies]
 python = ">=3.8, < 4"
-Pint = "^0.20"
+Pint = ">0.20"
 ipython = ">=7"
 pegen = "^0.2"
 
