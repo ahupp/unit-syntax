@@ -1,4 +1,4 @@
-`unit-syntax` extends the Python language in Jupyter/IPython to support expressions with physical units:
+`unit-syntax` adds support for physical units to the Python language:
 
 ```python
 >>> speed = 5 meters/second
@@ -6,7 +6,11 @@
 10 meter
 ```
 
-Behind the scenes this is translated into standard Python that uses the excellent [Pint](https://pint.readthedocs.io/) units library.
+Why? I often use Python as an interactive calculator for physical problems, and wished it had the type safety of explicit units along with the readability of normal notation.
+
+Where? `unit-syntax` currently supports Jupyter notebooks and the IPython interpreter; support for standalone scripts is planned.
+
+How? A syntax transformer based on the official Python grammar turns these expression into calls to the excellent [Pint](https://pint.readthedocs.io/) units library.
 
 ## Getting Started
 
@@ -23,30 +27,30 @@ import unit_syntax
 unit_syntax.enable_ipython()
 ```
 
-Note: in Jupyter this must be run in its own cell before any units expressions are evaluated.
+Tip: In Jupyter this must be run in its own cell before any units expressions are evaluated.
 
 ## Usage
 
 [An interactive notebook to play around with units](https://colab.research.google.com/drive/1PInyLGZHnUzEuUVgMsLrUUNdCurXK7v1#scrollTo=JszzXmATY0TV)
 
-Units apply to the immediately preceding value:
+Units can be applied to any "simple" expression:
+
+- number: `1 meter`
+- variables: `x parsec`, `y.z watts`, `area[id] meters**2`
+- lists and tuples: `[1., 37.] newton meters`
+- unary operators: `-x dBm`
+- power: `x**2 meters`
+
+To apply units within a more complex expression, use parentheses:
 
 ```python
-1.21 gigawatts # literal number
-(30 + 7) watts # parenthesized expression
-[5, 7] meters # literal list
-(9, 11) lumens # literal tuple
-# variable reference
-y becquerel
-position.x attoparsec
-velocity[player_id] meters/s
+one_lux = (1 lumen)/(1 meter**2)
 ```
 
-Units are parsed greedily and bind only to the immediately preceding value:
+Units can be used in other places where Python allows expressions like:
 
-```python
-x * 5 meters # x * (5 meters), not (x*5) meters
-```
+- function arguments: `area_of_circle(radius=1 meter)`
+- list comprehensions: `[x meters for x in range(10)]`
 
 Quantities can be converted to another measurement system:
 
@@ -57,54 +61,38 @@ Quantities can be converted to another measurement system:
 31.999999999999936 degree_Fahrenheit
 ```
 
-It's _highly_ recommended to parenthesize any complex that include units. For example:
-
-```python
-1 meters * sin(degrees)
-```
-
-This is desugared to `Quantity(1, "meters * sin(degrees)")`, when you probably wanted `(1 meters) * sin(degrees)`.
+Compound units (e.g. `newtons/meter**2`) are supported and follow the usual precedence rules.
 
 Units _may not_ begin with parentheses (consider the possible
 interpretations of `x (meters)`). Parentheses are allowed anywhere else:
 
 ```python
-x (newton meters)/(second*kg) # parsed as a function call, will result in a runtime error
-x newton meters/(second*kg) # ok
+# parsed as a function call, will result in a runtime error
+x (newton meters)/(second*kg)
+# a-ok
+x newton meters/(second*kg)
 ```
 
-## Syntax Details
+## Why only allow units on simple expressions?
 
-The full grammar for units is:
+The rule for applying units only to "simple" expressions rather than treating it as a typical operator is to avoid unintentional error. Imagine units were instead parsed as operator with high precedence and you wrote this reasonable looking expression:
 
-```
-units:
-    | units '/' units_group
-    | units '*' units_group
-    | units units_group
-    | units '**' NUMBER
-    | NAME
-
-units_group:
-    | '(' units ')'
-    | units
+```python
+ppi = 300 pixels/inch
+y = x inches * ppi
 ```
 
-Compound units allow the usual operators multiplication, division, and exponentiation with the usual precedence rules. Adjacent units without an operator are treated as multiplication.
+`inches * ppi` would be parsed as the unit, leading to (at best) a runtime error sometime later and at worst an incorrect calculation. This could be avoided by parenthesizing the expression (e.g. `(x inches) * ppi`, but in general it's too error prone to allow free intermixing of operators and units. (Note: This is not a hypoethical concern, I hit this within 10 minutes of first trying out the idea)
 
 ## Help!
 
-If you're getting an unexpected result, try using `unit_syntax.enable_ipython(debug_transform=True)`. This will log the transformed python code to the console.
+If you're getting an unexpected result, try using `unit_syntax.enable_ipython(debug_transform=True)`. This will log the transformed Python code to the console.
 
-## Why? How? Are you sure this a good idea?
+If you're stuck, feel free to open an issue.
 
-I like using Python with [Jupyter Notebook](https://jupyter.org/) as a calculator for physical problems and often wish it had the clarity and type checking of explicit units. [Pint](https://pint.readthedocs.io/) is great, but its (necessary) verbosity makes it hard to see the underlying calculation that's going. Ultimately I want something that is as readable as what I'd write on paper using normal notation.
+## How does it work?
 
-`unit-syntax` is an IPython [custom input transformer](https://ipython.readthedocs.io/en/stable/config/inputtransforms.html) that rewrites expressions with units into calls to `pint.Quantity`. The parser is a lightly modified version of the Python grammar using the same parser generator ([pegen](https://github.com/we-like-parsers/pegen)) as Python itself.
-
-Should you use this? There are tradeoffs. When using unit-syntax as an interactive calculator the clarity of explicit units improves both readability and correctness. However, the new syntax also introduces _new_ opportunities for error if an expression is parsed in an unexpected way. Usually this is obvious when used interactively, but it's something to be aware of.
-
-`unit-syntax` cannot (currently) be used for standalone python scripts outside of IPython/Jupyter, but that's in principle possible through [meta_path import hooks](https://docs.python.org/3/reference/import.html#the-meta-path).
+The parser is derived from the official Python grammar using the same parser generator ([pegen](https://github.com/we-like-parsers/pegen)) as Python itself. The transformer hooks into IPython/Jupyter using [custom input transformers](https://ipython.readthedocs.io/en/stable/config/inputtransforms.html).
 
 ## Prior Art
 
@@ -125,10 +113,8 @@ To regenerate the parser:
 Running tests:
 
 ```
-
 $ poetry install --with dev
 $ poetry run pytest
-
 ```
 
 ## Future work and open questions
@@ -139,6 +125,6 @@ $ poetry run pytest
 - Unit type hints, maybe checked with [@runtime_checkable](https://docs.python.org/3/library/typing.html#typing.runtime_checkable). More Pint typechecking [discussion](https://github.com/hgrecco/pint/issues/1166)
 - Expand the demo Colab notebook
 - Typography of output
-- Its too easy to get an unexpected parse if you forget parentheses.
 - make it work with numba
 - understand how numpy interop works
+- fail more clearly when units are used in an invalid location

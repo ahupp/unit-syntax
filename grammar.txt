@@ -239,7 +239,9 @@ expressions:
     | expression ','
     | expression
 
+
 expression:
+    | factor_with_units
     | disjunction 'if' disjunction 'else' expression
     | disjunction
     | lambdef
@@ -334,6 +336,8 @@ shift_expr:
     | shift_expr '>>' sum
     | sum
 
+factor_with_units: p=factor u=units {('value_with_units', p, u)}
+
 units:
     | units '/' units_group
     | units '*' units_group
@@ -363,7 +367,6 @@ factor:
     | power
 power:
     | await_primary '**' factor
-    | a=await_primary u=units {('value_with_units', a, u)}
     | await_primary
 await_primary:
     | AWAIT primary

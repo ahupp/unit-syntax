@@ -1645,8 +1645,13 @@ class GeneratedParser(Parser):
 
     @memoize
     def expression(self) -> Optional[Any]:
-        # expression: disjunction 'if' disjunction 'else' expression | disjunction | lambdef
+        # expression: factor_with_units | disjunction 'if' disjunction 'else' expression | disjunction | lambdef
         mark = self._mark()
+        if (
+            (factor_with_units := self.factor_with_units())
+        ):
+            return factor_with_units;
+        self._reset(mark)
         if (
             (disjunction := self.disjunction())
             and
@@ -2275,6 +2280,19 @@ class GeneratedParser(Parser):
         self._reset(mark)
         return None;
 
+    @memoize
+    def factor_with_units(self) -> Optional[Any]:
+        # factor_with_units: factor units
+        mark = self._mark()
+        if (
+            (p := self.factor())
+            and
+            (u := self.units())
+        ):
+            return ( 'value_with_units' , p , u );
+        self._reset(mark)
+        return None;
+
     @memoize_left_rec
     def units(self) -> Optional[Any]:
         # units: units '/' units_group | units '*' units_group | units units_group | units '**' NUMBER | NAME
@@ -2459,7 +2477,7 @@ class GeneratedParser(Parser):
 
     @memoize
     def power(self) -> Optional[Any]:
-        # power: await_primary '**' factor | await_primary units | await_primary
+        # power: await_primary '**' factor | await_primary
         mark = self._mark()
         if (
             (await_primary := self.await_primary())
@@ -2469,13 +2487,6 @@ class GeneratedParser(Parser):
             (factor := self.factor())
         ):
             return [await_primary, literal, factor];
-        self._reset(mark)
-        if (
-            (a := self.await_primary())
-            and
-            (u := self.units())
-        ):
-            return ( 'value_with_units' , a , u );
         self._reset(mark)
         if (
             (await_primary := self.await_primary())
