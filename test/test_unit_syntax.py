@@ -139,3 +139,5 @@ result = 1 meters
 
     # Check valid units at parse time
     assert_syntax_error("3 smoots")
+
+    assert_syntax_error("1 + 3 meters")

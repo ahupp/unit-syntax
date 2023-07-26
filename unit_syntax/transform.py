@@ -16,7 +16,7 @@ class UnitExprTransformer(ast.NodeTransformer):
         if isinstance(node, UnitsExpr):
             # Check units are valid
             try:
-                self.ureg.parse_units(node.units)
+                self.ureg.parse_units(node.units.value)
             except pint.UndefinedUnitError as e:
                 raise SyntaxError(e)
 
@@ -27,7 +27,7 @@ class UnitExprTransformer(ast.NodeTransformer):
                     "Quantity",
                     ctx=ast.Load(),
                 ),
-                args=[value, ast.Constant(node.units)],
+                args=[value, node.units],
                 keywords=[],
             )
         else:

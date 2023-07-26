@@ -465,11 +465,6 @@ class Parser(Parser):
 
 class UnitsExpr(ast.AST):
     _fields = ("value", "units")
-
-    def __init__(self, value, units):
-        super().__init__(value, units)
-        self.value = value
-        self.units = units
 '''
 
 
@@ -1134,18 +1129,20 @@ keyword_pattern:
 # EXPRESSIONS
 # -----------
 
-factor_with_units[UnitsExpr]: f=factor u=units {UnitsExpr(f, u)}
+factor_with_units[UnitsExpr]: f=factor u=units {UnitsExpr(f, u, LOCATIONS)}
 
-units[str]:
-    | a=units '/' c=units_group {a + '/' + c}
-    | a=units '*' c=units_group {a + '*' + c}
-    | a=units b=units_group {a + ' ' + b}
-    | a=units '**' c=NUMBER {a + '**' + c.string}
+units[ast.Constant]: u=units_ {ast.Constant(value=u, LOCATIONS)}
+
+units_[str]:
+    | a=units_ '/' c=units_group_ {a + '/' + c}
+    | a=units_ '*' c=units_group_ {a + '*' + c}
+    | a=units_ b=units_group_ {a + ' ' + b}
+    | a=units_ '**' c=NUMBER {a + '**' + c.string}
     | a=NAME {a.string}
 
-units_group[str]:
-    | '(' a=units ')' {'(' + a + ')'}
-    | units
+units_group_[str]:
+    | '(' a=units_ ')' {'(' + a + ')'}
+    | units_
 
 
 expressions:
@@ -1292,6 +1289,11 @@ term:
     | a=term '@' b=factor {
         self.check_version((3, 5), "The '@' operator is", ast.BinOp(left=a, op=ast.MatMult(), right=b, LOCATIONS))
      }
+    | f=factor u=units {
+        self.raise_syntax_error_known_range(
+            "Units must be parenthesized when mixed with operators, see https://github.com/ahupp/unit-syntax/#why-only-allow-units-on-simple-expressions",
+            f, u
+        )}
     | factor
 
 factor (memo):
