@@ -1,6 +1,4 @@
 import ast
-from io import StringIO
-from typing import Iterator, Optional, Generator
 from .parser import parse_string, UnitsExpr
 import pint
 
@@ -25,11 +23,7 @@ class UnitExprTransformer(ast.NodeTransformer):
 
             value = self.generic_visit(node.value)
             return ast.Call(
-                func=ast.Attribute(
-                    ast.Name(id="unit_syntax", ctx=ast.Load()),
-                    "Quantity",
-                    ctx=ast.Load(),
-                ),
+                ast.Name(id="_unit_syntax_q", ctx=ast.Load()),
                 args=[value, node.units],
                 keywords=[],
             )
@@ -45,9 +39,3 @@ def transform(code: str) -> str:
     tree_std = UnitExprTransformer(ureg).visit(tree)
     tree_std = ast.fix_missing_locations(tree_std)
     return ast.unparse(tree_std)
-
-
-def transform_lines(lines: list[str]) -> list[str]:
-    """IPython transforms provide a list of strings in the current cell, but to parse correctly we
-    need to parse them as a single string"""
-    return transform("".join(lines)).splitlines(keepends=True)

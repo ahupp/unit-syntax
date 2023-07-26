@@ -1,4 +1,4 @@
-from .transform import transform_lines
+from .transform import transform
 import pint
 
 
@@ -27,6 +27,12 @@ _has_init_log = False
 _debug = False
 
 
+def transform_lines(lines: list[str]) -> list[str]:
+    """IPython transforms provide a list of strings in the current cell, but to parse correctly we
+    need to parse them as a single string"""
+    return transform("".join(lines)).splitlines(keepends=True)
+
+
 def ipython_transform(lines):
     ret = transform_lines(lines)
 
@@ -49,9 +55,9 @@ def load_ipython_extension(ipython):
 
     _add_formatters(ipython)
 
-    # ensure the module is still visible if imported via
-    # `from unit_syntax import ipython` for some reason
-    ipython.run_cell("import unit_syntax")
+    from . import BOOTSTRAP
+
+    ipython.run_cell(BOOTSTRAP)
 
     try:
         import matplotlib
