@@ -3,10 +3,13 @@ from io import StringIO
 from typing import Iterator, Optional, Generator
 from .parser import parse_string, UnitsExpr
 import pint
-from pprint import pprint
 
 
 class UnitExprTransformer(ast.NodeTransformer):
+    """
+    AST transformer to turn python-with-units into standard python
+    """
+
     ureg: pint.UnitRegistry
 
     def __init__(self, ureg: pint.UnitRegistry):
@@ -38,7 +41,7 @@ def transform(code: str) -> str:
     """Transform a string of python-with-units into a standard python string"""
 
     tree = parse_string(code, mode="file")
-    ureg = pint.UnitRegistry()
+    ureg = pint._DEFAULT_REGISTRY
     tree_std = UnitExprTransformer(ureg).visit(tree)
     tree_std = ast.fix_missing_locations(tree_std)
     return ast.unparse(tree_std)
