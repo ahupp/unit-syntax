@@ -1,8 +1,14 @@
+from io import StringIO
 from unit_syntax import transform
 import unit_syntax
 import pytest
 import numpy
 import pint
+import tokenize
+
+
+def generate_tokens(code: str):
+    return tokenize.generate_tokens(StringIO(code).readline)
 
 
 class AttrTest:
@@ -19,9 +25,9 @@ seven_furlong = unit_syntax.ureg.Quantity(7.0, "furlong")
 def dbg_transform(code):
     from pprint import pprint
 
-    tokens = list(transform.generate_tokens(code))
+    tokens = list(generate_tokens(code))
     pprint(tokens)
-    pprint(transform.parse(iter(tokens)))
+    # pprint(transform.parse(iter(tokens)))
     pprint(transform.transform(code))
 
 
@@ -131,5 +137,5 @@ result = 1 meters
     list_comp = transform_eval("[x meters for x in range(4)]")
     assert list_comp == [pint.Quantity(x, "meters") for x in range(4)]
 
-    with pytest.raises(SyntaxError):
-        assert_quantity("3 smoots", 3, "smoots")
+    # Check valid units at parse time
+    assert_syntax_error("3 smoots")

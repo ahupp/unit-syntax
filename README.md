@@ -116,7 +116,7 @@ A [long discussion on the python-ideas mailing list](https://lwn.net/Articles/90
 
 To regenerate the parser:
 
-`python -m pegen grammar.txt -o unit_syntax/parser.py`
+`python -m pegen python_units.gram -o unit_syntax/parser.py`
 
 Running tests:
 
