@@ -33,30 +33,46 @@ def id(v):
     return v
 
 
+def transform_exec(code):
+    glo = dict(globals())
+    exec(transform.transform(code), glo)
+    return glo["result"]
+
+
+def transform_eval(code):
+    code_assign = "result = " + code
+    return transform_exec(code_assign)
+
+
+def assert_quantity_eq(result, value, units):
+    u = unit_syntax.ureg.Quantity(value, units)
+    result = result.to(u.units)
+
+    if type(value) == float and type(result.magnitude) == float:
+        assert result.magnitude == pytest.approx(value)
+    elif type(result.magnitude) == numpy.ndarray:
+        assert numpy.all(result.magnitude == value)
+    else:
+        assert result.magnitude == value
+    assert result.units == u.units
+
+
 def assert_quantity_exec(code, value, units):
     try:
-        glo = dict(globals())
-        exec(transform.transform(code), glo)
-        result = glo["result"]
-
-        u = unit_syntax.ureg.Quantity(value, units)
-        result = result.to(u.units)
-
-        if type(value) == float and type(result.magnitude) == float:
-            assert result.magnitude == pytest.approx(value)
-        elif type(result.magnitude) == numpy.ndarray:
-            assert numpy.all(result.magnitude == value)
-        else:
-            assert result.magnitude == value
-        assert result.units == u.units
+        result = transform_exec(code)
+        assert_quantity_eq(result, value, units)
     except Exception as e:
         dbg_transform(code)
         raise e
 
 
 def assert_quantity(code, value, units):
-    code_assign = "result = " + code
-    assert_quantity_exec(code_assign, value, units)
+    try:
+        result = transform_eval(code)
+        assert_quantity_eq(result, value, units)
+    except Exception as e:
+        dbg_transform(code)
+        raise e
 
 
 def assert_syntax_error(code):
@@ -112,7 +128,8 @@ result = 1 meters
 
     assert_quantity("6.67 N m**2/kg**2", 6.67, "N*m**2/kg**2")
 
+    list_comp = transform_eval("[x meters for x in range(4)]")
+    assert list_comp == [pint.Quantity(x, "meters") for x in range(4)]
 
-# TODO
-# with pytest.raises(SyntaxError):
-#     assert_quantity("3 smoots", 3, "smoots")
+    with pytest.raises(SyntaxError):
+        assert_quantity("3 smoots", 3, "smoots")

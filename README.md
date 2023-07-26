@@ -8,9 +8,9 @@
 
 Why? I often use Python as an interactive calculator for physical problems, and wished it had the type safety of explicit units along with the readability of normal notation.
 
-Where? `unit-syntax` currently supports Jupyter notebooks and the IPython interpreter; support for standalone scripts is planned.
+Where? `unit-syntax` currently supports Jupyter notebooks and the IPython interpreter; maybe someday support for standalone scripts.
 
-How? A syntax transformer based on the official Python grammar turns these expression into calls to the excellent [Pint](https://pint.readthedocs.io/) units library.
+How? An IPython [custom input transformer](https://ipython.readthedocs.io/en/stable/config/inputtransforms.html) parses the new syntax using a modified version of the official Python grammar, and translates it into calls to the excellent [Pint](https://pint.readthedocs.io/) units library.
 
 ## Getting Started
 
@@ -41,13 +41,13 @@ Units can be applied to any "simple" expression:
 - unary operators: `-x dBm`
 - power: `x**2 meters`
 
-To apply units within a more complex expression, use parentheses:
+In expressions mixing units and binary operators, parenthesize:
 
 ```python
 one_lux = (1 lumen)/(1 meter**2)
 ```
 
-Units can be used in other places where Python allows expressions like:
+Units can be used in any place where Python allows expressions, e.g:
 
 - function arguments: `area_of_circle(radius=1 meter)`
 - list comprehensions: `[x meters for x in range(10)]`
@@ -71,6 +71,14 @@ interpretations of `x (meters)`). Parentheses are allowed anywhere else:
 x (newton meters)/(second*kg)
 # a-ok
 x newton meters/(second*kg)
+```
+
+Using invalid units produces a syntax error at import time:
+
+```python
+>>> 1 smoot
+...
+SyntaxError: 'smoot' is not defined in the unit registry
 ```
 
 ## Why only allow units on simple expressions?
@@ -121,7 +129,6 @@ $ poetry run pytest
 
 - Test against various ipython and python versions
 - Support standalone scripts through sys.meta_path
-- Check units at parse time
 - Unit type hints, maybe checked with [@runtime_checkable](https://docs.python.org/3/library/typing.html#typing.runtime_checkable). More Pint typechecking [discussion](https://github.com/hgrecco/pint/issues/1166)
 - Expand the demo Colab notebook
 - Typography of output

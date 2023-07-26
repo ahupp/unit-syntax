@@ -3,6 +3,7 @@ from io import StringIO
 from typing import Iterator, Optional, Generator
 from .parser import GeneratedParser
 from pegen.tokenizer import Tokenizer
+import pint
 
 Position = tuple[int, int]
 
@@ -76,12 +77,12 @@ def first_token(node):
         raise Exception("unknown node: ", node)
 
 
-def ast_to_segments(node, output: OutputWriter):
+def ast_to_segments(ureg: pint.UnitRegistry, node, output: OutputWriter):
     """Given an AST produced by pegen, rewrite unit expressions into standard python and write the
     whole tree as a string back to `output`"""
     if isinstance(node, list):
         for child in node:
-            ast_to_segments(child, output)
+            ast_to_segments(ureg, child, output)
     elif isinstance(node, tokenize.TokenInfo):
         output.write_segment(node.string, node)
     elif isinstance(node, tuple) and node[0] == "value_with_units":
@@ -95,12 +96,24 @@ def ast_to_segments(node, output: OutputWriter):
         first = first_token(node)
 
         output.write_segment("unit_syntax.Quantity(", first)
-        ast_to_segments(value_node, output)
+        ast_to_segments(ureg, value_node, output)
         output.write_bare(', "')
         output.prev_tok_end = first_token(units_node).start
+
+        # We want to capture the raw string of parsed units for verification
+        start = len(output.output)
+
         # no need to escape this because the units grammar rule only allows
         # identifiers, parens and math operations
-        ast_to_segments(units_node, output)
+        ast_to_segments(ureg, units_node, output)
+
+        end = len(output.output)
+        units_str = "".join(output.output[start:end])
+
+        try:
+            ureg.parse_units(units_str)
+        except pint.UndefinedUnitError as e:
+            raise SyntaxError(e)
         output.write_bare('")')
     elif node is None:
         # TODO whats this
@@ -129,7 +142,8 @@ def transform(code: str) -> str:
     tree = parse(tokens)
     source_query = SourcePosQuery(code)
     output = OutputWriter(source_query)
-    ast_to_segments(tree, output)
+    ureg = pint.UnitRegistry()
+    ast_to_segments(ureg, tree, output)
     return output.to_string()
 
 
