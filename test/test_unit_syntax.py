@@ -41,7 +41,7 @@ def id(v):
 
 def transform_exec(code):
     glo = dict(globals())
-    exec(transform.transform(code), glo)
+    exec(transform.transform(unit_syntax.BOOTSTRAP + "\n" + code), glo)
     return glo["result"]
 
 
