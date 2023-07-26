@@ -33,8 +33,10 @@ def ipython_transform(lines):
     if _debug:
         import logging
 
+        global _has_init_log
         if not _has_init_log:
             logging.basicConfig(level=logging.DEBUG, force=True)
+        _has_init_log = True
         logging.debug("unit_syntax: %s -> %s", "\n".join(lines), "\n".join(ret))
     return ret
 
