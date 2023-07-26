@@ -1,5 +1,6 @@
 from .transform import transform
 import pint
+import logging
 
 
 def _add_formatters(ipython):
@@ -37,8 +38,6 @@ def ipython_transform(lines):
     ret = transform_lines(lines)
 
     if _debug:
-        import logging
-
         global _has_init_log
         if not _has_init_log:
             logging.basicConfig(level=logging.DEBUG, force=True)
@@ -48,6 +47,8 @@ def ipython_transform(lines):
 
 
 def load_ipython_extension(ipython):
+    logging.debug("unit_syntax: loading extension")
+
     if not hasattr(ipython, "input_transformers_post"):
         raise ImportError("Unsupported IPython version, version >=7 is required")
 
@@ -59,13 +60,7 @@ def load_ipython_extension(ipython):
 
     ipython.run_cell(BOOTSTRAP)
 
-    try:
-        import matplotlib
-
-        pint.setup_matplotlib(True)
-    except ImportError:
-        pass
-
 
 def unload_ipython_extension(ipython):
+    logging.debug("unit_syntax: unload extension")
     ipython.input_transformers_post.remove(ipython_transform)
