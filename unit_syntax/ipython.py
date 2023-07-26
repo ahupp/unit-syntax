@@ -24,25 +24,15 @@ def _add_formatters(ipython):
     add_formatter("text/latex", "_repr_latex_")
 
 
-_has_init_log = False
-_debug = False
+def enable_debug():
+    logging.basicConfig(level=logging.DEBUG, force=True)
 
 
 def transform_lines(lines: list[str]) -> list[str]:
     """IPython transforms provide a list of strings in the current cell, but to parse correctly we
     need to parse them as a single string"""
-    return transform("".join(lines)).splitlines(keepends=True)
-
-
-def ipython_transform(lines):
-    ret = transform_lines(lines)
-
-    if _debug:
-        global _has_init_log
-        if not _has_init_log:
-            logging.basicConfig(level=logging.DEBUG, force=True)
-        _has_init_log = True
-        logging.debug("unit_syntax: %s -> %s", "\n".join(lines), "\n".join(ret))
+    ret = transform("".join(lines)).splitlines(keepends=True)
+    logging.debug("unit_syntax: %s -> %s", lines, ret)
     return ret
 
 
@@ -52,7 +42,7 @@ def load_ipython_extension(ipython):
     if not hasattr(ipython, "input_transformers_post"):
         raise ImportError("Unsupported IPython version, version >=7 is required")
 
-    ipython.input_transformers_post.append(ipython_transform)
+    ipython.input_transformers_post.append(transform_lines)
 
     _add_formatters(ipython)
 
@@ -63,4 +53,4 @@ def load_ipython_extension(ipython):
 
 def unload_ipython_extension(ipython):
     logging.debug("unit_syntax: unload extension")
-    ipython.input_transformers_post.remove(ipython_transform)
+    ipython.input_transformers_post.remove(transform_lines)
