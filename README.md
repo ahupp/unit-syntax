@@ -6,7 +6,7 @@
 10 meter
 ```
 
-Why? I often use Python as an interactive calculator for physical problems, and wished it had the type safety of explicit units along with the readability of normal notation.
+Why? I often use Python as an interactive calculator for physical problems and wished it had the type safety of explicit units along with the readability of normal notation.
 
 `unit-syntax` currently supports Jupyter notebooks and the IPython interpreter; maybe someday support for standalone scripts.
 
@@ -23,7 +23,7 @@ $ pip install unit-syntax
 To enable unit-syntax in a Jupyter/IPython session run:
 
 ```python
-import unit_syntax.ipython
+%load_ext unit_syntax
 ```
 
 Tip: In Jupyter this must be run in its own cell before any units expressions are evaluated.
@@ -86,30 +86,18 @@ The parser is [pegen](https://we-like-parsers.github.io/pegen/), which is the sa
 
 Syntax transformation in IPython/Jupyter uses [IPython custom input transformers](https://ipython.readthedocs.io/en/stable/config/inputtransforms.html).
 
-````python
-
-An IPython [custom input transformer](https://ipython.readthedocs.io/en/stable/config/inputtransforms.html) parses the new syntax using a modified version of the official Python grammar, and translates it into calls to the excellent [Pint](https://pint.readthedocs.io/) units library.
-
 ## Why only allow units on simple expressions?
 
-The rule for applying units only to "simple" expressions rather than treating it as a typical operator is to avoid unintentional error. Imagine units were instead parsed as operator with high precedence and you wrote this reasonable looking expression:
+Imagine units were instead parsed as operator with high precedence and you wrote this reasonable looking expression:
 
 ```python
 ppi = 300 pixels/inch
 y = x inches * ppi
-````
+```
 
-`inches * ppi` would be parsed as the unit, leading to (at best) a runtime error sometime later and at worst an incorrect calculation. This could be avoided by parenthesizing the expression (e.g. `(x inches) * ppi`, but in general it's too error prone to allow free intermixing of operators and units. (Note: This is not a hypoethical concern, I hit this within 10 minutes of first trying out the idea)
+`inches * ppi` would be parsed as the unit, leading to (at best) a runtime error sometime later and at worst an incorrect calculation. This could be avoided by parenthesizing the expression (e.g. `(x inches) * ppi`, but in general it's too error prone to allow free intermixing of operators and units. (Note: This is not a hypothical concern, I hit this within 10 minutes of first trying out the idea)
 
-## Help!
-
-If you're getting an unexpected result, try using `unit_syntax.enable_ipython(debug_transform=True)`. This will log the transformed Python code to the console.
-
-If you're stuck, feel free to open an issue.
-
-## How does it work?
-
-The parser is derived from the official Python grammar using the same parser generator ([pegen](https://github.com/we-like-parsers/pegen)) as Python itself. The transformer hooks into IPython/Jupyter using [custom input transformers](https://ipython.readthedocs.io/en/stable/config/inputtransforms.html).
+It's easy to detect units used when they aren't allowed (that syntax isn't valid anywhere else), but not generally possible to determine if you forgot parens or meant to write a unit.
 
 ## Prior Art
 
@@ -143,3 +131,4 @@ $ poetry run pytest
 - Typography of output
 - make it work with numba
 - understand how numpy interop works
+- pre-parse units

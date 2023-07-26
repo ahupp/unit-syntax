@@ -66,3 +66,6 @@ def enable_ipython(debug_transform=False):
         pint.setup_matplotlib(True)
     except ImportError:
         pass
+
+
+from .ipython import load_ipython_extension, unload_ipython_extension
