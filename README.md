@@ -8,9 +8,9 @@
 
 Why? I often use Python as an interactive calculator for physical problems, and wished it had the type safety of explicit units along with the readability of normal notation.
 
-Where? `unit-syntax` currently supports Jupyter notebooks and the IPython interpreter; maybe someday support for standalone scripts.
+`unit-syntax` currently supports Jupyter notebooks and the IPython interpreter; maybe someday support for standalone scripts.
 
-How? An IPython [custom input transformer](https://ipython.readthedocs.io/en/stable/config/inputtransforms.html) parses the new syntax using a modified version of the official Python grammar, and translates it into calls to the excellent [Pint](https://pint.readthedocs.io/) units library.
+[How does it work?](#how-does-it-work)
 
 ## Getting Started
 
@@ -23,8 +23,7 @@ $ pip install unit-syntax
 To enable unit-syntax in a Jupyter/IPython session run:
 
 ```python
-import unit_syntax
-unit_syntax.enable_ipython()
+import unit_syntax.ipython
 ```
 
 Tip: In Jupyter this must be run in its own cell before any units expressions are evaluated.
@@ -81,6 +80,16 @@ Using invalid units produces a syntax error at import time:
 SyntaxError: 'smoot' is not defined in the unit registry
 ```
 
+## How does it work?
+
+The parser is [pegen](https://we-like-parsers.github.io/pegen/), which is the same parser generator used by Python itself. The grammar is a lightly modified version the official Python grammar.
+
+Syntax transformation in IPython/Jupyter uses [IPython custom input transformers](https://ipython.readthedocs.io/en/stable/config/inputtransforms.html).
+
+````python
+
+An IPython [custom input transformer](https://ipython.readthedocs.io/en/stable/config/inputtransforms.html) parses the new syntax using a modified version of the official Python grammar, and translates it into calls to the excellent [Pint](https://pint.readthedocs.io/) units library.
+
 ## Why only allow units on simple expressions?
 
 The rule for applying units only to "simple" expressions rather than treating it as a typical operator is to avoid unintentional error. Imagine units were instead parsed as operator with high precedence and you wrote this reasonable looking expression:
@@ -88,7 +97,7 @@ The rule for applying units only to "simple" expressions rather than treating it
 ```python
 ppi = 300 pixels/inch
 y = x inches * ppi
-```
+````
 
 `inches * ppi` would be parsed as the unit, leading to (at best) a runtime error sometime later and at worst an incorrect calculation. This could be avoided by parenthesizing the expression (e.g. `(x inches) * ppi`, but in general it's too error prone to allow free intermixing of operators and units. (Note: This is not a hypoethical concern, I hit this within 10 minutes of first trying out the idea)
 
@@ -134,4 +143,3 @@ $ poetry run pytest
 - Typography of output
 - make it work with numba
 - understand how numpy interop works
-- fail more clearly when units are used in an invalid location
