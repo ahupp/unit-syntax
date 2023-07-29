@@ -1,4 +1,4 @@
-from .transform import transform
+from .transform import transform_to_str
 import pint
 import logging
 
@@ -31,7 +31,7 @@ def enable_debug():
 def transform_lines(lines: list[str]) -> list[str]:
     """IPython transforms provide a list of strings in the current cell, but to parse correctly we
     need to parse them as a single string"""
-    ret = transform("".join(lines)).splitlines(keepends=True)
+    ret = transform_to_str("".join(lines)).splitlines(keepends=True)
     logging.debug("unit_syntax: %s -> %s", lines, ret)
     return ret
 

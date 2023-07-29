@@ -12,3 +12,4 @@ _unit_syntax_q = unit_syntax.ureg.Quantity
 
 
 from .ipython import load_ipython_extension, unload_ipython_extension
+from .loader import enable_units_for_package

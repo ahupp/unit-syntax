@@ -411,6 +411,22 @@ files = [
 ]
 
 [[package]]
+name = "import-transforms"
+version = "0.1.0"
+description = ""
+category = "main"
+optional = false
+python-versions = "^3.8"
+files = []
+develop = false
+
+[package.source]
+type = "git"
+url = "https://github.com/ahupp/import-transforms"
+reference = "HEAD"
+resolved_reference = "787c7f20959e58586b9a7e3bdcc5713bded9c1ed"
+
+[[package]]
 name = "importlib-metadata"
 version = "6.8.0"
 description = "Read metadata from Python packages"
@@ -1265,4 +1281,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8, < 4"
-content-hash = "7e7caf610fd8b897097229775f0e8cfd77039ead2349e48fa2329cf9942add8c"
+content-hash = "d99dea80bec731c4697e87688185df8ce21ddfe7432b444ffe684983907cccec"

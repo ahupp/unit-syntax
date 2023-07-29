@@ -1,5 +1,7 @@
+from os import path
 from io import StringIO
 from unit_syntax import transform
+import sys
 import unit_syntax
 import pytest
 import numpy
@@ -28,7 +30,7 @@ def dbg_transform(code):
     tokens = list(generate_tokens(code))
     pprint(tokens)
     # pprint(transform.parse(iter(tokens)))
-    pprint(transform.transform(code))
+    pprint(transform.transform_to_str(code))
 
 
 def do_mult(left, right):
@@ -41,7 +43,7 @@ def id(v):
 
 def transform_exec(code):
     glo = dict(globals())
-    exec(transform.transform(unit_syntax.BOOTSTRAP + "\n" + code), glo)
+    exec(transform.transform_to_str(unit_syntax.BOOTSTRAP + "\n" + code), glo)
     return glo["result"]
 
 
@@ -83,7 +85,7 @@ def assert_quantity(code, value, units):
 
 def assert_syntax_error(code):
     with pytest.raises(SyntaxError):
-        exec(transform.transform(code))
+        exec(transform.transform_to_str(code))
 
 
 def test_all():
@@ -141,3 +143,10 @@ result = 1 meters
     assert_syntax_error("3 smoots")
 
     assert_syntax_error("1 + 3 meters")
+
+
+def test_loader():
+    sys.path.append(path.join(path.dirname(__file__), "test_pkg"))
+    import test_pkg.mod_with_units
+
+    assert_quantity_eq(test_pkg.mod_with_units.speed(), 1, "attoparsec/fortnight")

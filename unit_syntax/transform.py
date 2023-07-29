@@ -31,11 +31,14 @@ class UnitExprTransformer(ast.NodeTransformer):
             return super().generic_visit(node)
 
 
-def transform(code: str) -> str:
-    """Transform a string of python-with-units into a standard python string"""
-
+def transform_to_ast(code: str) -> ast.AST:
     tree = parse_string(code, mode="file")
     ureg = pint._DEFAULT_REGISTRY
     tree_std = UnitExprTransformer(ureg).visit(tree)
-    tree_std = ast.fix_missing_locations(tree_std)
+    return ast.fix_missing_locations(tree_std)
+
+
+def transform_to_str(code: str) -> str:
+    """Transform a string of python-with-units into a standard python string"""
+    tree_std = transform_to_ast(code)
     return ast.unparse(tree_std)

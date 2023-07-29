@@ -127,8 +127,6 @@ $ poetry run pytest
 - Test against various ipython and python versions
 - Support standalone scripts through sys.meta_path
 - Unit type hints, maybe checked with [@runtime_checkable](https://docs.python.org/3/library/typing.html#typing.runtime_checkable). More Pint typechecking [discussion](https://github.com/hgrecco/pint/issues/1166)
-- Expand the demo Colab notebook
 - Typography of output
-- make it work with numba
-- understand how numpy interop works
+- understand how numpy and numba interop works
 - pre-parse units

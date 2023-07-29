@@ -1,6 +1,6 @@
-__pycache__
 .ipynb_checkpoints
-.vscode
 dist/
-__pycache__
+**/__pycache__
 build/
+.venv
+.pytest_cache.vscode/
