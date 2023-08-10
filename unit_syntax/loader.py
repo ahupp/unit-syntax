@@ -1,10 +1,15 @@
-def enable_units_for_package(package_name: str):
-    from import_transforms import set_module_source_transform, SourceTransformLoader
+import pint
+
+
+def enable_units_for_package(package_name: str, ureg: pint.UnitRegistry | None = None):
+    from import_transforms import register_package_source_transform
     from .transform import transform_to_ast
-    from . import BOOTSTRAP
-    import ast
 
-    def f(source: str) -> ast.AST:
-        return transform_to_ast(BOOTSTRAP + source)
+    if ureg is None:
+        _q = pint._DEFAULT_REGISTRY.Quantity
+    else:
+        _q = ureg.Quantity
 
-    set_module_source_transform(f"{package_name}.*", f)
+    register_package_source_transform(
+        package_name, transform_to_ast, injected={"_unit_syntax_q": _q}
+    )

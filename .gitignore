@@ -4,3 +4,4 @@ dist/
 build/
 .venv
 .pytest_cache.vscode/
+.vscode/

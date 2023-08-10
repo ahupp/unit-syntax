@@ -36,6 +36,13 @@ def transform_lines(lines: list[str]) -> list[str]:
     return ret
 
 
+ureg = pint._DEFAULT_REGISTRY
+
+
+def Quantity(mag, units):
+    return ureg.Quantity(mag, units)
+
+
 def load_ipython_extension(ipython):
     logging.debug("unit_syntax: loading extension")
 
@@ -46,9 +53,12 @@ def load_ipython_extension(ipython):
 
     _add_formatters(ipython)
 
-    from . import BOOTSTRAP
-
-    ipython.run_cell(BOOTSTRAP)
+    ipython.run_cell(
+        """
+import unit_syntax.ipython
+_unit_syntax_q = unit_syntax.ipython.Quantity
+        """
+    )
 
 
 def unload_ipython_extension(ipython):

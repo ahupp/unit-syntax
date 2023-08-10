@@ -3,14 +3,14 @@ from io import StringIO
 from unit_syntax import transform
 import sys
 import unit_syntax
+import unit_syntax.ipython
 import pytest
 import numpy
 import pint
 import tokenize
 
 
-def generate_tokens(code: str):
-    return tokenize.generate_tokens(StringIO(code).readline)
+## For testing various kinds of operations
 
 
 class AttrTest:
@@ -21,16 +21,6 @@ class AttrTest:
 test_attr = AttrTest()
 test_dict = {"value": 37}
 second = 1024
-seven_furlong = unit_syntax.ureg.Quantity(7.0, "furlong")
-
-
-def dbg_transform(code):
-    from pprint import pprint
-
-    tokens = list(generate_tokens(code))
-    pprint(tokens)
-    # pprint(transform.parse(iter(tokens)))
-    pprint(transform.transform_to_str(code))
 
 
 def do_mult(left, right):
@@ -41,9 +31,22 @@ def id(v):
     return v
 
 
+##
+
+
+def dbg_transform(code: str):
+    from pprint import pprint
+
+    tokens = list(tokenize.generate_tokens(StringIO(code).readline))
+    pprint(tokens)
+    # pprint(transform.parse(iter(tokens)))
+    pprint(transform.transform_to_str(code))
+
+
 def transform_exec(code):
     glo = dict(globals())
-    exec(transform.transform_to_str(unit_syntax.BOOTSTRAP + "\n" + code), glo)
+    glo["_unit_syntax_q"] = unit_syntax.ipython.Quantity
+    exec(transform.transform_to_str(code), glo)
     return glo["result"]
 
 
@@ -53,15 +56,15 @@ def transform_eval(code):
 
 
 def assert_quantity_eq(result, value, units):
-    u = unit_syntax.ureg.Quantity(value, units)
+    # Use the same registry as `result`, in case its different
+    # from the default
+    u = result._REGISTRY.Quantity(value, units)
     result = result.to(u.units)
 
-    if type(value) == float and type(result.magnitude) == float:
-        assert result.magnitude == pytest.approx(value)
-    elif type(result.magnitude) == numpy.ndarray:
+    if type(result.magnitude) == numpy.ndarray:
         assert numpy.all(result.magnitude == value)
     else:
-        assert result.magnitude == value
+        assert result.magnitude == pytest.approx(value)
     assert result.units == u.units
 
 
@@ -116,7 +119,6 @@ result = 1 meters
     assert_quantity("27.1 meter/s**2", 27.1, "meter/s**2")
     assert_quantity("3 meter second/kg", 3, "(meter second)/kg")
 
-    # assert_quantity("(2048 meter/second) * 2 second", 4096, "meters")
     assert_quantity("(2048 meter)/second * (2 second)", 4, "meter*second")
     assert_quantity("do_mult(3 kg, 5 s)", 15, "kg*s")
 
@@ -142,11 +144,21 @@ result = 1 meters
     # Check valid units at parse time
     assert_syntax_error("3 smoots")
 
+    # Check mixing operators and units without parens is disallowed
     assert_syntax_error("1 + 3 meters")
 
 
 def test_loader():
     sys.path.append(path.join(path.dirname(__file__), "test_pkg"))
-    import test_pkg.mod_with_units
 
-    assert_quantity_eq(test_pkg.mod_with_units.speed(), 1, "attoparsec/fortnight")
+    import test_pkg_standard_btu.mod_with_units
+
+    assert_quantity_eq(
+        test_pkg_standard_btu.mod_with_units.speed(), 1, "attoparsec/fortnight"
+    )
+    assert_quantity_eq(test_pkg_standard_btu.mod_with_units.btu(), 1055.056, "joule")
+
+    # Check that a custom UnitRegistry is being used
+    import test_pkg_intl_btu.mod_with_units
+
+    assert_quantity_eq(test_pkg_intl_btu.mod_with_units.btu(), 1, "Btu_it")

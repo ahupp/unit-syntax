@@ -32,6 +32,7 @@ class UnitExprTransformer(ast.NodeTransformer):
 
 
 def transform_to_ast(code: str) -> ast.AST:
+    "Transform a string of python-with-units into a standard python ast.AST"
     tree = parse_string(code, mode="file")
     ureg = pint._DEFAULT_REGISTRY
     tree_std = UnitExprTransformer(ureg).visit(tree)
@@ -39,6 +40,6 @@ def transform_to_ast(code: str) -> ast.AST:
 
 
 def transform_to_str(code: str) -> str:
-    """Transform a string of python-with-units into a standard python string"""
+    "Transform a string of python-with-units into a standard python string"
     tree_std = transform_to_ast(code)
     return ast.unparse(tree_std)
