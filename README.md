@@ -6,11 +6,11 @@
 10 meter
 ```
 
-Why? I often use Python as an interactive calculator for physical problems and wished it had the type safety of explicit units along with the readability of normal notation.
+Why? I like to use Python as a calculator for physical problems and wished it had the type safety of explicit units along with the readability of normal notation.
 
-`unit-syntax` currently supports Jupyter notebooks and the IPython interpreter; maybe someday support for standalone scripts.
+`unit-syntax` works in Jupyter notebooks, standalone Python scripts, and regular packages.
 
-[How does it work?](#how-does-it-work)
+[How does it work?](https://github.com/ahupp/unit-syntax#how-does-it-work)
 
 ## Getting Started
 
@@ -20,6 +20,8 @@ Install the package:
 $ pip install unit-syntax
 ```
 
+### .. with Jupyter/IPython
+
 To enable unit-syntax in a Jupyter/IPython session run:
 
 ```python
@@ -27,6 +29,27 @@ To enable unit-syntax in a Jupyter/IPython session run:
 ```
 
 Tip: In Jupyter this must be run in its own cell before any units expressions are evaluated.
+
+### .. with packages
+
+To use/distribute a package with unit-syntax, add this in your `__init__.py`:
+
+```python
+from unit_syntax.import_hook import enable_units_for_package
+enable_units_for_package(__name__)
+```
+
+This applies the transform only to sub-modules of your package.
+
+### .. with standalone scripts
+
+To run a standalone script with units:
+
+```
+$ python -m unit_syntax <path_to_script.py>
+```
+
+Note that this installs a custom import hook that affects all imports performed by the script.
 
 ## Usage
 
@@ -82,9 +105,11 @@ SyntaxError: 'smoot' is not defined in the unit registry
 
 ## How does it work?
 
-The parser is [pegen](https://we-like-parsers.github.io/pegen/), which is the same parser generator used by Python itself. The grammar is a lightly modified version the official Python grammar.
+The paser is [pegen](https://we-like-parsers.github.io/pegen/), which is a standalone version of the same parser generator used by Python itself. The grammar is a [lightly modified](https://github.com/ahupp/unit-syntax/compare/base-grammar..main#diff-7405fdc26614e4d2e7f8f37c9b559ccb3a7f7c619d41e207dda28afdfae20f83) version the official Python grammar shipped with pegen.
 
 Syntax transformation in IPython/Jupyter uses [IPython custom input transformers](https://ipython.readthedocs.io/en/stable/config/inputtransforms.html).
+
+Syntax transformation of arbitrary Python modules uses [importlib](https://docs.python.org/3/library/importlib.html)'s [MetaPathFinder], see [import-transforms](https://github.com/ahupp/import-transformss) and [unit_syntax.loader](https://github.com/ahupp/unit-syntax/blob/main/unit_syntax/loader.py) for details.
 
 ## Why only allow units on simple expressions?
 
@@ -125,8 +150,9 @@ $ poetry run pytest
 ## Future work and open questions
 
 - Test against various ipython and python versions
-- Support standalone scripts through sys.meta_path
+- Ensure bytecode caching still works
+- Test with wider range of source files with the wildcard loader
 - Unit type hints, maybe checked with [@runtime_checkable](https://docs.python.org/3/library/typing.html#typing.runtime_checkable). More Pint typechecking [discussion](https://github.com/hgrecco/pint/issues/1166)
 - Typography of output
-- understand how numpy and numba interop works
 - pre-parse units
+- talk to pint about interop between UnitRegistries

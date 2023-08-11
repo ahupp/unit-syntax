@@ -1,14 +1,12 @@
-from os import path
+import os.path
 from io import StringIO
-from unit_syntax import transform
-import sys
-import unit_syntax
-import unit_syntax.ipython
+from unit_syntax import transform, _injected_q
 import pytest
 import numpy
 import pint
 import tokenize
 
+TEST_DIR = os.path.dirname(__file__)
 
 ## For testing various kinds of operations
 
@@ -31,9 +29,6 @@ def id(v):
     return v
 
 
-##
-
-
 def dbg_transform(code: str):
     from pprint import pprint
 
@@ -45,7 +40,7 @@ def dbg_transform(code: str):
 
 def transform_exec(code):
     glo = dict(globals())
-    glo["_unit_syntax_q"] = unit_syntax.ipython.Quantity
+    glo.update(_injected_q(None))
     exec(transform.transform_to_str(code), glo)
     return glo["result"]
 
@@ -149,8 +144,6 @@ result = 1 meters
 
 
 def test_loader():
-    sys.path.append(path.join(path.dirname(__file__), "test_pkg"))
-
     import test_pkg_standard_btu.mod_with_units
 
     assert_quantity_eq(
@@ -162,3 +155,16 @@ def test_loader():
     import test_pkg_intl_btu.mod_with_units
 
     assert_quantity_eq(test_pkg_intl_btu.mod_with_units.btu(), 1, "Btu_it")
+
+
+def test_standalone_scripts():
+    import runpy, sys
+
+    filename = os.path.join(TEST_DIR, "./standalone_script.py")
+
+    argv = sys.argv
+    sys.argv = ["<unit-syntax>", filename]
+    runpy.run_module(
+        "unit_syntax",
+    )
+    sys.argv = argv
