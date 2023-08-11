@@ -12,7 +12,7 @@ python = ">=3.8, < 4"
 Pint = ">0.20"
 ipython = ">=7"
 pegen = "^0.2"
-import-transforms = {git = "https://github.com/ahupp/import-transforms"}
+import-transforms = {git = "https://github.com/ahupp/import-transforms.git", rev = "v0.2.4"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.2"
