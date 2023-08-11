@@ -8,7 +8,7 @@
 
 Why? I like to use Python as a calculator for physical problems and wished it had the type safety of explicit units along with the readability of normal notation.
 
-`unit-syntax` works in Jupyter notebooks, standalone Python scripts, and regular packages.
+`unit-syntax` works in Jupyter notebooks, standalone Python scripts, and Python packages.
 
 [How does it work?](https://github.com/ahupp/unit-syntax#how-does-it-work)
 
@@ -20,7 +20,7 @@ Install the package:
 $ pip install unit-syntax
 ```
 
-### .. with Jupyter/IPython
+### ... with Jupyter/IPython
 
 To enable unit-syntax in a Jupyter/IPython session run:
 
@@ -30,7 +30,17 @@ To enable unit-syntax in a Jupyter/IPython session run:
 
 Tip: In Jupyter this must be run in its own cell before any units expressions are evaluated.
 
-### .. with packages
+### ... with standalone scripts
+
+To run a standalone script with units:
+
+```
+$ python -m unit_syntax <path_to_script.py>
+```
+
+Note that this installs a custom import hook that affects all imports performed by the script.
+
+### ... with Python packages
 
 To use/distribute a package with unit-syntax, add this in your `__init__.py`:
 
@@ -40,16 +50,6 @@ enable_units_for_package(__name__)
 ```
 
 This applies the transform only to sub-modules of your package.
-
-### .. with standalone scripts
-
-To run a standalone script with units:
-
-```
-$ python -m unit_syntax <path_to_script.py>
-```
-
-Note that this installs a custom import hook that affects all imports performed by the script.
 
 ## Usage
 
@@ -95,7 +95,7 @@ x (newton meters)/(second*kg)
 x newton meters/(second*kg)
 ```
 
-Using invalid units produces a syntax error at import time:
+Using unknown units produces a syntax error at import time:
 
 ```python
 >>> 1 smoot
@@ -105,11 +105,13 @@ SyntaxError: 'smoot' is not defined in the unit registry
 
 ## How does it work?
 
-The paser is [pegen](https://we-like-parsers.github.io/pegen/), which is a standalone version of the same parser generator used by Python itself. The grammar is a [lightly modified](https://github.com/ahupp/unit-syntax/compare/base-grammar..main#diff-7405fdc26614e4d2e7f8f37c9b559ccb3a7f7c619d41e207dda28afdfae20f83) version the official Python grammar shipped with pegen.
+`unit-syntax` transforms python-with-units into standard python that calls the excellent [pint](https://pint.readthedocs.io/en/stable/) units handling library.
+
+The parser is [pegen](https://we-like-parsers.github.io/pegen/), which is a standalone version of the same parser generator used by Python itself. The grammar is a [lightly modified](https://github.com/ahupp/unit-syntax/compare/base-grammar..main#diff-7405fdc26614e4d2e7f8f37c9b559ccb3a7f7c619d41e207dda28afdfae20f83) version the official Python grammar shipped with pegen.
 
 Syntax transformation in IPython/Jupyter uses [IPython custom input transformers](https://ipython.readthedocs.io/en/stable/config/inputtransforms.html).
 
-Syntax transformation of arbitrary Python modules uses [importlib](https://docs.python.org/3/library/importlib.html)'s [MetaPathFinder], see [import-transforms](https://github.com/ahupp/import-transformss) and [unit_syntax.loader](https://github.com/ahupp/unit-syntax/blob/main/unit_syntax/loader.py) for details.
+Syntax transformation of arbitrary Python modules uses [importlib](https://docs.python.org/3/library/importlib.html)'s [MetaPathFinder](https://docs.python.org/3/library/importlib.html#importlib.abc.MetaPathFinder), see [import-transforms](https://github.com/ahupp/import-transformss) and [unit_syntax.loader](https://github.com/ahupp/unit-syntax/blob/main/unit_syntax/loader.py) for details.
 
 ## Why only allow units on simple expressions?
 
@@ -120,9 +122,7 @@ ppi = 300 pixels/inch
 y = x inches * ppi
 ```
 
-`inches * ppi` would be parsed as the unit, leading to (at best) a runtime error sometime later and at worst an incorrect calculation. This could be avoided by parenthesizing the expression (e.g. `(x inches) * ppi`, but in general it's too error prone to allow free intermixing of operators and units. (Note: This is not a hypothical concern, I hit this within 10 minutes of first trying out the idea)
-
-It's easy to detect units used when they aren't allowed (that syntax isn't valid anywhere else), but not generally possible to determine if you forgot parens or meant to write a unit.
+`inches * ppi` would be parsed as the unit, leading to (at best) a runtime error sometime later and at worst an incorrect calculation. This could be avoided by parenthesizing the expression (e.g. `(x inches) * ppi`, but if that's optional it's easy to forget. So the intent of this restriction is to make these risky forms uncommon and thus more obvious. This is not a hypothetical concern, I hit this within 10 minutes of first using the initial syntax.
 
 ## Prior Art
 
