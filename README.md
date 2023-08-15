@@ -111,7 +111,7 @@ The parser is [pegen](https://we-like-parsers.github.io/pegen/), which is a stan
 
 Syntax transformation in IPython/Jupyter uses [IPython custom input transformers](https://ipython.readthedocs.io/en/stable/config/inputtransforms.html).
 
-Syntax transformation of arbitrary Python modules uses [importlib](https://docs.python.org/3/library/importlib.html)'s [MetaPathFinder](https://docs.python.org/3/library/importlib.html#importlib.abc.MetaPathFinder), see [import-transforms](https://github.com/ahupp/import-transformss) and [unit_syntax.loader](https://github.com/ahupp/unit-syntax/blob/main/unit_syntax/loader.py) for details.
+Syntax transformation of arbitrary Python modules uses [importlib](https://docs.python.org/3/library/importlib.html)'s [MetaPathFinder](https://docs.python.org/3/library/importlib.html#importlib.abc.MetaPathFinder), see [import-transforms](https://github.com/ahupp/import-transformss) and [unit_syntax.import_hook](https://github.com/ahupp/unit-syntax/blob/main/unit_syntax/import_hook.py) for details.
 
 ## Why only allow units on simple expressions?
 
