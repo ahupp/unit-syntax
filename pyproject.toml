@@ -12,13 +12,12 @@ python = ">=3.8, < 4"
 Pint = ">0.20"
 ipython = ">=7"
 pegen = "^0.2"
-import-transforms = {git = "https://github.com/ahupp/import-transforms.git", rev = "v0.2.4"}
+import-transforms = "0.5.0"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.2"
-black = "^22.12"
+pytest = "^7"
+black = "^22"
 numpy = "^1.24.3"
-twine = "^4.0.2"
 mypy = "^1.2.0"
 
 [build-system]
