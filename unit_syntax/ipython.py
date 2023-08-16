@@ -1,7 +1,6 @@
-from .transform import transform_to_str
-from . import _injected_q
 import pint
 import logging
+from .transform import UnitSourceTransform
 
 
 def _add_formatters(ipython):
@@ -29,10 +28,13 @@ def enable_debug():
     logging.basicConfig(level=logging.DEBUG, force=True)
 
 
+_UNIT_TRANSFORM = UnitSourceTransform(None)
+
+
 def transform_lines(lines: list[str]) -> list[str]:
     """IPython transforms provide a list of strings in the current cell, but to parse correctly we
     need to parse them as a single string"""
-    ret = transform_to_str("".join(lines)).splitlines(keepends=True)
+    ret = _UNIT_TRANSFORM.transform_to_str("".join(lines)).splitlines(keepends=True)
     logging.debug("unit_syntax: %s -> %s", lines, ret)
     return ret
 
@@ -47,7 +49,7 @@ def load_ipython_extension(ipython):
 
     _add_formatters(ipython)
 
-    ipython.push(_injected_q(None))
+    ipython.push(_UNIT_TRANSFORM.injected_globals())
 
 
 def unload_ipython_extension(ipython):

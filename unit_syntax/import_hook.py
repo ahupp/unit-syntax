@@ -1,16 +1,15 @@
 import pint
-
-from . import _injected_q
+from .transform import UnitSourceTransform
 
 
 def _enable(module_glob: str, ureg: pint.UnitRegistry | None, check_loaded: bool):
     from import_transforms import register_module_source_transform
-    from .transform import transform_to_ast
+
+    transform = UnitSourceTransform(ureg)
 
     register_module_source_transform(
         module_glob,
-        transform_to_ast,
-        injected=_injected_q(ureg),
+        transform,
         check_loaded=check_loaded,
     )
 

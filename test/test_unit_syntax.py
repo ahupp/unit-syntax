@@ -1,6 +1,7 @@
 import os.path
+import sys
 from io import StringIO
-from unit_syntax import transform, _injected_q
+from unit_syntax.transform import UnitSourceTransform
 import pytest
 import numpy
 import pint
@@ -29,25 +30,47 @@ def id(v):
     return v
 
 
-def dbg_transform(code: str):
-    from pprint import pprint
+class UnitSourceTransformTester:
+    def __init__(self, ust: UnitSourceTransform):
+        self.ust = ust
 
-    tokens = list(tokenize.generate_tokens(StringIO(code).readline))
-    pprint(tokens)
-    # pprint(transform.parse(iter(tokens)))
-    pprint(transform.transform_to_str(code))
+    def transform_eval(self, code):
+        code_assign = "result = " + code
+        return self.transform_exec(code_assign)
 
+    def transform_exec(self, code):
+        glo = dict(globals())
+        glo.update(self.ust.injected_globals())
+        exec(self.ust.transform_to_str(code), glo)
+        return glo["result"]
 
-def transform_exec(code):
-    glo = dict(globals())
-    glo.update(_injected_q(None))
-    exec(transform.transform_to_str(code), glo)
-    return glo["result"]
+    def dbg_transform(self, code: str):
+        from pprint import pprint
 
+        tokens = list(tokenize.generate_tokens(StringIO(code).readline))
+        pprint(tokens)
+        # pprint(transform.parse(iter(tokens)))
+        pprint(self.ust.transform_to_str(code))
 
-def transform_eval(code):
-    code_assign = "result = " + code
-    return transform_exec(code_assign)
+    def assert_quantity_exec(self, code, value, units):
+        try:
+            result = self.transform_exec(code)
+            assert_quantity_eq(result, value, units)
+        except Exception as e:
+            self.dbg_transform(code)
+            raise e
+
+    def assert_quantity(self, code, value, units):
+        try:
+            result = self.transform_eval(code)
+            assert_quantity_eq(result, value, units)
+        except Exception as e:
+            self.dbg_transform(code)
+            raise e
+
+    def assert_syntax_error(self, code):
+        with pytest.raises(SyntaxError):
+            self.transform_exec(code)
 
 
 def assert_quantity_eq(result, value, units):
@@ -63,31 +86,10 @@ def assert_quantity_eq(result, value, units):
     assert result.units == u.units
 
 
-def assert_quantity_exec(code, value, units):
-    try:
-        result = transform_exec(code)
-        assert_quantity_eq(result, value, units)
-    except Exception as e:
-        dbg_transform(code)
-        raise e
-
-
-def assert_quantity(code, value, units):
-    try:
-        result = transform_eval(code)
-        assert_quantity_eq(result, value, units)
-    except Exception as e:
-        dbg_transform(code)
-        raise e
-
-
-def assert_syntax_error(code):
-    with pytest.raises(SyntaxError):
-        exec(transform.transform_to_str(code))
-
-
 def test_all():
-    assert_quantity_exec(
+    tst = UnitSourceTransformTester(UnitSourceTransform(None))
+
+    tst.assert_quantity_exec(
         """
 from math import *
 def surface_area(radius):
@@ -101,7 +103,7 @@ result = total_surface_force(1.0)
         "N",
     )
 
-    assert_quantity_exec(
+    tst.assert_quantity_exec(
         """
 # this is a comment
 result = 1 meters
@@ -110,37 +112,37 @@ result = 1 meters
         "meters",
     )
 
-    assert_quantity("12 meter", 12, "meter")
-    assert_quantity("27.1 meter/s**2", 27.1, "meter/s**2")
-    assert_quantity("3 meter second/kg", 3, "(meter second)/kg")
+    tst.assert_quantity("12 meter", 12, "meter")
+    tst.assert_quantity("27.1 meter/s**2", 27.1, "meter/s**2")
+    tst.assert_quantity("3 meter second/kg", 3, "(meter second)/kg")
 
-    assert_quantity("(2048 meter)/second * (2 second)", 4, "meter*second")
-    assert_quantity("do_mult(3 kg, 5 s)", 15, "kg*s")
+    tst.assert_quantity("(2048 meter)/second * (2 second)", 4, "meter*second")
+    tst.assert_quantity("do_mult(3 kg, 5 s)", 15, "kg*s")
 
-    assert_quantity("[2, 5] T", [2, 5], "T")
-    assert_quantity("(1., 3., 5.) attoparsec", (1.0, 3.0, 5.0), "attoparsec")
+    tst.assert_quantity("[2, 5] T", [2, 5], "T")
+    tst.assert_quantity("(1., 3., 5.) attoparsec", (1.0, 3.0, 5.0), "attoparsec")
 
-    assert_quantity("(3 kg) pounds", 6.61386786, "pounds")
+    tst.assert_quantity("(3 kg) pounds", 6.61386786, "pounds")
 
-    assert_quantity("test_attr.second degF", 7, "degF")
-    assert_quantity("test_dict['value'] ns", 37, "ns")
+    tst.assert_quantity("test_attr.second degF", 7, "degF")
+    tst.assert_quantity("test_dict['value'] ns", 37, "ns")
 
-    assert_quantity("(2**4) meters", 16, "meters")
+    tst.assert_quantity("(2**4) meters", 16, "meters")
 
-    assert_quantity("(2 meters) ** 2", 4, "meters**2")
-    assert_quantity("second * (1 meters)", 1024, "meters")
-    assert_quantity("-1 meters", -1, "meters")
+    tst.assert_quantity("(2 meters) ** 2", 4, "meters**2")
+    tst.assert_quantity("second * (1 meters)", 1024, "meters")
+    tst.assert_quantity("-1 meters", -1, "meters")
 
-    assert_quantity("6.67 N m**2/kg**2", 6.67, "N*m**2/kg**2")
+    tst.assert_quantity("6.67 N m**2/kg**2", 6.67, "N*m**2/kg**2")
 
-    list_comp = transform_eval("[x meters for x in range(4)]")
+    list_comp = tst.transform_eval("[x meters for x in range(4)]")
     assert list_comp == [pint.Quantity(x, "meters") for x in range(4)]
 
     # Check valid units at parse time
-    assert_syntax_error("3 smoots")
+    tst.assert_syntax_error("3 smoots")
 
     # Check mixing operators and units without parens is disallowed
-    assert_syntax_error("1 + 3 meters")
+    tst.assert_syntax_error("1 + 3 meters")
 
 
 def test_loader():
@@ -158,13 +160,9 @@ def test_loader():
 
 
 def test_standalone_scripts():
-    import runpy, sys
+    import subprocess
 
     filename = os.path.join(TEST_DIR, "./standalone_script.py")
 
-    argv = sys.argv
-    sys.argv = ["<unit-syntax>", filename]
-    runpy.run_module(
-        "unit_syntax",
-    )
-    sys.argv = argv
+    out = subprocess.check_output([sys.executable, "-m", "unit_syntax", filename])
+    assert out == b"15 meter\n"
