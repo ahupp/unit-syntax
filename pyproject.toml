@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "unit-syntax"
-version = "0.2.6"
+version = "0.3.0"
 authors = ["Adam Hupp <adam@hupp.org>"]
 packages = [{ include = "unit_syntax" }]
 readme = "README.md"
