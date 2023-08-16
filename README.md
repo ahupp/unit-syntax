@@ -156,3 +156,4 @@ $ poetry run pytest
 - Typography of output
 - pre-parse units
 - talk to pint about interop between UnitRegistries
+- Fix reported location of SyntaxError when paren missing

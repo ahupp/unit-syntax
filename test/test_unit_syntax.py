@@ -144,6 +144,8 @@ result = 1 meters
     # Check mixing operators and units without parens is disallowed
     tst.assert_syntax_error("1 + 3 meters")
 
+    tst.assert_quantity("6.022e23 mol**-1", 6.022e23, "mol**-1")
+
 
 def test_loader():
     import test_pkg_standard_btu.mod_with_units

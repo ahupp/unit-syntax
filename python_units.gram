@@ -1137,7 +1137,7 @@ units_[str]:
     | a=units_ '/' c=units_group_ {a + '/' + c}
     | a=units_ '*' c=units_group_ {a + '*' + c}
     | a=units_ b=units_group_ {a + ' ' + b}
-    | a=units_ '**' c=NUMBER {a + '**' + c.string}
+    | a=units_ '**' sign='-'? c=NUMBER {a + '**' + (sign.string if sign is not None else "") + c.string}
     | a=NAME {a.string}
 
 units_group_[str]:

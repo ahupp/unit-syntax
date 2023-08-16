@@ -3163,7 +3163,7 @@ class PythonParser(Parser):
 
     @memoize_left_rec
     def units_(self) -> Optional[str]:
-        # units_: units_ '/' units_group_ | units_ '*' units_group_ | units_ units_group_ | units_ '**' NUMBER | NAME
+        # units_: units_ '/' units_group_ | units_ '*' units_group_ | units_ units_group_ | units_ '**' '-'? NUMBER | NAME
         mark = self._mark()
         if (
             (a := self.units_())
@@ -3195,9 +3195,11 @@ class PythonParser(Parser):
             and
             (self.expect('**'))
             and
+            (sign := self.expect('-'),)
+            and
             (c := self.number())
         ):
-            return a + '**' + c . string;
+            return a + '**' + ( sign . string if sign is not None else "" ) + c . string;
         self._reset(mark)
         if (
             (a := self.name())
