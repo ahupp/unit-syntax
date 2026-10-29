@@ -15,8 +15,14 @@ def type_parameter(parser, kind, name, bound, default, **locations):
     return getattr(ast, kind)(**arguments)
 
 
+def source_lines(source):
+    # Tokenization advances on LF, not Unicode separators inside strings.
+    parts = source.split("\n")
+    return [line + "\n" for line in parts[:-1]] + parts[-1:]
+
+
 def utf8_locations(tree, source):
-    lines = source.splitlines(keepends=True)
+    lines = source_lines(source)
     for node in ast.walk(tree):
         for line_attr, column_attr in (
             ("lineno", "col_offset"),
@@ -44,7 +50,7 @@ def interpolated_string(parser, start, parts, end):
     No expression is evaluated, and the original expression ASTs are retained.
     """
     source = parser.source
-    lines = source.splitlines(keepends=True)
+    lines = source_lines(source)
     offsets = [0]
     for line in lines:
         offsets.append(offsets[-1] + len(line))
@@ -79,7 +85,7 @@ def interpolated_string(parser, start, parts, end):
     for a, b, text in sorted(edits, reverse=True):
         masked = masked[: a - begin] + text + masked[b - begin :]
     tree = ast.parse(masked, filename=parser.filename, mode="eval").body
-    masked_lines = masked.splitlines(keepends=True)
+    masked_lines = source_lines(masked)
     # Native AST columns are bytes; the PEG tree uses character columns until
     # parse_string's final, shared conversion to CPython UTF-8 coordinates.
     for node in ast.walk(tree):
@@ -137,9 +143,12 @@ def interpolated_string(parser, start, parts, end):
                     if isinstance(part, getattr(ast, "Interpolation", ())):
                         a = offset((value.lineno, value.col_offset))
                         b = offset((value.end_lineno, value.end_col_offset))
-                        part.str = part.str.replace(
-                            masked[a - begin : b - begin], source[a:b], 1
-                        )
+                        masked_expression = masked[a - begin : b - begin]
+                        # Python 3.14 drops trailing field whitespace from str;
+                        # 3.15 retains it. Restore the expression in either form.
+                        if masked_expression not in part.str:
+                            masked_expression = masked_expression.rstrip()
+                        part.str = part.str.replace(masked_expression, source[a:b], 1)
                 if part.format_spec:
                     self.visit(part.format_spec)
             return node

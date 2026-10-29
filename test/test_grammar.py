@@ -54,11 +54,15 @@ def test_matches_native_python_grammar(source):
     [
         "é = 3; model = 5 mm\n",
         "é = f'{1+2}'\n",
+        'label="a\u2028b"; model=5 mm\n',
+        'label="a\u2028b"\nmodel=5 mm\n',
+        'label="a\u2028b"; value=f"{1+2}"\n',
+        'value=f"a\u2028b{1+2}"\n',
         'x = t"{ 1 + 2 }"\n',
     ],
 )
 def test_utf8_source_locations(source):
-    if " mm" in source:
+    if "mm" in source:
         tree = parse_string(source, mode="exec")
         unit = next(node for node in ast.walk(tree) if isinstance(node, UnitsExpr))
         assert ast.get_source_segment(source, unit) == "5 mm"
