@@ -109,9 +109,93 @@ SyntaxError: 'smoot' is not defined in the unit registry
 
 The parser is [pegen](https://we-like-parsers.github.io/pegen/), which is a standalone version of the same parser generator used by Python itself. The grammar is a [lightly modified](https://github.com/ahupp/unit-syntax/compare/base-grammar..main#diff-7405fdc26614e4d2e7f8f37c9b559ccb3a7f7c619d41e207dda28afdfae20f83) version the official Python grammar shipped with pegen.
 
+The grammar now targets **Python 3.15**, including generic declarations, type
+parameter defaults, f-strings and template strings, unparenthesized exception
+types, unpacking comprehensions, and lazy imports. Execution of newer syntax
+requires a Python interpreter that supports it. Python 3.10 is the minimum
+supported interpreter. See [GRAMMAR.md](GRAMMAR.md) for the pinned upstream
+sources and regeneration instructions.
+
 Syntax transformation in IPython/Jupyter uses [IPython custom input transformers](https://ipython.readthedocs.io/en/stable/config/inputtransforms.html).
 
-Syntax transformation of arbitrary Python modules uses [importlib](https://docs.python.org/3/library/importlib.html)'s [MetaPathFinder](https://docs.python.org/3/library/importlib.html#importlib.abc.MetaPathFinder), see [import-transforms](https://github.com/ahupp/import-transformss) and [unit_syntax.import_hook](https://github.com/ahupp/unit-syntax/blob/main/unit_syntax/import_hook.py) for details.
+Syntax transformation of arbitrary Python modules uses Python's public
+`importlib` finder and loader interfaces; see `unit_syntax.import_hook`.
+
+## Static dimension checking
+
+Install the optional checker, then check a script or package before executing it:
+
+```sh
+pip install 'unit-syntax[check]'
+python -m unit_syntax check model.py
+# Equivalent console command:
+unit-syntax check my_package/
+```
+
+The checker uses **ty**. It creates a temporary Python view of the source, gives
+every unit literal its physical dimension, checks project imports, and maps
+diagnostics back to the original filenames and positions. It never executes the
+checked code or writes transformed code into the project. Running `ty check`
+directly on a file containing unit suffixes will still produce syntax errors;
+use the `unit-syntax check` entry point. `--project PATH` explicitly selects the
+root for imports. Syntax-only errors in unrelated, unselected files do not
+prevent checking the selected files.
+
+```python
+from math import sqrt
+
+width = 18 mm
+height = 27 mm
+ratio = width / height
+ear = width * sqrt(1 - ratio * ratio)  # accepted: ratio is dimensionless
+
+sqrt(width)                  # error: Quantity[Length] is not dimensionless
+width + (2 seconds)          # error: Length and Time are incompatible
+converted = (2 seconds) mm   # error: conversion requires compatible dimensions
+```
+
+Function annotations can express the same contract:
+
+```python
+from unit_syntax.typing import Quantity, Length, Area
+
+def surface_area(radius: Quantity[Length]) -> Quantity[Area]:
+    return radius * radius
+
+surface_area(5 mm)       # accepted
+surface_area(5 seconds)  # rejected by the checker
+```
+
+In `unit_syntax.typing`, `Quantity[D]` carries a **dimension**. This differs
+from Pint's `pint.Quantity[T]`, whose type parameter describes the **magnitude**
+(such as `float` or an array), not whether the value is a length or time. Pint's
+existing annotations do not perform this dimensional checking. At runtime
+`unit_syntax.typing.Quantity` is an alias for Pint's real `Quantity`; values,
+registries, formatting, and arithmetic continue to use Pint.
+
+Only `Quantity[Dimensionless]` supports `__float__` in the typing contract.
+Pint already performs dimensionless numeric conversion at runtime, including
+scale normalization: `float((1 m) / (1 mm))` is `1000`. Angles remain a distinct
+static dimension, even though Pint treats radians as dimensionless. Convert an
+angle to radians and explicitly extract its magnitude when calling Python's
+plain numeric trigonometric functions.
+
+The operator annotations normalize common dimensions, including area, volume,
+velocity, acceleration, force, pressure, energy, power, and density. Matching
+dimensions divide to a dimensionless quantity, including arbitrary compound
+units written as literals. Other products and quotients retain symbolic
+dimension types. Python typing cannot generally simplify arbitrary exponent
+algebra, so an equivalent expression outside the normalized set can be
+conservatively rejected. Physical powers currently require a supported literal
+integer exponent (`-3` through `4`); dimensionless powers accept ordinary
+numbers. Magnitude dtype and shape constraints, runtime-selected units,
+arbitrary `.to()` strings, and Pint contexts remain runtime checks. Untyped
+Python values retain the usual limits of gradual type checking.
+
+The checker resolves literal unit names with its supplied registry (the Pint
+application registry by default). Python API callers can pass their own registry
+to `unit_syntax.check.checking_source`; checking does not execute package
+initializers to discover custom registry definitions.
 
 ## Why only allow units on simple expressions?
 
@@ -143,8 +227,10 @@ To regenerate the parser:
 Running tests:
 
 ```
-$ poetry install --with dev
+$ poetry install --with dev --extras check
 $ poetry run pytest
+$ poetry run python scripts/generate_typing.py
+$ poetry run ty check unit_syntax/typing.pyi
 ```
 
 ## Future work and open questions
@@ -152,7 +238,7 @@ $ poetry run pytest
 - Test against various ipython and python versions
 - Ensure bytecode caching still works
 - Test with wider range of source files with the wildcard loader
-- Unit type hints, maybe checked with [@runtime_checkable](https://docs.python.org/3/library/typing.html#typing.runtime_checkable). More Pint typechecking [discussion](https://github.com/hgrecco/pint/issues/1166)
+- Extend static normalization to more dimensional products and exponent expressions.
 - Typography of output
 - pre-parse units
 - talk to pint about interop between UnitRegistries

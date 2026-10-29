@@ -1,7 +1,6 @@
 import ast
 import pint
 from .parser import parse_string, UnitsExpr
-from import_transforms import SourceTransform
 
 
 class UnitExprTransformer(ast.NodeTransformer):
@@ -23,16 +22,19 @@ class UnitExprTransformer(ast.NodeTransformer):
                 raise SyntaxError(e)
 
             value = self.generic_visit(node.value)
-            return ast.Call(
-                ast.Name(id="_unit_syntax_q", ctx=ast.Load()),
-                args=[value, node.units],
-                keywords=[],
+            return ast.copy_location(
+                ast.Call(
+                    ast.Name(id="_unit_syntax_q", ctx=ast.Load()),
+                    args=[value, node.units],
+                    keywords=[],
+                ),
+                node,
             )
         else:
             return super().generic_visit(node)
 
 
-class UnitSourceTransform(SourceTransform):
+class UnitSourceTransform:
     ureg: pint.UnitRegistry
 
     def __init__(self, ureg: pint.UnitRegistry | None):

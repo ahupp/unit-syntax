@@ -3,5 +3,6 @@ dist/
 **/__pycache__
 build/
 .venv
+.pytest_cache/
 .pytest_cache.vscode/
 .vscode/

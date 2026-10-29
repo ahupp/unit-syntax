@@ -1,0 +1,19 @@
+name: Python grammar and dimension checks
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.11', '3.14', '3.15']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install -e '.[check]' pytest numpy build
+      - run: python -m pytest -q
+      - run: ty check unit_syntax/typing.pyi
+      - run: python scripts/generate_typing.py && git diff --exit-code unit_syntax/typing.pyi
+      - run: python -m pegen python_units.gram -o unit_syntax/parser.py && git diff --exit-code unit_syntax/parser.py
+      - run: python -m build
