@@ -74,7 +74,7 @@ def checking_source(source: str, *, ureg=None, filename="<unknown>") -> Checking
         return CheckingSource(source, source, list(range(len(source))))
     if ureg is None:
         ureg = pint.get_application_registry()
-    lines = source.splitlines(keepends=True)
+    lines = source.split("\n")
     offsets = _line_offsets(source)
 
     def position(line, byte_column):

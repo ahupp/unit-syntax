@@ -170,3 +170,10 @@ def test_unknown_unit_has_source_diagnostic(tmp_path):
     assert code == 1
     assert f"{path}:1:7:" in output
     assert "not_a_unit" in output
+
+
+def test_unicode_string_separator_keeps_checker_source_lines(tmp_path):
+    path, (code, output) = check(tmp_path, 'label="a\u2028b"\nvalue: int = 5 mm\n')
+    assert code == 1, output
+    assert f"{path}:2:" in output
+    assert "invalid-assignment" in output
