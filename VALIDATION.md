@@ -46,10 +46,10 @@ Local validation used uv 0.9.24 and locked ty 0.0.95:
 
 | Python | Tests | Library type check |
 | --- | --- | --- |
-| 3.10 | 51 passed, 22 skipped | Pass |
-| 3.11 | 52 passed, 21 skipped | Pass |
-| 3.14 | 61 passed, 12 skipped | Pass |
-| 3.15 | 73 passed | Pass |
+| 3.10 | 50 passed, 22 skipped | Pass |
+| 3.11 | 51 passed, 21 skipped | Pass |
+| 3.14 | 60 passed, 12 skipped | Pass |
+| 3.15 | 72 passed | Pass |
 
 Skips cover language syntax unavailable in the corresponding interpreter.
 The two original Python 3.11 Unicode/f-string source-location failures were
@@ -57,9 +57,9 @@ reproduced before the fix; the same assertions now pass with additional Unicode
 cases. No failing test was removed or weakened.
 
 Registry regressions cover replacing the application registry before and after
-transformation, notebook constructors initialized before replacement, explicit
-registries, matching runtime/checker dimensions, and nested package-specific
-registries taking precedence over a standalone runner's global import hook.
+transformation, notebook constructors initialized before replacement, matching
+runtime/checker dimensions, and global and nested package hooks sharing the
+application registry. Registry override parameters have been removed.
 
 Parser and dimensional-stub regeneration produce identical checked-in contents
 on all four interpreters. `uv lock --check` passes. `uv build` produces a wheel

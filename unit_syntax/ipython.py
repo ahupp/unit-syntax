@@ -28,7 +28,7 @@ def enable_debug():
     logging.basicConfig(level=logging.DEBUG, force=True)
 
 
-_UNIT_TRANSFORM = UnitSourceTransform(None)
+_UNIT_TRANSFORM = UnitSourceTransform()
 
 
 def transform_lines(lines: list[str]) -> list[str]:

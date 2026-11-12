@@ -54,27 +54,24 @@ enable_units_for_package(__name__)
 
 This applies the transform only to sub-modules of your package.
 
-Unit literals use Pint's application registry by default, including in scripts
-and notebooks. Replacing it with `pint.set_application_registry(ureg)` also
-changes the registry used by existing default transforms and the checker.
-
-To use a fixed custom registry for a package, pass it when enabling the import
-hook in `__init__.py`:
+Unit literals and static checking always use Pint's application registry,
+including scripts, imported modules, and notebooks. To configure custom units,
+set the application registry before transforming or importing code that uses
+them:
 
 ```python
 import pint
-from unit_syntax import enable_units_for_package
 
 ureg = pint.UnitRegistry()
 ureg.define("widget = 2 * meter")
-enable_units_for_package(__name__, ureg=ureg)
+pint.set_application_registry(ureg)
 ```
 
-More specific package registrations take precedence over parent-package and
-global hooks. Define custom units before importing modules that use them;
-unit names are validated before a module executes. The checker does not execute
-package initializers, so its Python API must be supplied the same custom registry
-when those definitions are needed for checking.
+Replacing the application registry also affects existing transforms and notebook
+constructors. Package import hooks only select where unit syntax is enabled;
+they do not select a registry. Unit names are validated before a module executes.
+The checker does not execute package initializers, so custom definitions must
+already exist in its application registry when checking begins.
 
 ## Usage
 
@@ -215,9 +212,9 @@ numbers. Magnitude dtype and shape constraints, runtime-selected units,
 arbitrary `.to()` strings, and Pint contexts remain runtime checks. Untyped
 Python values retain the usual limits of gradual type checking.
 
-The checker resolves literal unit names with its supplied registry (the Pint
-application registry by default). Python API callers can pass their own registry
-to `unit_syntax.check.checking_source`; checking does not execute package
+The checker resolves literal unit names with Pint's application registry.
+Python API callers can configure it with `pint.set_application_registry` before
+calling `unit_syntax.check.checking_source`. Checking does not execute package
 initializers to discover custom registry definitions.
 
 ## Why only allow units on simple expressions?

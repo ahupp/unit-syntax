@@ -124,7 +124,7 @@ def test_runtime_stays_pint_and_normalizes_scaled_ratios():
     from unit_syntax.typing import Quantity
     from unit_syntax.transform import UnitSourceTransform
 
-    transform = UnitSourceTransform(None)
+    transform = UnitSourceTransform()
     namespace = transform.injected_globals()
     exec(
         compile(transform.transform("value=(1 m)/(1 mm)\n"), "units.py", "exec"),

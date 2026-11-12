@@ -9,9 +9,9 @@
 - GitHub Actions checks the handwritten library and public stubs with ty,
   tests Python 3.10, 3.11, 3.14, and 3.15, and keeps other matrix jobs running
   when one version fails.
-- Default transforms and their injected constructors now follow Pint's current
-  application registry. Explicit package registries take precedence over
-  parent-package and global import hooks.
+- Transforms, injected constructors, package imports, notebooks, and static
+  checking always use Pint's current application registry. Removed registry
+  override arguments from the transform, package-hook, and checking APIs.
 - The `unit-syntax` command now runs standalone scripts directly, enabling
   `uvx unit-syntax script.py` and passing subsequent arguments to the script.
 - Replaced the `check` subcommand with `--check` for static dimensional checking.

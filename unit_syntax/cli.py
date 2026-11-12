@@ -41,7 +41,7 @@ def main(argv=None):
     filename = args.path
     sys.argv = [filename, *args.arguments]
     sys.path.insert(0, str(Path(filename).resolve().parent))
-    transform = UnitSourceTransform(None)
+    transform = UnitSourceTransform()
     enable_units_everywhere()
     namespace = {
         "__name__": "__main__",

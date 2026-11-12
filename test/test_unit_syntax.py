@@ -87,7 +87,7 @@ def assert_quantity_eq(result, value, units):
 
 
 def test_all():
-    tst = UnitSourceTransformTester(UnitSourceTransform(None))
+    tst = UnitSourceTransformTester(UnitSourceTransform())
 
     tst.assert_quantity_exec(
         """
@@ -154,11 +154,6 @@ def test_loader():
         test_pkg_standard_btu.mod_with_units.speed(), 1, "attoparsec/fortnight"
     )
     assert_quantity_eq(test_pkg_standard_btu.mod_with_units.btu(), 1055.056, "joule")
-
-    # Check that a custom UnitRegistry is being used
-    import test_pkg_intl_btu.mod_with_units
-
-    assert_quantity_eq(test_pkg_intl_btu.mod_with_units.btu(), 1, "Btu_it")
 
 
 def test_standalone_scripts():

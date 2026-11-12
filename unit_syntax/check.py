@@ -62,7 +62,7 @@ def _unit_dimension(ureg, unit):
     return dimension_key(dimensions)
 
 
-def checking_source(source: str, *, ureg=None, filename="<unknown>") -> CheckingSource:
+def checking_source(source: str, *, filename="<unknown>") -> CheckingSource:
     """Lower suffixes to typed constructors, with a map to original characters."""
     try:
         tree = ast.parse(source, filename=filename)
@@ -71,8 +71,7 @@ def checking_source(source: str, *, ureg=None, filename="<unknown>") -> Checking
     units = [node for node in ast.walk(tree) if isinstance(node, UnitsExpr)]
     if not units:
         return CheckingSource(source, source, list(range(len(source))))
-    if ureg is None:
-        ureg = pint.get_application_registry()
+    ureg = pint.get_application_registry()
     lines = source.split("\n")
     offsets = _line_offsets(source)
 

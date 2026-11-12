@@ -95,7 +95,7 @@ def test_utf8_source_locations(source):
 def test_new_syntax_composes_with_units(source):
     if sys.version_info < (3, 15):
         pytest.skip("Python 3.15 execution coverage")
-    transform = UnitSourceTransform(None)
+    transform = UnitSourceTransform()
     namespace = transform.injected_globals()
     exec(compile(transform.transform(source), "unit_grammar.py", "exec"), namespace)
     result = namespace["result"]
