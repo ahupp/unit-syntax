@@ -32,11 +32,14 @@ Tip: In Jupyter this must be run in its own cell before any units expressions ar
 
 ### ... with standalone scripts
 
-To run a standalone script with units:
+With [uv](https://docs.astral.sh/uv/), run a standalone script with units
+without installing unit-syntax first:
 
+```sh
+$ uvx unit-syntax path_to_script.py
 ```
-$ python -m unit_syntax <path_to_script.py>
-```
+
+Arguments after the script filename are passed to the script.
 
 Note that this installs a custom import hook that affects all imports performed by the script.
 
@@ -109,13 +112,6 @@ SyntaxError: 'smoot' is not defined in the unit registry
 
 The parser is [pegen](https://we-like-parsers.github.io/pegen/), which is a standalone version of the same parser generator used by Python itself. The grammar is a [lightly modified](https://github.com/ahupp/unit-syntax/compare/base-grammar..main#diff-7405fdc26614e4d2e7f8f37c9b559ccb3a7f7c619d41e207dda28afdfae20f83) version the official Python grammar shipped with pegen.
 
-The grammar now targets **Python 3.15**, including generic declarations, type
-parameter defaults, f-strings and template strings, unparenthesized exception
-types, unpacking comprehensions, and lazy imports. Execution of newer syntax
-requires a Python interpreter that supports it. Python 3.10 is the minimum
-supported interpreter. See [GRAMMAR.md](GRAMMAR.md) for the pinned upstream
-sources and regeneration instructions.
-
 Syntax transformation in IPython/Jupyter uses [IPython custom input transformers](https://ipython.readthedocs.io/en/stable/config/inputtransforms.html).
 
 Syntax transformation of arbitrary Python modules uses Python's public
@@ -127,9 +123,14 @@ Install the optional checker, then check a script or package before executing it
 
 ```sh
 pip install 'unit-syntax[check]'
-python -m unit_syntax check model.py
-# Equivalent console command:
-unit-syntax check my_package/
+unit-syntax --check model.py
+unit-syntax --check my_package/
+```
+
+To fetch and run the optional checker with uv:
+
+```sh
+uvx --from 'unit-syntax[check]' unit-syntax --check model.py
 ```
 
 The checker uses **ty**. It creates a temporary Python view of the source, gives
@@ -137,7 +138,7 @@ every unit literal its physical dimension, checks project imports, and maps
 diagnostics back to the original filenames and positions. It never executes the
 checked code or writes transformed code into the project. Running `ty check`
 directly on a file containing unit suffixes will still produce syntax errors;
-use the `unit-syntax check` entry point. `--project PATH` explicitly selects the
+use `unit-syntax --check`. `--project PATH` explicitly selects the
 root for imports. Syntax-only errors in unrelated, unselected files do not
 prevent checking the selected files.
 

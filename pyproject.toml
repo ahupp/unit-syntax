@@ -26,7 +26,7 @@ ty = {version = ">=0.0.95", optional = true}
 check = ["ty"]
 
 [tool.poetry.scripts]
-unit-syntax = "unit_syntax.check:main"
+unit-syntax = "unit_syntax.cli:main"
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=8"

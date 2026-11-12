@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- The `unit-syntax` command now runs standalone scripts directly, enabling
+  `uvx unit-syntax script.py` and passing subsequent arguments to the script.
+- Replaced the `check` subcommand with `--check` for static dimensional checking.
+  The console command and `python -m unit_syntax` use the same CLI.
+- Updated standalone-script and checker examples in the README and removed
+  the Python grammar version paragraph.
+
 ## 0.4.0
 
 ### Added

@@ -139,7 +139,7 @@ def test_cli(tmp_path):
     path = tmp_path / "model.py"
     path.write_text("from math import sqrt\nx = sqrt(5 mm)\n")
     result = subprocess.run(
-        [sys.executable, "-m", "unit_syntax", "check", str(path)],
+        [sys.executable, "-m", "unit_syntax", "--check", str(path)],
         capture_output=True,
         text=True,
     )

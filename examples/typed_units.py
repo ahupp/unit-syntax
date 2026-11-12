@@ -1,4 +1,4 @@
-"""Run with unit-syntax, or check with `unit-syntax check` without execution."""
+"""Run with unit-syntax, or check with `unit-syntax --check` without execution."""
 from math import sqrt
 from unit_syntax.typing import Area, Length, Quantity
 

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import argparse
 import ast
 from bisect import bisect_right
 from dataclasses import dataclass
@@ -278,17 +277,3 @@ def check_paths(paths, *, project=None):
                 line += " Only dimensionless quantities support numeric conversion."
             output.append(line.replace(str(mirror), str(root)))
         return result.returncode, "\n".join(output) + "\n"
-
-
-def main(argv=None):
-    parser = argparse.ArgumentParser(prog="unit-syntax")
-    subparsers = parser.add_subparsers(dest="command", required=True)
-    check = subparsers.add_parser("check", help="Check unit-enabled Python with ty")
-    check.add_argument("paths", nargs="+", type=Path)
-    check.add_argument(
-        "--project", type=Path, help="Root used to resolve project imports"
-    )
-    args = parser.parse_args(argv)
-    code, output = check_paths(args.paths, project=args.project)
-    print(output, end="")
-    return code
