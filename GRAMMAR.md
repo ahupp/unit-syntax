@@ -22,7 +22,7 @@ separate source ranges. AST columns use CPython's UTF-8 byte convention.
 Generate the checked-in parser with pegen 0.3:
 
 ```sh
-python -m pegen python_units.gram -o unit_syntax/parser.py
+uv run python -m pegen python_units.gram -o unit_syntax/parser.py
 ```
 
 Do not edit `parser.py` directly. `test/test_grammar.py` compares newer language
@@ -35,7 +35,7 @@ the standard-library `contextlib`, `functools`, `dataclasses`, `enum`, and
 The dimension annotations in `unit_syntax/typing.pyi` are generated separately:
 
 ```sh
-python scripts/generate_typing.py
+uv run python scripts/generate_typing.py
 ```
 
 Edit the dimensional aliases in `unit_syntax/typing.py` and the operator rules

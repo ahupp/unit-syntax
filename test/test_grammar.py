@@ -58,6 +58,9 @@ def test_matches_native_python_grammar(source):
         'label="a\u2028b"\nmodel=5 mm\n',
         'label="a\u2028b"; value=f"{1+2}"\n',
         'value=f"a\u2028b{1+2}"\n',
+        'label="😀"; value=f"{1+2}"\n',
+        'value=f"é {1+2!r:04}"\n',
+        'value=(f"é{1+2}"\n f"😀{3+4}")\n',
         'x = t"{ 1 + 2 }"\n',
     ],
 )

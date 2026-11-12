@@ -14,7 +14,7 @@ from typing import (
 )
 
 from pegen.tokenizer import Tokenizer
-from unit_syntax._parser_support import (utf8_locations, formatted_field,
+from unit_syntax._parser_support import (utf8_locations, character_locations, formatted_field,
                                          interpolated_string, concatenate_templates, type_parameter)
 
 # Singleton ast nodes, created once for efficiency
@@ -355,7 +355,9 @@ class Parser(Parser):
         if err_args is not None:
             raise SyntaxError(*err_args)
 
-        node = m.body[0].value
+        # The native parser returns UTF-8 columns. Restore character columns
+        # before the final shared conversion applies the original source offsets.
+        node = character_locations(m.body[0].value, source)
         # Since we asked Python to parse an alterred source starting at line 2
         # we alter the lineno of the returned AST to recover the right line.
         # If the string start at line 1, tha AST says 2 so we need to decrement by 1

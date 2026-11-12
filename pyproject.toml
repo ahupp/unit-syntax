@@ -1,46 +1,52 @@
-[tool.poetry]
+[project]
 name = "unit-syntax"
 version = "0.4.0"
-authors = ["Adam Hupp <adam@hupp.org>"]
-packages = [{ include = "unit_syntax" }]
-readme = "README.md"
-include = [{ path = "CHANGELOG.md", format = "sdist" }]
-repository = "https://github.com/ahupp/unit-syntax"
 description = "Physical unit literals for Jupyter and IPython"
-
-[tool.poetry.dependencies]
-python = ">=3.10, < 4"
-Pint = [
-    {version = ">=0.24.4", python = "<3.11"},
-    {version = ">=0.25.3", python = ">=3.11,<3.12"},
-    {version = ">=0.26.2", python = ">=3.12"},
+readme = "README.md"
+authors = [{ name = "Adam Hupp", email = "adam@hupp.org" }]
+requires-python = ">=3.10,<4"
+dependencies = [
+    "Pint>=0.24.4; python_version < '3.11'",
+    "Pint>=0.25.3; python_version >= '3.11' and python_version < '3.12'",
+    "Pint>=0.26.2; python_version >= '3.12'",
+    "ipython>=8; python_version < '3.11'",
+    "ipython>=9; python_version >= '3.11'",
+    "pegen>=0.3,<0.4",
 ]
-ipython = [
-    {version = ">=8", python = "<3.11"},
-    {version = ">=9", python = ">=3.11"},
-]
-pegen = "^0.3"
-ty = {version = ">=0.0.95", optional = true}
 
-[tool.poetry.extras]
-check = ["ty"]
+[project.optional-dependencies]
+check = ["ty>=0.0.95"]
 
-[tool.poetry.scripts]
+[project.scripts]
 unit-syntax = "unit_syntax.cli:main"
 
-[tool.poetry.group.dev.dependencies]
-pytest = ">=8"
-black = ">=25"
-numpy = [
-    {version = ">=1.24.3", python = "<3.11"},
-    {version = ">=2.4", python = ">=3.11,<3.12"},
-    {version = ">=2.5.4", python = ">=3.12"},
+[project.urls]
+Repository = "https://github.com/ahupp/unit-syntax"
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "black>=25",
+    "numpy>=1.24.3; python_version < '3.11'",
+    "numpy>=2.4; python_version >= '3.11' and python_version < '3.12'",
+    "numpy>=2.5.4; python_version >= '3.12'",
+    "ty==0.0.95",
 ]
-ty = ">=0.0.95"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.9.24,<0.10"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
+source-include = [
+    "CHANGELOG.md", "GRAMMAR.md", "VALIDATION.md", "python_units.gram",
+    "scripts/**", "test/**", "examples/**", "uv.lock",
+]
+
+[tool.ty.src]
+# pegen generates the parser; its public interface is checked via parser.pyi.
+exclude = ["unit_syntax/parser.py"]
 
 [tool.black]
 include = '\.pyi?$'

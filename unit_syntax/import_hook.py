@@ -36,7 +36,9 @@ class _UnitFinder(importlib.abc.MetaPathFinder):
         transform = next(
             (
                 t
-                for pattern, t in self.transforms
+                for pattern, t in sorted(
+                    self.transforms, key=lambda item: len(item[0]), reverse=True
+                )
                 if fnmatch.fnmatchcase(fullname, pattern)
             ),
             None,

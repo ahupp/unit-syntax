@@ -4,12 +4,25 @@
 
 ### Changed
 
+- Migrated project metadata, dependency locking, development commands, and
+  test/release workflows from Poetry to uv. Run tests with `uv run pytest`.
+- GitHub Actions checks the handwritten library and public stubs with ty,
+  tests Python 3.10, 3.11, 3.14, and 3.15, and keeps other matrix jobs running
+  when one version fails.
+- Default transforms and their injected constructors now follow Pint's current
+  application registry. Explicit package registries take precedence over
+  parent-package and global import hooks.
 - The `unit-syntax` command now runs standalone scripts directly, enabling
   `uvx unit-syntax script.py` and passing subsequent arguments to the script.
 - Replaced the `check` subcommand with `--check` for static dimensional checking.
   The console command and `python -m unit_syntax` use the same CLI.
 - Updated standalone-script and checker examples in the README and removed
   the Python grammar version paragraph.
+
+### Fixed
+
+- Avoided applying UTF-8 column conversion twice to native string ASTs on
+  Python 3.10 and 3.11, preserving Unicode and f-string source locations.
 
 ## 0.4.0
 

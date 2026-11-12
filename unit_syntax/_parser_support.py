@@ -37,6 +37,22 @@ def utf8_locations(tree, source):
     return tree
 
 
+def character_locations(tree, source):
+    """Convert native AST byte columns back to PEG character columns."""
+    lines = source_lines(source)
+    for node in ast.walk(tree):
+        for line_attr, column_attr in (
+            ("lineno", "col_offset"),
+            ("end_lineno", "end_col_offset"),
+        ):
+            line = getattr(node, line_attr, None)
+            column = getattr(node, column_attr, None)
+            if line and column is not None:
+                encoded = lines[line - 1].encode("utf-8")
+                setattr(node, column_attr, len(encoded[:column].decode("utf-8")))
+    return tree
+
+
 def formatted_field(node, debug):
     node._unit_syntax_debug = debug
     return node
@@ -168,7 +184,10 @@ def concatenate_templates(parts):
                 values[-1].value += value.value
             else:
                 values.append(value)
-    result = ast.copy_location(ast.TemplateStr(values=values), parts[0])
+    template_type = getattr(ast, "TemplateStr", None)
+    if template_type is None:
+        raise SyntaxError("Template strings require Python 3.14 or newer")
+    result = ast.copy_location(template_type(values=values), parts[0])
     result.end_lineno, result.end_col_offset = (
         parts[-1].end_lineno,
         parts[-1].end_col_offset,

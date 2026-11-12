@@ -154,11 +154,9 @@ def checking_source(source: str, *, ureg=None, filename="<unknown>") -> Checking
         )
         if not (docstring or future):
             break
-        insertion = (
-            offsets[statement.end_lineno]
-            if statement.end_lineno < len(offsets)
-            else len(source)
-        )
+        end_line = statement.end_lineno
+        assert end_line is not None  # Parsed statements always carry source locations.
+        insertion = offsets[end_line] if end_line < len(offsets) else len(source)
     # Every original character survives outside replacements. Locate the
     # insertion in the generated view by its mapped original position.
     generated_insertion = next(

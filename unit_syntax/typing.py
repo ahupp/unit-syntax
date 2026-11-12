@@ -4,6 +4,7 @@ The companion stub provides dimensional operator signatures for static tools.
 Pint's own Quantity[T] parameter describes magnitude, not physical dimension.
 """
 
+from collections.abc import Mapping
 from typing import Generic, Literal, TypeVar
 
 import pint
@@ -53,7 +54,7 @@ DIMENSIONS = {
 }
 
 
-def dimension_key(dimensions):
+def dimension_key(dimensions: Mapping[str, float]) -> str:
     return (
         "|".join(
             f"{name}^{power:g}" for name, power in sorted(dimensions.items()) if power
@@ -63,7 +64,11 @@ def dimension_key(dimensions):
 
 
 for _name, _dimensions in DIMENSIONS.items():
-    globals()[_name] = Dimension[Literal[dimension_key(_dimensions)]]
+    # The generated companion stub gives these dynamically created aliases
+    # their statically known dimension keys.
+    globals()[_name] = Dimension[
+        Literal[dimension_key(_dimensions)]  # ty: ignore[invalid-type-form]
+    ]
 
 # This is deliberately an alias: unit-syntax does not introduce another
 # quantity implementation or replace the user's Pint registry.

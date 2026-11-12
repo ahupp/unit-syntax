@@ -54,6 +54,28 @@ enable_units_for_package(__name__)
 
 This applies the transform only to sub-modules of your package.
 
+Unit literals use Pint's application registry by default, including in scripts
+and notebooks. Replacing it with `pint.set_application_registry(ureg)` also
+changes the registry used by existing default transforms and the checker.
+
+To use a fixed custom registry for a package, pass it when enabling the import
+hook in `__init__.py`:
+
+```python
+import pint
+from unit_syntax import enable_units_for_package
+
+ureg = pint.UnitRegistry()
+ureg.define("widget = 2 * meter")
+enable_units_for_package(__name__, ureg=ureg)
+```
+
+More specific package registrations take precedence over parent-package and
+global hooks. Define custom units before importing modules that use them;
+unit names are validated before a module executes. The checker does not execute
+package initializers, so its Python API must be supplied the same custom registry
+when those definitions are needed for checking.
+
 ## Usage
 
 [An interactive notebook to play around with units](https://colab.research.google.com/drive/1PInyLGZHnUzEuUVgMsLrUUNdCurXK7v1#scrollTo=JszzXmATY0TV)
@@ -221,18 +243,33 @@ A [long discussion on the python-ideas mailing list](https://lwn.net/Articles/90
 
 ## Development
 
-To regenerate the parser:
+Run the tests with [uv](https://docs.astral.sh/uv/):
 
-`python -m pegen python_units.gram -o unit_syntax/parser.py`
-
-Running tests:
-
+```sh
+uv run pytest
 ```
-$ poetry install --with dev --extras check
-$ poetry run pytest
-$ poetry run python scripts/generate_typing.py
-$ poetry run ty check unit_syntax/typing.pyi
+
+This installs the project and its development dependencies from `uv.lock`
+automatically. To use a particular interpreter, run `uv run --python 3.11 pytest`.
+
+Type check the library and its public stubs:
+
+```sh
+uv run ty check unit_syntax
 ```
+
+The generated PEG parser is checked through its public interface stub,
+grammar tests, and regeneration checks rather than type checking generated code.
+GitHub Actions runs these checks on Python 3.10, 3.11, 3.14, and 3.15.
+
+Regenerate the parser and dimensional typing stubs:
+
+```sh
+uv run python -m pegen python_units.gram -o unit_syntax/parser.py
+uv run python scripts/generate_typing.py
+```
+
+Build a source distribution and wheel with `uv build`.
 
 ## Future work and open questions
 

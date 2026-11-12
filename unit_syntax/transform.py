@@ -1,5 +1,6 @@
 import ast
 import pint
+from typing import Any
 from .parser import parse_string, UnitsExpr
 
 
@@ -35,18 +36,23 @@ class UnitExprTransformer(ast.NodeTransformer):
 
 
 class UnitSourceTransform:
-    ureg: pint.UnitRegistry
-
     def __init__(self, ureg: pint.UnitRegistry | None):
-        if ureg is None:
-            ureg = pint._DEFAULT_REGISTRY
-        self.ureg = ureg
+        self._ureg = ureg
 
-    def injected_globals(self) -> dict[str, any]:
-        return {"_unit_syntax_q": self.ureg.Quantity}
+    @property
+    def ureg(self):
+        return self._ureg if self._ureg is not None else pint.get_application_registry()
 
-    def transform(self, source: str) -> ast.AST:
-        tree = parse_string(source, mode="file")
+    def _quantity(self, value, units):
+        # Resolve the application registry at call time, including in notebooks
+        # whose injected globals outlive an application-registry replacement.
+        return self.ureg.Quantity(value, units)
+
+    def injected_globals(self) -> dict[str, Any]:
+        return {"_unit_syntax_q": self._quantity}
+
+    def transform(self, source: str) -> ast.Module:
+        tree = parse_string(source, mode="exec")
         tree_std = UnitExprTransformer(self.ureg).visit(tree)
         return ast.fix_missing_locations(tree_std)
 

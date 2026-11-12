@@ -33,3 +33,41 @@ dynamic units, and Pint contexts remain runtime responsibilities.
 The CI matrix covers Python 3.11, 3.14, and 3.15. Remote CI has not been run;
 Python 3.14 was not independently tested in this local run. Nothing has been
 published to PyPI or pushed to GitHub.
+
+
+## uv management and registry fixes (2026-11-12)
+
+The project now uses PEP 621 metadata, a default development dependency group,
+`uv.lock`, and the uv build backend. Poetry configuration and its lockfile were
+removed. Both GitHub Actions workflows use uv and run the library type check.
+The test matrix does not cancel other versions after one version fails.
+
+Local validation used uv 0.9.24 and locked ty 0.0.95:
+
+| Python | Tests | Library type check |
+| --- | --- | --- |
+| 3.10 | 51 passed, 22 skipped | Pass |
+| 3.11 | 52 passed, 21 skipped | Pass |
+| 3.14 | 61 passed, 12 skipped | Pass |
+| 3.15 | 73 passed | Pass |
+
+Skips cover language syntax unavailable in the corresponding interpreter.
+The two original Python 3.11 Unicode/f-string source-location failures were
+reproduced before the fix; the same assertions now pass with additional Unicode
+cases. No failing test was removed or weakened.
+
+Registry regressions cover replacing the application registry before and after
+transformation, notebook constructors initialized before replacement, explicit
+registries, matching runtime/checker dimensions, and nested package-specific
+registries taking precedence over a standalone runner's global import hook.
+
+Parser and dimensional-stub regeneration produce identical checked-in contents
+on all four interpreters. `uv lock --check` passes. `uv build` produces a wheel
+and a source archive; the wheel includes the CLI entry point, parser and quantity
+stubs, and `py.typed`. The source archive also includes the lockfile, changelog,
+grammar, generators, examples, and tests.
+
+`uv run ty check unit_syntax` checks handwritten library files and public stubs.
+The pegen-generated parser implementation is excluded from ty; its typed public
+interface, grammar comparisons, compilation, and regeneration remain checked.
+These are local results; GitHub Actions records remote execution separately.
