@@ -209,7 +209,7 @@ y = x inches * ppi
 
 `inches * ppi` would be parsed as the unit, leading to (at best) a runtime error sometime later and at worst an incorrect calculation. This could be avoided by parenthesizing the expression (e.g. `(x inches) * ppi`, but if that's optional it's easy to forget. So the intent of this restriction is to make these risky forms uncommon and thus more obvious. This is not a hypothetical concern, I hit this within 10 minutes of first using the initial syntax.
 
-## Prior Art
+## Related Work
 
 The immediate inspriration of `unit-syntax` is a language called [Fortress](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.180.6323&rep=rep1&type=pdf) from Sun Microsystems. Fortress was intended as a modern Fortran, and had first-class support for units in both the syntax and type system.
 
