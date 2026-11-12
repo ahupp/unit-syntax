@@ -4,6 +4,8 @@
 
 ### Changed
 
+- Documented `uvx --with unit-syntax ipython` startup, gave unit registries
+  their own README section, and removed the standalone-script import-hook note.
 - Migrated project metadata, dependency locking, development commands, and
   test/release workflows from Poetry to uv. Run tests with `uv run pytest`.
 - GitHub Actions checks the handwritten library and public stubs with ty,

@@ -22,7 +22,13 @@ $ pip install unit-syntax
 
 ### ... with Jupyter/IPython
 
-To enable unit-syntax in a Jupyter/IPython session run:
+Start IPython with unit-syntax available:
+
+```sh
+$ uvx --with unit-syntax ipython
+```
+
+Then enable unit-syntax in the session:
 
 ```python
 %load_ext unit_syntax
@@ -41,8 +47,6 @@ $ uvx unit-syntax path_to_script.py
 
 Arguments after the script filename are passed to the script.
 
-Note that this installs a custom import hook that affects all imports performed by the script.
-
 ### ... with Python packages
 
 To use/distribute a package with unit-syntax, add this in your `__init__.py`:
@@ -53,6 +57,8 @@ enable_units_for_package(__name__)
 ```
 
 This applies the transform only to sub-modules of your package.
+
+## Unit registries
 
 Unit literals and static checking always use Pint's application registry,
 including scripts, imported modules, and notebooks. To configure custom units,
