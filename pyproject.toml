@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "unit-syntax"
-version = "0.4.0.dev0"
+version = "0.4.0"
 authors = ["Adam Hupp <adam@hupp.org>"]
 packages = [{ include = "unit_syntax" }]
 readme = "README.md"
+include = [{ path = "CHANGELOG.md", format = "sdist" }]
 repository = "https://github.com/ahupp/unit-syntax"
 description = "Physical unit literals for Jupyter and IPython"
 
