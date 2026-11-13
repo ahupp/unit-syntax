@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.4.1
 
 ### Changed
 
@@ -22,6 +22,9 @@
   the Python grammar version paragraph.
 
 ### Fixed
+
+- Initialize Pint's lazy application registry before concurrent first use,
+  so checks and execution cannot observe partially loaded unit definitions.
 
 - Avoided applying UTF-8 column conversion twice to native string ASTs on
   Python 3.10 and 3.11, preserving Unicode and f-string source locations.

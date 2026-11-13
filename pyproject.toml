@@ -1,6 +1,6 @@
 [project]
 name = "unit-syntax"
-version = "0.4.0"
+version = "0.4.1"
 description = "Physical unit literals for Jupyter and IPython"
 readme = "README.md"
 authors = [{ name = "Adam Hupp", email = "adam@hupp.org" }]

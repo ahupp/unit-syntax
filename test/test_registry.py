@@ -110,3 +110,42 @@ def test_imports_share_application_registry_across_global_and_package_hooks(tmp_
     )
     assert result.returncode == 0, result.stdout + result.stderr
     assert result.stdout == "shared application registry\n"
+
+
+def test_concurrent_first_use_sees_fully_initialized_application_registry():
+    # A fresh interpreter is essential: the rest of this suite already uses Pint.
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            r"""
+import concurrent.futures
+import threading
+import time
+import pint
+
+original = pint.UnitRegistry._after_init
+def slow_initialization(self):
+    time.sleep(0.05)
+    original(self)
+pint.UnitRegistry._after_init = slow_initialization
+
+from unit_syntax.check import checking_source
+from unit_syntax.transform import UnitSourceTransform
+barrier = threading.Barrier(16)
+def check_and_execute(index):
+    barrier.wait()
+    source = 'value = 1 meter\n'
+    checking_source(source)
+    transform = UnitSourceTransform()
+    namespace = transform.injected_globals()
+    exec(compile(transform.transform(source), '<thread>', 'exec'), namespace)
+    assert namespace['value'].to('mm').magnitude == 1000
+with concurrent.futures.ThreadPoolExecutor(max_workers=16) as pool:
+    list(pool.map(check_and_execute, range(16)))
+""",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
